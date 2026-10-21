@@ -27,7 +27,7 @@ from app.schemas import (
     TutelaSections,
     VerificationReport,
 )
-from app.search import search_jurisprudence
+from app.search import SearchResult, asearch_jurisprudence
 
 logger = logging.getLogger("amparo.pipeline")
 
@@ -36,7 +36,7 @@ M = TypeVar("M", bound=BaseModel)
 MAX_CANDIDATES = 10
 MAX_PRECEDENTS = 8
 EXCERPT_CHARS = 1200
-SCREENING_CHARS = 500
+SCREENING_CHARS = 800
 UNVERIFIED_MARKER = "[CITA NO VERIFICADA]"
 DISCLAIMER = (
     "Amparo es una herramienta de ayuda para la redacción y no constituye asesoría legal. "
@@ -173,22 +173,38 @@ async def analysis(narrative: str, facts: CaseFacts, usage: StepUsage) -> LegalA
 
 # --- Step 3: research --------------------------------------------------------
 
-RELEVANCE_SYSTEM = f"""You screen Colombian Constitutional Court rulings found by a search engine. For each \
-ruling, decide whether it is relevant to the case and summarize in one or two sentences why. Base the \
-summary only on the excerpt provided; do not add facts about the ruling that are not in the excerpt.
+RELEVANCE_SYSTEM = f"""You screen Colombian Constitutional Court rulings found by a search engine for a tutela against an EPS. Mark a ruling as relevant (relevante=true) when its excerpt deals with the same kind of problem (the same or a similar denied or delayed service, the same patient situation) OR with the general rules on the right to health that a judge would apply to this case (oportunidad, integralidad, continuidad, services not covered by the PBS, special protection subjects). Mark it as not relevant only when it is clearly about something else (pensions, labor, other areas of law).
+For each ruling, summarize in one or two sentences why it matters for this case, based only on the excerpt.
 Return one item per ruling, using exactly the sentencia_id given.
 {OUTPUT_LANGUAGE}"""
 
 
-async def research(facts: CaseFacts, legal: LegalAnalysis, usage: StepUsage) -> Precedents:
-    batches = await asyncio.gather(
-        *(asyncio.to_thread(search_jurisprudence, q) for q in legal.queries_de_busqueda)
-    )
-    usage.tavily_searches += len(legal.queries_de_busqueda)
+async def _search_all(queries: list[str], usage: StepUsage) -> list[list[SearchResult]]:
+    outcomes = await asyncio.gather(*(asearch_jurisprudence(q) for q in queries), return_exceptions=True)
+    usage.tavily_searches += len(queries)
+    batches = []
+    for query, outcome in zip(queries, outcomes):
+        if isinstance(outcome, BaseException):
+            logger.warning("tavily query failed query=%r error=%r", query, outcome)
+            continue
+        batches.append(outcome)
+    if not batches:
+        raise RuntimeError(f"All {len(queries)} Tavily searches failed; see server logs")
+    return batches
 
-    candidates: dict[str, Precedent] = {}
+
+def _round_robin(batches: list[list[SearchResult]]) -> list[SearchResult]:
+    """Interleave results so every query contributes to the candidate pool."""
+    longest = max((len(b) for b in batches), default=0)
+    return [b[i] for i in range(longest) for b in batches if i < len(b)]
+
+
+async def research(facts: CaseFacts, legal: LegalAnalysis, usage: StepUsage) -> Precedents:
+    batches = await _search_all(legal.queries_de_busqueda, usage)
+
+    candidates: dict[str, tuple[SearchResult, Precedent]] = {}
     seen_urls: set[str] = set()
-    for result in (r for batch in batches for r in batch):
+    for result in _round_robin(batches):
         url = result.url.split("#")[0]
         if url in seen_urls:
             continue
@@ -196,26 +212,27 @@ async def research(facts: CaseFacts, legal: LegalAnalysis, usage: StepUsage) -> 
         sentencia_id = citations.id_from_source(result.title, url)
         if sentencia_id is None or sentencia_id in candidates:
             continue
-        if len(candidates) == MAX_CANDIDATES:
-            break
-        candidates[sentencia_id] = Precedent(
+        candidates[sentencia_id] = (result, Precedent(
             sentencia_id=sentencia_id,
             url=url,
             resumen_relevancia="",
             extracto_fuente=result.content[:EXCERPT_CHARS],
-        )
+        ))
+        if len(candidates) == MAX_CANDIDATES:
+            break
     if not candidates:
         return Precedents(precedentes=[])
 
     listing = "\n\n".join(
-        f"sentencia_id: {p.sentencia_id}\nexcerpt: {p.extracto_fuente}" for p in candidates.values()
+        f"sentencia_id: {p.sentencia_id}\ntitle: {r.title}\nexcerpt: {p.extracto_fuente[:SCREENING_CHARS]}"
+        for r, p in candidates.values()
     )
     user = f"Case facts:\n{_dump(facts)}\n\nRulings:\n{listing}"
     review = await structured("fast", RelevanceReview, RELEVANCE_SYSTEM, user, usage, max_tokens=8192)
 
     reviewed = {item.sentencia_id: item for item in review.items}
     selected = []
-    for precedent in candidates.values():
+    for _, precedent in candidates.values():
         item = reviewed.get(precedent.sentencia_id)
         if item is not None and not item.relevante:
             continue
@@ -234,8 +251,10 @@ Rules:
 - hechos: numbered, chronological, first person, only facts from the case. No invented details.
 - fundamentos_juridicos: you may cite articles of the Constitución Política (e.g. 11, 48, 49, 86), \
 the Decreto 2591 de 1991 and the Ley 1751 de 2015 (Ley Estatutaria de Salud).
-- CITATIONS: you may cite ONLY the Constitutional Court rulings in the ALLOWED RULINGS list, written as \
-"Sentencia T-123 de 2024". Never cite any other ruling, even well-known ones. If the list is empty, cite no rulings.
+- CITATIONS: support the legal grounds with the Constitutional Court rulings in the ALLOWED RULINGS list: \
+cite every one that applies (normally 2 to 4), written as "Sentencia T-123 de 2024", with one sentence on what \
+each one says, based on its relevance note. Cite ONLY rulings from that list; never any other ruling, even \
+well-known ones. If the list is empty, cite no rulings.
 - pretensiones: concrete orders (e.g. authorize and deliver the service within 48 hours, comprehensive treatment).
 - Use bracket placeholders for personal data you do not have: [NOMBRE COMPLETO], [NÚMERO DE CÉDULA], [CIUDAD].
 - juramento: state under oath that no other tutela has been filed for the same facts and rights.
@@ -253,7 +272,9 @@ def _allowed_rulings(precedents: Precedents) -> str:
 
 
 def _numbered(items: list[str]) -> str:
-    return "\n".join(f"{i}. {item}" for i, item in enumerate(items, 1))
+    # Models often number items themselves; drop that so numbering is not doubled.
+    clean = (re.sub(r"^\s*\d+\s*[.)-]\s*", "", item) for item in items)
+    return "\n".join(f"{i}. {item}" for i, item in enumerate(clean, 1))
 
 
 def _right_name(right: str) -> str:
@@ -322,6 +343,13 @@ async def draft(
         f"ALLOWED RULINGS:\n{_allowed_rulings(precedents)}"
     )
     sections = await structured("draft", TutelaSections, DRAFT_SYSTEM, user, usage)
+    if precedents.precedentes and not citations.find_citations(sections.fundamentos_juridicos):
+        logger.warning("draft cited no allowed ruling; retrying once")
+        reminder = (
+            "\n\nIMPORTANT: a previous attempt cited no ruling. fundamentos_juridicos must cite the applicable "
+            'ALLOWED RULINGS as "Sentencia T-123 de 2024".'
+        )
+        sections = await structured("draft", TutelaSections, DRAFT_SYSTEM, user + reminder, usage)
     return TutelaDraft(**sections.model_dump(), texto_completo=assemble_tutela(facts, sections))
 
 

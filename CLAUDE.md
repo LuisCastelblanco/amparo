@@ -17,10 +17,14 @@ Amparo is an AI agent that helps people in Colombia draft an *acción de tutela*
   - `app/config.py`: settings via pydantic-settings.
   - `app/llm.py`: single Token Factory client; `chat(tier, messages, response_format=None)`.
   - `app/search.py`: Tavily client; `search_jurisprudence(query)`.
-  - `app/main.py`: FastAPI app.
-- `frontend/`: web UI (not built yet).
-- `scripts/`: tooling, e.g. `uv run --project backend python scripts/smoke_test.py`.
-- `docs/`: documentation.
+  - `app/schemas.py`: pydantic models for each step's output.
+  - `app/pipeline.py`: the six steps plus the `run_case` event generator.
+  - `app/citations.py`: deterministic detection and normalization of ruling IDs (T-760/08).
+  - `app/main.py`: FastAPI app; `POST /api/cases/run` streams Server-Sent Events.
+- `frontend/`: Next.js (App Router, TypeScript, Tailwind) single-page UI. `NEXT_PUBLIC_API_URL` points to the API.
+  This Next.js version differs from older ones; read `frontend/AGENTS.md` before changing it.
+- `scripts/`: `smoke_test.py` (API check) and `run_case.py` (run demo cases), both via `uv run --project backend python scripts/...`.
+- `docs/`: `demo_cases/` (synthetic cases, synced into the frontend at build time) and `DEPLOY.md`.
 
 ## Rules
 
