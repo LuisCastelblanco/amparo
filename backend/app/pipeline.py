@@ -11,15 +11,18 @@ from typing import Any, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
-from app import citations
+from app import citations, grounding, sources
+from app.config import get_settings
 from app.llm import ChatResult, Tier, chat
 from app.schemas import (
     CaseFacts,
     CitationCheck,
+    CitationOutcome,
     CoherenceReview,
     FinalPackage,
     LegalAnalysis,
     PackageGuidance,
+    ParagraphRewrite,
     Precedent,
     Precedents,
     RelevanceReview,
@@ -37,7 +40,17 @@ MAX_CANDIDATES = 10
 MAX_PRECEDENTS = 8
 EXCERPT_CHARS = 1200
 SCREENING_CHARS = 800
-UNVERIFIED_MARKER = "[CITA NO VERIFICADA]"
+MAX_VERIFY_ITERATIONS = 2
+# Output budget per LLM call. Reasoning-tier calls include the model's thinking tokens.
+MAX_TOKENS = {
+    "intake": 4096,
+    "analysis": 12288,
+    "screening": 4096,
+    "draft": 8192,
+    "rewrite": 4096,
+    "coherence": 12288,
+    "package": 4096,
+}
 DISCLAIMER = (
     "Amparo es una herramienta de ayuda para la redacción y no constituye asesoría legal. "
     "Revise el documento, complete los datos entre corchetes y, si es posible, consúltelo con un "
@@ -49,15 +62,38 @@ OUTPUT_LANGUAGE = "All user-facing text values in the JSON must be written in Sp
 # --- Usage tracking ----------------------------------------------------------
 
 
+class SearchBudgetExceeded(RuntimeError):
+    pass
+
+
+@dataclass
+class SearchBudget:
+    """Maximum number of Tavily searches for a whole case."""
+
+    remaining: int
+
+    def take(self, n: int) -> int:
+        """Reserve up to `n` searches; return how many were granted."""
+        granted = max(0, min(n, self.remaining))
+        self.remaining -= granted
+        return granted
+
+
 @dataclass
 class StepUsage:
     calls: list[ChatResult] = field(default_factory=list)
     tavily_searches: int = 0
+    budget: SearchBudget = field(default_factory=lambda: SearchBudget(get_settings().max_tavily_searches_per_case))
+    # Sends an intermediate SSE event (escalations, verification iterations) while the step runs.
+    emit: Callable[[str, dict[str, Any]], None] = lambda event, data: None
+    escalations: list[dict[str, Any]] = field(default_factory=list)
 
     def metrics(self) -> dict[str, Any]:
         costs = [c.cost_usd for c in self.calls]
         return {
             "models": list(dict.fromkeys(c.model for c in self.calls)),
+            "final_model": self.calls[-1].model if self.calls else None,
+            "escalations": self.escalations,
             "llm_calls": len(self.calls),
             "input_tokens": sum(c.input_tokens for c in self.calls),
             "output_tokens": sum(c.output_tokens for c in self.calls),
@@ -104,7 +140,7 @@ async def structured(
     system: str,
     user: str,
     usage: StepUsage,
-    max_tokens: int = 16384,
+    max_tokens: int,
 ) -> M:
     """Call the LLM with a JSON schema and parse into `model`, retrying once on invalid output."""
     response_format = {
@@ -143,6 +179,8 @@ delayed a health service) from the person's own narrative, to prepare an acción
 Rules:
 - Use only what the narrative says. Never invent names, dates, diagnoses or documents.
 - Copy drug, procedure and diagnosis names exactly as the user wrote them.
+- servicio_negado: a short noun phrase (at most 8 words) naming only what was denied, in the user's words.
+- eps: the EPS name exactly as written. edad: the age in years if the narrative states it.
 - Include every date the user mentions in fechas_relevantes and every document in anexos_mencionados.
 - Use null for an unknown age or special condition.
 - In datos_faltantes, ask short questions only for information that is critical to draft the tutela \
@@ -151,7 +189,26 @@ Rules:
 
 
 async def intake(narrative: str, usage: StepUsage) -> CaseFacts:
-    return await structured("fast", CaseFacts, INTAKE_SYSTEM, f"Narrative:\n{narrative}", usage, max_tokens=8192)
+    """Extract facts with the fast tier; escalate to the draft tier if any fact is not grounded."""
+    user = f"Narrative:\n{narrative}"
+    facts = await structured("fast", CaseFacts, INTAKE_SYSTEM, user, usage, max_tokens=MAX_TOKENS["intake"])
+    issues = grounding.check(facts, narrative)
+    if not issues:
+        return facts
+    escalation = {
+        "step": "intake",
+        "from_tier": "fast",
+        "from_model": usage.calls[-1].model,
+        "to_tier": "draft",
+        "to_model": get_settings().model_for_tier("draft"),
+        "reasons": issues,
+    }
+    logger.warning("intake not grounded, escalating to draft tier: %s", issues)
+    usage.emit("escalated", escalation)
+    facts = await structured("draft", CaseFacts, INTAKE_SYSTEM, user, usage, max_tokens=MAX_TOKENS["intake"])
+    escalation["remaining_issues"] = grounding.check(facts, narrative)
+    usage.escalations.append(escalation)
+    return facts
 
 
 # --- Step 2: legal analysis --------------------------------------------------
@@ -168,7 +225,7 @@ on corteconstitucional.gov.co. Make queries specific to the denied service and t
 
 async def analysis(narrative: str, facts: CaseFacts, usage: StepUsage) -> LegalAnalysis:
     user = f"Narrative:\n{narrative}\n\nExtracted facts:\n{_dump(facts)}"
-    return await structured("reasoning", LegalAnalysis, ANALYSIS_SYSTEM, user, usage)
+    return await structured("reasoning", LegalAnalysis, ANALYSIS_SYSTEM, user, usage, max_tokens=MAX_TOKENS["analysis"])
 
 
 # --- Step 3: research --------------------------------------------------------
@@ -180,6 +237,11 @@ Return one item per ruling, using exactly the sentencia_id given.
 
 
 async def _search_all(queries: list[str], usage: StepUsage) -> list[list[SearchResult]]:
+    """Run the queries in parallel (each with its own timeout), within the case's search budget."""
+    granted = usage.budget.take(len(queries))
+    if granted == 0:
+        raise SearchBudgetExceeded("Tavily search budget for this case is exhausted")
+    queries = queries[:granted]
     outcomes = await asyncio.gather(*(asearch_jurisprudence(q) for q in queries), return_exceptions=True)
     usage.tavily_searches += len(queries)
     batches = []
@@ -199,27 +261,44 @@ def _round_robin(batches: list[list[SearchResult]]) -> list[SearchResult]:
     return [b[i] for i in range(longest) for b in batches if i < len(b)]
 
 
-async def research(facts: CaseFacts, legal: LegalAnalysis, usage: StepUsage) -> Precedents:
-    batches = await _search_all(legal.queries_de_busqueda, usage)
-
-    candidates: dict[str, tuple[SearchResult, Precedent]] = {}
+def _candidates(results: list[SearchResult]) -> dict[str, tuple[SearchResult, Precedent]]:
+    """One candidate per ruling (ID from the URL path), T and SU before C, at most MAX_CANDIDATES."""
+    by_id: dict[str, tuple[SearchResult, Precedent]] = {}
     seen_urls: set[str] = set()
-    for result in _round_robin(batches):
+    for result in results:
         url = result.url.split("#")[0]
         if url in seen_urls:
             continue
         seen_urls.add(url)
         sentencia_id = citations.id_from_source(result.title, url)
-        if sentencia_id is None or sentencia_id in candidates:
+        if sentencia_id is None or sentencia_id in by_id:
             continue
-        candidates[sentencia_id] = (result, Precedent(
+        by_id[sentencia_id] = (result, Precedent(
             sentencia_id=sentencia_id,
             url=url,
             resumen_relevancia="",
             extracto_fuente=result.content[:EXCERPT_CHARS],
         ))
-        if len(candidates) == MAX_CANDIDATES:
-            break
+    # Stable sort keeps the round-robin order within each priority level.
+    ranked = sorted(by_id.items(), key=lambda kv: citations.TYPE_PRIORITY.get(citations.ruling_type(kv[0]), 2))
+    return dict(ranked[:MAX_CANDIDATES])
+
+
+async def enrich_from_pages(precedents: list[Precedent]) -> None:
+    """Download each ruling page with its real charset; restore the excerpt's accents and list its citations."""
+    pages = await sources.fetch_rulings([p.url for p in precedents])
+    for p in precedents:
+        page = pages.get(p.url)
+        if page is None:
+            continue
+        p.extracto_fuente, p.acentos_restaurados = sources.restore_accents(p.extracto_fuente, page.text)
+        p.charset = page.charset
+        p.citas_mencionadas = [c for c in page.cited if c != p.sentencia_id]
+
+
+async def research(facts: CaseFacts, legal: LegalAnalysis, usage: StepUsage) -> Precedents:
+    batches = await _search_all(legal.queries_de_busqueda, usage)
+    candidates = _candidates(_round_robin(batches))
     if not candidates:
         return Precedents(precedentes=[])
 
@@ -228,7 +307,9 @@ async def research(facts: CaseFacts, legal: LegalAnalysis, usage: StepUsage) -> 
         for r, p in candidates.values()
     )
     user = f"Case facts:\n{_dump(facts)}\n\nRulings:\n{listing}"
-    review = await structured("fast", RelevanceReview, RELEVANCE_SYSTEM, user, usage, max_tokens=8192)
+    review = await structured(
+        "fast", RelevanceReview, RELEVANCE_SYSTEM, user, usage, max_tokens=MAX_TOKENS["screening"]
+    )
 
     reviewed = {item.sentencia_id: item for item in review.items}
     selected = []
@@ -239,7 +320,9 @@ async def research(facts: CaseFacts, legal: LegalAnalysis, usage: StepUsage) -> 
         if item is not None:
             precedent.resumen_relevancia = item.resumen_relevancia
         selected.append(precedent)
-    return Precedents(precedentes=selected[:MAX_PRECEDENTS])
+    selected = selected[:MAX_PRECEDENTS]
+    await enrich_from_pages(selected)
+    return Precedents(precedentes=selected)
 
 
 # --- Step 4: draft -----------------------------------------------------------
@@ -342,14 +425,15 @@ async def draft(
         f"Case facts:\n{_dump(facts)}\n\nLegal analysis:\n{_dump(legal)}\n\n"
         f"ALLOWED RULINGS:\n{_allowed_rulings(precedents)}"
     )
-    sections = await structured("draft", TutelaSections, DRAFT_SYSTEM, user, usage)
+    budget = MAX_TOKENS["draft"]
+    sections = await structured("draft", TutelaSections, DRAFT_SYSTEM, user, usage, max_tokens=budget)
     if precedents.precedentes and not citations.find_citations(sections.fundamentos_juridicos):
         logger.warning("draft cited no allowed ruling; retrying once")
         reminder = (
             "\n\nIMPORTANT: a previous attempt cited no ruling. fundamentos_juridicos must cite the applicable "
             'ALLOWED RULINGS as "Sentencia T-123 de 2024".'
         )
-        sections = await structured("draft", TutelaSections, DRAFT_SYSTEM, user + reminder, usage)
+        sections = await structured("draft", TutelaSections, DRAFT_SYSTEM, user + reminder, usage, max_tokens=budget)
     return TutelaDraft(**sections.model_dump(), texto_completo=assemble_tutela(facts, sections))
 
 
@@ -363,24 +447,38 @@ Do not evaluate citations of rulings; they are checked separately. List concrete
 {OUTPUT_LANGUAGE}"""
 
 
-async def verify(
-    facts: CaseFacts, tutela: TutelaDraft, precedents: Precedents, usage: StepUsage
-) -> tuple[TutelaDraft, VerificationReport]:
+REWRITE_SYSTEM = f"""You edit paragraphs of a Colombian acción de tutela. Some rulings it cites could not be \
+verified against the Constitutional Court's website and must be removed.
+Rules:
+- Remove every reference to the rulings listed under REMOVE, including sentences that only describe them.
+- Keep the rest of each paragraph's legal argument and wording, and keep every other citation exactly as it is.
+- Never add rulings, laws or facts that are not already in the paragraph.
+- If a paragraph only presented a removed ruling, return an empty string for it.
+- Return exactly one paragraph per input paragraph, in the same order.
+{OUTPUT_LANGUAGE}"""
+
+_TEXT_FIELDS = ("hechos", "derechos_vulnerados", "fundamentos_juridicos", "pretensiones", "pruebas_y_anexos", "juramento")
+
+
+def check_citations(found: list[str], precedents: Precedents) -> tuple[list[CitationCheck], list[CitationCheck]]:
+    """Split citations into verified (a found ruling, or cited inside one) and unverified."""
     by_id = {p.sentencia_id: p for p in precedents.precedentes}
     mentioned_in: dict[str, Precedent] = {}
     for p in precedents.precedentes:
-        for cited in citations.find_citations(p.extracto_fuente):
+        for cited in [*citations.find_citations(p.extracto_fuente), *p.citas_mencionadas]:
             mentioned_in.setdefault(cited, p)
 
-    found = citations.find_citations(tutela.texto_completo)
     verified: list[CitationCheck] = []
     unverified: list[CitationCheck] = []
     for sid in found:
         if sid in by_id:
-            verified.append(CitationCheck(
-                sentencia_id=sid, estado="verificada", url=by_id[sid].url,
-                detalle="Coincide con una sentencia encontrada en la búsqueda.",
-            ))
+            p = by_id[sid]
+            detalle = (
+                p.resumen_relevancia
+                if p.origen == "busqueda_dirigida"
+                else "Coincide con una sentencia encontrada en la búsqueda."
+            )
+            verified.append(CitationCheck(sentencia_id=sid, estado="verificada", url=p.url, detalle=detalle))
         elif sid in mentioned_in:
             source = mentioned_in[sid]
             verified.append(CitationCheck(
@@ -390,34 +488,200 @@ async def verify(
         else:
             unverified.append(CitationCheck(
                 sentencia_id=sid, estado="no_verificada",
-                detalle="No aparece en las fuentes consultadas. Verifíquela antes de radicar o retírela.",
+                detalle="No aparece en las fuentes consultadas.",
             ))
+    return verified, unverified
 
-    observaciones: list[str] = []
+
+async def targeted_search(pending: list[str], usage: StepUsage) -> dict[str, Precedent]:
+    """Search corteconstitucional.gov.co for each ruling by ID; return the ones found, keyed by ID."""
+    granted = usage.budget.take(len(pending))
+    if granted < len(pending):
+        logger.warning("search budget allows %d of %d targeted searches", granted, len(pending))
+    searched = pending[:granted]
+    if not searched:
+        return {}
+    # "sentencia T-760/08 relatoria" finds the ruling page; "Sentencia T-760 de 2008" mostly returns the
+    # follow-up autos of famous rulings.
+    outcomes = await asyncio.gather(
+        *(asearch_jurisprudence(f"sentencia {sid} relatoria") for sid in searched),
+        return_exceptions=True,
+    )
+    usage.tavily_searches += len(searched)
+    found: dict[str, Precedent] = {}
+    for sid, outcome in zip(searched, outcomes):
+        if isinstance(outcome, BaseException):
+            logger.warning("targeted search failed id=%s error=%r", sid, outcome)
+            continue
+        exact = next((r for r in outcome if citations.id_from_url(r.url.split("#")[0]) == sid), None)
+        # Otherwise, an official Court document whose text cites the ruling proves that it exists.
+        cited_in = next((r for r in outcome if sid in citations.find_citations(f"{r.title} {r.content}")), None)
+        match = exact or cited_in
+        if match is None:
+            continue
+        note = (
+            "Encontrada con una búsqueda dirigida durante la verificación de citas."
+            if exact
+            else "Una búsqueda dirigida encontró un documento oficial de la Corte que la cita."
+        )
+        found[sid] = Precedent(
+            sentencia_id=sid,
+            url=match.url.split("#")[0],
+            resumen_relevancia=note,
+            extracto_fuente=match.content[:EXCERPT_CHARS],
+            origen="busqueda_dirigida",
+        )
+    await enrich_from_pages([p for p in found.values() if citations.id_from_url(p.url)])
+    return found
+
+
+def _units(sections: TutelaSections) -> dict[str, list[str]]:
+    """Each text field as a list of editable units: list items, or the lines of a text field."""
+    return {
+        name: list(value) if isinstance(value := getattr(sections, name), list) else value.split("\n")
+        for name in _TEXT_FIELDS
+    }
+
+
+def _rebuild(sections: TutelaSections, units: dict[str, list[str]]) -> TutelaSections:
+    data: dict[str, Any] = {}
+    for name in _TEXT_FIELDS:
+        if isinstance(getattr(sections, name), list):
+            data[name] = [u for u in units[name] if u.strip()]
+        else:
+            data[name] = re.sub(r"\n{3,}", "\n\n", "\n".join(units[name])).strip()
+    return TutelaSections(**data)
+
+
+def _cites_any(text: str, flagged: set[str]) -> bool:
+    return bool(set(citations.find_citations(text)) & flagged)
+
+
+def strip_sentences(text: str, flagged: set[str]) -> str:
+    """Deterministic last resort: drop the sentences that cite a flagged ruling."""
+    sentences = re.split(r"(?<=[.;])\s+", text)
+    return " ".join(s for s in sentences if not _cites_any(s, flagged))
+
+
+async def rewrite_without(
+    facts: CaseFacts, tutela: TutelaDraft, flagged: set[str], usage: StepUsage
+) -> TutelaDraft:
+    """Rewrite only the paragraphs that cite a flagged ruling, with the draft tier, without those citations."""
+    sections = TutelaSections(**tutela.model_dump(include=set(_TEXT_FIELDS)))
+    units = _units(sections)
+    targets = [(name, i) for name, items in units.items() for i, item in enumerate(items) if _cites_any(item, flagged)]
+    if not targets:
+        return tutela
+    original = [units[name][i] for name, i in targets]
+    user = (
+        f"REMOVE: {', '.join('Sentencia ' + citations.display(s) for s in sorted(flagged))}\n\n"
+        f"Paragraphs (JSON list):\n{json.dumps(original, ensure_ascii=False, indent=2)}"
+    )
+    try:
+        rewrite = await structured(
+            "draft", ParagraphRewrite, REWRITE_SYSTEM, user, usage, max_tokens=MAX_TOKENS["rewrite"]
+        )
+        rewritten = rewrite.parrafos if len(rewrite.parrafos) == len(original) else None
+    except ValueError as exc:
+        logger.warning("paragraph rewrite failed: %s", exc)
+        rewritten = None
+    if rewritten is None:
+        logger.warning("paragraph rewrite unusable; removing the sentences deterministically")
+        rewritten = original
+    for (name, i), old, new in zip(targets, original, rewritten):
+        # Never keep a flagged citation, even if the model left one behind.
+        units[name][i] = strip_sentences(new, flagged) if _cites_any(new, flagged) else new
+    sections = _rebuild(sections, units)
+    return TutelaDraft(**sections.model_dump(), texto_completo=assemble_tutela(facts, sections))
+
+
+async def verify(
+    facts: CaseFacts, tutela: TutelaDraft, precedents: Precedents, usage: StepUsage
+) -> tuple[TutelaDraft, VerificationReport, Precedents]:
+    """Verify every citation; search for the missing ones, rewrite without the ones that do not exist.
+
+    Loop (at most MAX_VERIFY_ITERATIONS): targeted Tavily search per unverified ruling; found ones
+    join the precedents, the rest are removed by rewriting only the affected paragraphs. Anything
+    still unverified after the loop is removed deterministically, so the final text has none.
+    """
+    precedents = precedents.model_copy(deep=True)
+    verified, unverified = check_citations(citations.find_citations(tutela.texto_completo), precedents)
+    initial_unverified = [c.sentencia_id for c in unverified]
+    outcomes: list[CitationOutcome] = []
+
+    iteration = 0
+    while unverified and iteration < MAX_VERIFY_ITERATIONS:
+        iteration += 1
+        pending = [c.sentencia_id for c in unverified]
+        usage.emit("verify_iteration", {"step": "verify", "iteration": iteration, "phase": "searching",
+                                        "unverified": pending})
+        found = await targeted_search(pending, usage)
+        for sid, p in found.items():
+            precedents.precedentes.append(p)
+            outcomes.append(CitationOutcome(
+                sentencia_id=sid, resultado="verificada_busqueda_dirigida", iteracion=iteration, url=p.url,
+                detalle="Se encontró en corteconstitucional.gov.co con una búsqueda dirigida.",
+            ))
+        removed = [sid for sid in pending if sid not in found]
+        if removed:
+            tutela = await rewrite_without(facts, tutela, set(removed), usage)
+            outcomes += [
+                CitationOutcome(
+                    sentencia_id=sid, resultado="retirada_reescritura", iteracion=iteration,
+                    detalle="No se encontró en corteconstitucional.gov.co; el párrafo se reescribió sin esta cita.",
+                )
+                for sid in removed
+            ]
+        verified, unverified = check_citations(citations.find_citations(tutela.texto_completo), precedents)
+        usage.emit("verify_iteration", {
+            "step": "verify", "iteration": iteration, "phase": "done", "found": list(found), "removed": removed,
+            "still_unverified": [c.sentencia_id for c in unverified],
+        })
+
     if unverified:
         flagged = {c.sentencia_id for c in unverified}
-        tutela = tutela.model_copy(update={
-            "texto_completo": citations.annotate(tutela.texto_completo, flagged, UNVERIFIED_MARKER),
-            "fundamentos_juridicos": citations.annotate(tutela.fundamentos_juridicos, flagged, UNVERIFIED_MARKER),
-        })
+        logger.warning("citations still unverified after %d iterations, removing: %s", iteration, flagged)
+        sections = TutelaSections(**tutela.model_dump(include=set(_TEXT_FIELDS)))
+        units = {name: [strip_sentences(u, flagged) for u in items] for name, items in _units(sections).items()}
+        sections = _rebuild(sections, units)
+        tutela = TutelaDraft(**sections.model_dump(), texto_completo=assemble_tutela(facts, sections))
+        outcomes += [
+            CitationOutcome(
+                sentencia_id=sid, resultado="retirada_automatica", iteracion=iteration,
+                detalle="Seguía sin verificarse al terminar el ciclo; se retiraron las frases que la citaban.",
+            )
+            for sid in sorted(flagged)
+        ]
+        verified, unverified = check_citations(citations.find_citations(tutela.texto_completo), precedents)
+
+    found_final = citations.find_citations(tutela.texto_completo)
+    observaciones: list[str] = []
+    if initial_unverified:
+        recovered = sum(o.resultado == "verificada_busqueda_dirigida" for o in outcomes)
         observaciones.append(
-            f"{len(unverified)} cita(s) no verificada(s) quedaron marcadas en el texto con {UNVERIFIED_MARKER}."
+            f"{len(initial_unverified)} cita(s) no se verificaron al principio: {recovered} se encontraron con una "
+            f"búsqueda dirigida y {len(initial_unverified) - recovered} se retiraron del texto."
         )
-    if not found:
+    if not found_final:
         observaciones.append("El borrador no cita sentencias de la Corte Constitucional.")
 
-    sections = tutela.model_dump(exclude={"texto_completo"})
-    user = f"Case facts:\n{_dump(facts)}\n\nDraft sections:\n{json.dumps(sections, ensure_ascii=False, indent=2)}"
-    review = await structured("reasoning", CoherenceReview, COHERENCE_SYSTEM, user, usage)
+    sections_json = json.dumps(tutela.model_dump(exclude={"texto_completo"}), ensure_ascii=False, indent=2)
+    user = f"Case facts:\n{_dump(facts)}\n\nDraft sections:\n{sections_json}"
+    review = await structured(
+        "reasoning", CoherenceReview, COHERENCE_SYSTEM, user, usage, max_tokens=MAX_TOKENS["coherence"]
+    )
     observaciones += review.observaciones
 
     report = VerificationReport(
-        citas_encontradas=found,
+        citas_encontradas=found_final,
         citas_verificadas=verified,
         citas_no_verificadas=unverified,
+        citas_no_verificadas_iniciales=initial_unverified,
+        ciclo=outcomes,
+        iteraciones=iteration,
         observaciones=observaciones,
     )
-    return tutela, report
+    return tutela, report, precedents
 
 
 # --- Step 6: package ---------------------------------------------------------
@@ -445,7 +709,9 @@ async def package(
         f"Case facts:\n{_dump(facts)}\n\nUrgency: {legal.urgencia}\n\n"
         f"Draft annexes:\n{_numbered(tutela.pruebas_y_anexos)}"
     )
-    guidance = await structured("fast", PackageGuidance, PACKAGE_SYSTEM, user, usage, max_tokens=8192)
+    guidance = await structured(
+        "fast", PackageGuidance, PACKAGE_SYSTEM, user, usage, max_tokens=MAX_TOKENS["package"]
+    )
     return FinalPackage(**guidance.model_dump(), draft=tutela, verification=report, aviso=DISCLAIMER)
 
 
@@ -457,7 +723,10 @@ STEPS = ("intake", "analysis", "research", "draft", "verify", "package")
 async def run_case(narrative: str) -> AsyncIterator[tuple[str, dict[str, Any]]]:
     """Run all steps, yielding (event, payload) tuples for each step and the final result."""
     state: dict[str, Any] = {}
-    totals = {"input_tokens": 0, "output_tokens": 0, "cost_usd": 0.0, "latency_s": 0.0, "tavily_searches": 0}
+    totals = {
+        "input_tokens": 0, "output_tokens": 0, "cost_usd": 0.0, "latency_s": 0.0, "tavily_searches": 0,
+        "escalations": 0,
+    }
 
     async def step_intake(u: StepUsage) -> BaseModel:
         state["facts"] = await intake(narrative, u)
@@ -476,7 +745,9 @@ async def run_case(narrative: str) -> AsyncIterator[tuple[str, dict[str, Any]]]:
         return state["draft"]
 
     async def step_verify(u: StepUsage) -> BaseModel:
-        state["draft"], state["report"] = await verify(state["facts"], state["draft"], state["precedents"], u)
+        state["draft"], state["report"], state["precedents"] = await verify(
+            state["facts"], state["draft"], state["precedents"], u
+        )
         return state["report"]
 
     async def step_package(u: StepUsage) -> BaseModel:
@@ -492,24 +763,47 @@ async def run_case(narrative: str) -> AsyncIterator[tuple[str, dict[str, Any]]]:
         "package": step_package,
     }
 
+    budget = SearchBudget(get_settings().max_tavily_searches_per_case)
     for index, name in enumerate(STEPS, 1):
         yield "step_started", {"step": name, "index": index, "total": len(STEPS)}
-        usage = StepUsage()
+        events: asyncio.Queue[tuple[str, dict[str, Any]]] = asyncio.Queue()
+        usage = StepUsage(budget=budget, emit=lambda event, data: events.put_nowait((event, data)))
         start = time.perf_counter()
+        task = asyncio.create_task(runners[name](usage))
         try:
-            result = await runners[name](usage)
+            # Forward intermediate events (escalations, verification iterations) while the step runs.
+            while not task.done():
+                getter = asyncio.create_task(events.get())
+                await asyncio.wait({task, getter}, return_when=asyncio.FIRST_COMPLETED)
+                if getter.done():
+                    yield getter.result()
+                else:
+                    getter.cancel()
+            while not events.empty():
+                yield events.get_nowait()
+            result = task.result()
         except Exception as exc:  # noqa: BLE001 - reported to the client as step_failed
             logger.exception("step %s failed", name)
             metrics = usage.metrics() | {"latency_s": round(time.perf_counter() - start, 2)}
+            _accumulate(totals, metrics)
             yield "step_failed", {"step": name, "index": index, "error": _error_message(exc), "metrics": metrics}
             yield "case_failed", {"failed_step": name, "totals": _round(totals)}
             return
+        finally:
+            # The client may disconnect mid-step: do not leave the step running in the background.
+            if not task.done():
+                task.cancel()
         metrics = usage.metrics() | {"latency_s": round(time.perf_counter() - start, 2)}
-        for key in ("input_tokens", "output_tokens", "cost_usd", "latency_s", "tavily_searches"):
-            totals[key] += metrics[key]
+        _accumulate(totals, metrics)
         yield "step_completed", {"step": name, "index": index, "result": result.model_dump(), "metrics": metrics}
 
     yield "case_completed", {"package": state["package"].model_dump(), "totals": _round(totals)}
+
+
+def _accumulate(totals: dict[str, Any], metrics: dict[str, Any]) -> None:
+    for key in ("input_tokens", "output_tokens", "cost_usd", "latency_s", "tavily_searches"):
+        totals[key] += metrics[key]
+    totals["escalations"] += len(metrics["escalations"])
 
 
 def _round(totals: dict[str, Any]) -> dict[str, Any]:

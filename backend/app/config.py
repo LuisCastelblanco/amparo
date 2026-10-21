@@ -50,6 +50,25 @@ class Settings(BaseSettings):
     llm_max_retries: int = 3
     llm_timeout_seconds: float = 300.0
 
+    # --- Usage control for the public demo ---
+    # false: the API refuses live runs and the UI only offers the recorded sample runs.
+    live_runs_enabled: bool = True
+    rate_limit_per_hour: int = 3  # cases per client IP
+    rate_limit_per_day: int = 10  # cases per client IP (UTC day)
+    daily_case_limit: int = 150  # cases per UTC day, all clients
+    daily_cost_limit_usd: float = 2.0  # estimated LLM spend per UTC day, all clients
+    max_concurrent_cases: int = 2  # per instance
+    max_narrative_chars: int = 4000
+    max_tavily_searches_per_case: int = 10
+    # "firestore" keeps counters across restarts and instances; "memory" is for local development.
+    usage_store: str = "memory"
+    firestore_project: str = ""  # empty: the project of the default credentials
+    firestore_collection: str = "amparo_usage"
+    # Secret key for hashing client IPs (HMAC-SHA256); IPs are never stored in clear.
+    ip_hash_key: str = ""
+    # Number of proxies in front of the app that append to X-Forwarded-For (Cloud Run: 1).
+    trusted_proxy_hops: int = 1
+
     def model_for_tier(self, tier: str) -> str:
         models = {
             "fast": self.model_fast,

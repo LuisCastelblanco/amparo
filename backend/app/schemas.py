@@ -60,6 +60,10 @@ class Precedent(BaseModel):
     url: str
     resumen_relevancia: str = Field(description="Why this ruling is relevant to the case, in Spanish")
     extracto_fuente: str = Field(description="Excerpt returned by the search engine")
+    origen: Literal["busqueda", "busqueda_dirigida"] = "busqueda"
+    charset: str | None = Field(default=None, description="Charset of the ruling page, if it was downloaded")
+    acentos_restaurados: int = Field(default=0, description="Words of the excerpt repaired from the page text")
+    citas_mencionadas: list[str] = Field(default_factory=list, description="Rulings cited inside the full text")
 
 
 class Precedents(BaseModel):
@@ -104,11 +108,28 @@ class CitationCheck(BaseModel):
     detalle: str
 
 
+class CitationOutcome(BaseModel):
+    """What the verification loop did with a citation that was not verified at first."""
+
+    sentencia_id: str
+    resultado: Literal["verificada_busqueda_dirigida", "retirada_reescritura", "retirada_automatica"]
+    iteracion: int
+    url: str | None = None
+    detalle: str
+
+
 class VerificationReport(BaseModel):
     citas_encontradas: list[str]
     citas_verificadas: list[CitationCheck]
-    citas_no_verificadas: list[CitationCheck]
+    citas_no_verificadas: list[CitationCheck] = Field(description="Unverified citations left in the final text")
+    citas_no_verificadas_iniciales: list[str] = Field(default_factory=list)
+    ciclo: list[CitationOutcome] = Field(default_factory=list)
+    iteraciones: int = 0
     observaciones: list[str]
+
+
+class ParagraphRewrite(BaseModel):
+    parrafos: list[str] = Field(description="The rewritten paragraphs, same count and order as given, in Spanish")
 
 
 class CoherenceReview(BaseModel):
