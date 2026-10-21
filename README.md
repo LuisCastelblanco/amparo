@@ -4,13 +4,15 @@ An AI agent that helps people in Colombia draft an *acción de tutela* when thei
 
 > Amparo is a drafting aid, not legal advice.
 
+Live demo: https://amparo-swart.vercel.app (rate-limited; "Watch a sample run" replays a recorded run without spending tokens).
+
 ## How it works
 
-1. **Intake**: extract the facts from the person's own narrative (Nemotron Nano).
+1. **Intake**: extract the facts from the person's own narrative (Nemotron Nano). A deterministic check that the service, EPS and dates appear in the narrative escalates to Nemotron Super when they do not.
 2. **Legal analysis**: rights at stake, admissibility, urgency, search queries (Nemotron Ultra).
-3. **Case-law search**: Constitutional Court rulings via Tavily, screened for relevance (Nano).
+3. **Case-law search**: Constitutional Court rulings via Tavily (parallel queries), screened for relevance (Nano); ruling pages are fetched with their real charset to restore the accents Tavily drops.
 4. **Drafting**: the tutela in Spanish, citing only the rulings found (Nemotron Super).
-5. **Citation check**: regex verification of every cited ruling against the sources, plus a coherence review (Ultra).
+5. **Citation check**: every cited ruling is checked against the sources; unverified ones get a targeted Tavily search, or their paragraph is rewritten without them (Super), up to 2 iterations, so no unverified citation reaches the document. Plus a coherence review (Ultra).
 6. **Delivery**: annex checklist and filing guidance (Nano).
 
 ## Quickstart
