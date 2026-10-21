@@ -129,6 +129,7 @@ All limits are environment variables on the Cloud Run service; counters are per 
 | `MAX_CONCURRENT_CASES` | 2 | running cases per instance; others get "try again in a minute" |
 | `MAX_NARRATIVE_CHARS` / `MAX_TAVILY_SEARCHES_PER_CASE` | 4000 / 10 | input size and search budget |
 | `LIVE_RUNS_ENABLED` | true | kill switch: `false` leaves only the recorded sample runs |
+| `INTAKE_RATE_LIMIT_PER_HOUR` | 10 | clarifying-question checks per client IP and instance; each is a Nano + Super call whose spend counts toward the daily budget |
 
 ```bash
 # Emergency stop (and back on)
@@ -139,7 +140,11 @@ gcloud run services update amparo-api --region us-central1 --update-env-vars LIV
 A limit was verified end to end by setting `DAILY_CASE_LIMIT=1` after 3 cases: the API answered
 429 `daily_case_limit` and the UI explained it and offered the sample run; the value was then restored to 150.
 
-Re-record the sample runs after changing the pipeline:
+Document export (`POST /api/documents/tutela.docx|pdf`) uses python-docx and fpdf2 with fpdf2's built-in
+fonts, so the image needs no system packages or font files. It takes the draft JSON and calls no model, so it
+also works for the recorded sample runs and is not counted against the limits.
+
+Re-record the sample runs after changing the pipeline (recording always includes the English summary):
 
 ```bash
 uv run --project backend python scripts/run_case.py --all --quiet --record frontend/src/data/samples
