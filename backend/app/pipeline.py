@@ -710,6 +710,7 @@ GENERAL_CHANNEL = (
 SUMMARY_SYSTEM = """You summarize a Colombian acción de tutela (written in Spanish) in English for reviewers who \
 do not read Spanish. Be faithful to the draft: no facts, rights, requests or rulings that are not in it. Keep it \
 short and plain. For each cited ruling, say in one sentence why the draft cites it.
+Write in the third person about "the petitioner" and use they/them; never guess their gender.
 All text values in the JSON must be written in English."""
 
 _URL_RE = re.compile(r"(?:https?://|www\.)[^\s)\]>\"'<,;]+", re.IGNORECASE)
@@ -776,10 +777,18 @@ async def filing_channel(ciudad: str, usage: StepUsage) -> FilingChannel:
     # Never show a link or e-mail address that is not in the source the model was shown.
     enlace = extraction.enlace if extraction.enlace and appears_in(extraction.enlace, source_text) else None
     correo = extraction.correo if extraction.correo and appears_in(extraction.correo, source_text) else None
+    descripcion = scrub_contacts(extraction.descripcion, {enlace or "", correo or "", source.url})
+    if descripcion != extraction.descripcion.strip():
+        # The model wrote a link or address the source does not contain; removing it leaves a broken
+        # sentence, so point to the source instead.
+        descripcion = (
+            f"La fuente oficial citada publica los medios autorizados para presentar tutelas en línea en {ciudad}. "
+            "Consulte allí el enlace o el correo vigente."
+        )
     return FilingChannel(
         ciudad=ciudad,
         encontrado=True,
-        descripcion=scrub_contacts(extraction.descripcion, {enlace or "", correo or "", source.url}),
+        descripcion=descripcion,
         enlace=enlace,
         correo=correo,
         fuente_url=source.url,
