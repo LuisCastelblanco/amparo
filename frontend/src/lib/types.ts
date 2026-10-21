@@ -41,6 +41,12 @@ export interface StepMetrics {
   latency_s: number;
   cost_usd: number;
   cost_complete: boolean;
+  /** Tiers used by the step's LLM calls ("fast", "draft", "reasoning"). */
+  tiers: string[];
+  /** The same calls and token counts priced at the reasoning tier (Ultra). */
+  cost_all_reasoning_usd: number;
+  /** Deterministic corrections made without an LLM call. */
+  notes: string[];
   tavily_searches: number;
 }
 
@@ -76,7 +82,27 @@ export interface TutelaDraft {
   pretensiones: string[];
   pruebas_y_anexos: string[];
   juramento: string;
+  accionada: string;
+  ciudad: string | null;
   texto_completo: string;
+}
+
+export interface FilingChannel {
+  ciudad: string;
+  encontrado: boolean;
+  descripcion: string;
+  enlace: string | null;
+  correo: string | null;
+  fuente_url: string | null;
+  fuente_titulo: string | null;
+  consultado: string;
+}
+
+export interface ReviewerSummary {
+  facts: string;
+  rights_invoked: string[];
+  requests: string[];
+  rulings: { ruling_id: string; why: string }[];
 }
 
 export interface FinalPackage {
@@ -85,6 +111,8 @@ export interface FinalPackage {
   checklist_anexos: string[];
   donde_radicar: string;
   que_hacer_si_no_cumplen: string;
+  canal_radicacion: FilingChannel | null;
+  resumen_revisores: ReviewerSummary | null;
   aviso: string;
 }
 
@@ -95,6 +123,7 @@ export interface Totals {
   latency_s: number;
   tavily_searches: number;
   escalations?: number;
+  cost_all_reasoning_usd?: number;
 }
 
 export type StepStatus = "pending" | "running" | "done" | "failed";

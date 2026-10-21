@@ -2,14 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import Intro from "@/components/Intro";
+import QuestionsPanel, { type PendingQuestion } from "@/components/QuestionsPanel";
+import Results, { modelLabel } from "@/components/Results";
 import demoCases from "@/data/demoCases.json";
 import { SAMPLE_RUNS } from "@/data/samples";
-import { fetchUsageStatus, replaySample, runCase, RunRefusedError } from "@/lib/sse";
+import { checkIntake, fetchUsageStatus, replaySample, runCase, RunRefusedError } from "@/lib/sse";
 import {
   STEPS,
   STEP_LABELS,
   type CaseEvent,
-  type CitationCheck,
   type FinalPackage,
   type Refusal,
   type StepMetrics,
@@ -23,10 +25,11 @@ const MAX_NARRATIVE_CHARS = 4000;
 const initialSteps = (): Record<StepName, StepState> =>
   Object.fromEntries(STEPS.map((s) => [s, { status: "pending" }])) as Record<StepName, StepState>;
 
-const shortModel = (model: string | null | undefined) => (model ? model.split("/").pop() : "");
+const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900";
 
 export default function AmparoApp() {
   const [narrative, setNarrative] = useState("");
+  const [englishSummary, setEnglishSummary] = useState(false);
   const [steps, setSteps] = useState(initialSteps);
   const [pkg, setPkg] = useState<FinalPackage | null>(null);
   const [totals, setTotals] = useState<Totals | null>(null);
@@ -36,6 +39,9 @@ export default function AmparoApp() {
   const [sampleTitle, setSampleTitle] = useState<string | null>(null);
   const [liveEnabled, setLiveEnabled] = useState(true);
   const [selectedDemo, setSelectedDemo] = useState(0);
+  // null: not checked yet; []: checked, nothing missing.
+  const [questions, setQuestions] = useState<PendingQuestion[] | null>(null);
+  const [checking, setChecking] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -107,47 +113,92 @@ export default function AmparoApp() {
     }
   }
 
-  const startLive = () => play((signal) => runCase(narrative, signal), null);
+  const editNarrative = (text: string) => {
+    setNarrative(text);
+    setQuestions(null);
+  };
+
+  function runLive(pending: PendingQuestion[]) {
+    const answers = pending
+      .filter((q) => !q.skipped && q.answer.trim())
+      .map((q) => ({ question: q.question, answer: q.answer.trim() }));
+    setQuestions(null);
+    play((signal) => runCase(narrative, { englishSummary, answers }, signal), null);
+  }
+
+  /** Ask the clarifying questions first, if the story misses something critical; then draft. */
+  async function startLive() {
+    if (questions !== null) return runLive(questions);
+    setChecking(true);
+    setError(null);
+    setRefusal(null);
+    try {
+      const { questions: asked } = await checkIntake(narrative);
+      if (asked.length > 0) {
+        setQuestions(asked.map((question) => ({ question, answer: "", skipped: false })));
+        return;
+      }
+    } catch (err) {
+      if (err instanceof RunRefusedError) {
+        setRefusal(err.refusal);
+        return;
+      }
+      // The check is optional: if it fails, draft without questions.
+    } finally {
+      setChecking(false);
+    }
+    runLive([]);
+  }
 
   function watchSample(index: number) {
     const sample = SAMPLE_RUNS[index];
     setSelectedDemo(index);
-    setNarrative(sample.narrative);
+    editNarrative(sample.narrative);
     play((signal) => replaySample(sample, signal), sample.title);
   }
 
   const tooLong = narrative.length > MAX_NARRATIVE_CHARS;
+  const current = STEPS.find((s) => steps[s].status === "running");
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
       <header className="mb-6">
         <h1 className="text-3xl font-semibold tracking-tight">Amparo</h1>
-        <p className="mt-1 text-slate-600">
-          Draft an <em>acción de tutela</em> when your EPS denies a health service.
+        <p className="mt-1 text-slate-700">
+          Draft an <em>acción de tutela</em> when your EPS (health insurer) denies a health service in Colombia.
         </p>
         <p className="mt-3 inline-block rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-900">
           Drafting aid, not legal advice. Review the document before filing it.
         </p>
       </header>
 
+      <Intro />
+
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <label htmlFor="narrative" className="mb-2 block text-sm font-medium text-slate-700">
+        <section aria-labelledby="case-heading" className="min-w-0 rounded-lg border border-slate-200 bg-white p-4">
+          <h2 id="case-heading" className="sr-only">
+            Your case
+          </h2>
+          <label htmlFor="narrative" className="mb-2 block text-sm font-medium text-slate-800">
             Tell your case in your own words (in Spanish)
           </label>
           <textarea
             id="narrative"
             value={narrative}
-            onChange={(e) => setNarrative(e.target.value)}
-            rows={12}
+            onChange={(e) => editNarrative(e.target.value)}
+            rows={10}
+            aria-describedby="narrative-count"
             placeholder="Ej.: Mi EPS me negó el medicamento que me formuló el médico porque..."
-            className="w-full resize-y rounded-md border border-slate-300 p-3 text-sm leading-relaxed focus:border-slate-500 focus:outline-none"
+            className="w-full resize-y rounded-md border border-slate-400 p-3 text-sm leading-relaxed placeholder:text-slate-500 focus:border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-300"
           />
-          <p className={`mt-1 text-right text-xs ${tooLong ? "text-red-700" : "text-slate-400"}`}>
-            {narrative.length.toLocaleString()} / {MAX_NARRATIVE_CHARS.toLocaleString()} characters
+          <p
+            id="narrative-count"
+            className={`mt-1 text-right text-xs ${tooLong ? "font-medium text-red-700" : "text-slate-600"}`}
+          >
+            {narrative.length.toLocaleString("en-US")} / {MAX_NARRATIVE_CHARS.toLocaleString("en-US")} characters
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="text-xs text-slate-500">Load a synthetic demo case:</span>
+            <span className="text-xs text-slate-600">Load a synthetic demo case:</span>
             {demoCases.map((c, i) => (
               <button
                 key={c.id}
@@ -156,24 +207,38 @@ export default function AmparoApp() {
                 disabled={running}
                 onClick={() => {
                   setSelectedDemo(i);
-                  setNarrative(c.narrative);
+                  editNarrative(c.narrative);
                 }}
-                className="rounded-md border border-slate-300 px-2.5 py-1 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                className={`max-w-full truncate rounded-md border border-slate-300 px-2.5 py-1 text-xs text-slate-800 hover:bg-slate-50 disabled:opacity-60 ${focusRing}`}
               >
                 {i + 1}. {c.title}
               </button>
             ))}
           </div>
+          <label className="mt-4 flex items-start gap-2 text-sm text-slate-800">
+            <input
+              type="checkbox"
+              checked={englishSummary}
+              onChange={(e) => setEnglishSummary(e.target.checked)}
+              className="mt-0.5 h-4 w-4"
+            />
+            <span>
+              English summary for reviewers
+              <span className="block text-xs text-slate-600">
+                One extra call to the fast model after the draft. Sample runs already include it.
+              </span>
+            </span>
+          </label>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={startLive}
-              disabled={running || !liveEnabled || tooLong || narrative.trim().length < 20}
-              className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+              disabled={running || checking || !liveEnabled || tooLong || narrative.trim().length < 20}
+              className={`rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-60 ${focusRing}`}
             >
-              {running && !sampleTitle ? "Running…" : "Draft my tutela"}
+              {checking ? "Reading your story…" : running && !sampleTitle ? "Running…" : "Draft my tutela"}
             </button>
-            <SampleMenu disabled={running} selected={selectedDemo} onSelect={setSelectedDemo} onWatch={watchSample} />
+            <SampleMenu disabled={running || checking} selected={selectedDemo} onSelect={setSelectedDemo} onWatch={watchSample} />
             {running && (
               <button
                 type="button"
@@ -181,32 +246,40 @@ export default function AmparoApp() {
                   abortRef.current?.abort();
                   setRunning(false);
                 }}
-                className="text-sm text-slate-600 underline"
+                className={`text-sm text-slate-700 underline ${focusRing}`}
               >
                 Cancel
               </button>
             )}
           </div>
+          {questions && questions.length > 0 && (
+            <QuestionsPanel
+              questions={questions}
+              onChange={setQuestions}
+              onContinue={() => runLive(questions)}
+              disabled={running}
+            />
+          )}
           {refusal && (
-            <div className="mt-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+            <div role="status" className="mt-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
               <p>{refusal.message}</p>
               <button
                 type="button"
                 onClick={() => watchSample(selectedDemo)}
-                className="mt-2 rounded-md bg-amber-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-800"
+                className={`mt-2 rounded-md bg-amber-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-800 ${focusRing}`}
               >
                 Watch a sample run
               </button>
             </div>
           )}
           {error && (
-            <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-              <p>{error}</p>
+            <div role="alert" className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+              <p className="break-words">{error}</p>
               {!sampleTitle && (
                 <button
                   type="button"
                   onClick={() => watchSample(selectedDemo)}
-                  className="mt-2 text-xs font-medium underline"
+                  className={`mt-2 text-xs font-medium underline ${focusRing}`}
                 >
                   Watch a recorded sample run instead
                 </button>
@@ -223,8 +296,11 @@ export default function AmparoApp() {
 
         <Timeline steps={steps} totals={totals} />
       </div>
+      <p className="sr-only" aria-live="polite">
+        {current ? `Running step: ${STEP_LABELS[current].title}` : pkg ? "Your tutela is ready." : ""}
+      </p>
 
-      {pkg && <Results pkg={pkg} />}
+      {pkg && <Results pkg={pkg} steps={steps} totals={totals} />}
     </div>
   );
 }
@@ -241,21 +317,21 @@ function SampleMenu({
   onWatch: (index: number) => void;
 }) {
   return (
-    <span className="flex items-center gap-1.5">
+    <span className="flex min-w-0 max-w-full items-center gap-1.5">
       <button
         type="button"
         disabled={disabled}
         onClick={() => onWatch(selected)}
-        className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-800 hover:bg-slate-50 disabled:opacity-50"
+        className={`shrink-0 rounded-md border border-slate-400 px-3 py-2 text-sm text-slate-900 hover:bg-slate-50 disabled:opacity-60 ${focusRing}`}
       >
         Watch a sample run
       </button>
       <select
-        aria-label="Sample case"
+        aria-label="Sample case to watch"
         value={selected}
         disabled={disabled}
         onChange={(e) => onSelect(Number(e.target.value))}
-        className="max-w-40 rounded-md border border-slate-300 bg-white px-1.5 py-2 text-xs text-slate-700"
+        className={`min-w-0 max-w-40 rounded-md border border-slate-400 bg-white px-1.5 py-2 text-xs text-slate-800 ${focusRing}`}
       >
         {SAMPLE_RUNS.map((s, i) => (
           <option key={i} value={i}>
@@ -269,8 +345,10 @@ function SampleMenu({
 
 function Timeline({ steps, totals }: { steps: Record<StepName, StepState>; totals: Totals | null }) {
   return (
-    <aside className="rounded-lg border border-slate-200 bg-white p-4">
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Pipeline</h2>
+    <aside aria-labelledby="pipeline-heading" className="min-w-0 rounded-lg border border-slate-200 bg-white p-4">
+      <h2 id="pipeline-heading" className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-600">
+        Pipeline
+      </h2>
       <ol className="space-y-3">
         {STEPS.map((name, i) => {
           const s = steps[name];
@@ -279,11 +357,16 @@ function Timeline({ steps, totals }: { steps: Record<StepName, StepState>; total
               <StatusDot status={s.status} index={i + 1} />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium">{STEP_LABELS[name].title}</p>
-                <p className="text-xs text-slate-500">{STEP_LABELS[name].description}</p>
+                <p className="text-xs text-slate-600">{STEP_LABELS[name].description}</p>
                 {s.metrics && <MetricsLine metrics={s.metrics} />}
                 {s.escalations?.map((e, k) => (
-                  <p key={k} className="mt-1 rounded bg-violet-50 px-1.5 py-1 text-[11px] text-violet-900">
-                    Escalated {shortModel(e.from_model)} → {shortModel(e.to_model)}: {e.reasons.join("; ")}
+                  <p key={k} className="mt-1 break-words rounded bg-violet-50 px-1.5 py-1 text-[11px] text-violet-900">
+                    Escalated {modelLabel(e.from_model)} → {modelLabel(e.to_model)}: {e.reasons.join("; ")}
+                  </p>
+                ))}
+                {s.metrics?.notes?.map((note, k) => (
+                  <p key={k} className="mt-1 break-words rounded bg-slate-50 px-1.5 py-1 text-[11px] text-slate-700">
+                    Corrected without a model: {note}
                   </p>
                 ))}
                 {s.iterations
@@ -295,15 +378,15 @@ function Timeline({ steps, totals }: { steps: Record<StepName, StepState>; total
                     </p>
                   ))}
                 {s.status === "running" && s.iterations?.at(-1)?.phase === "searching" && (
-                  <p className="mt-1 text-[11px] text-blue-700">
+                  <p className="mt-1 text-[11px] text-blue-800">
                     Searching for {s.iterations.at(-1)?.unverified?.join(", ")}…
                   </p>
                 )}
                 {s.status === "done" && <StepSummary step={name} result={s.result} />}
-                {s.status === "failed" && <p className="mt-1 text-xs text-red-700">{s.error}</p>}
+                {s.status === "failed" && <p className="mt-1 break-words text-xs text-red-700">{s.error}</p>}
                 {s.result && (
                   <details className="mt-1">
-                    <summary className="cursor-pointer text-xs text-slate-500">Raw output</summary>
+                    <summary className="cursor-pointer text-xs text-slate-600">Raw output</summary>
                     <pre className="mt-1 max-h-60 overflow-auto rounded bg-slate-50 p-2 text-[11px] leading-snug">
                       {JSON.stringify(s.result, null, 2)}
                     </pre>
@@ -315,11 +398,12 @@ function Timeline({ steps, totals }: { steps: Record<StepName, StepState>; total
         })}
       </ol>
       {totals && (
-        <div className="mt-4 border-t border-slate-200 pt-3 text-xs text-slate-600">
-          <p className="font-medium text-slate-800">Total</p>
+        <div className="mt-4 border-t border-slate-200 pt-3 text-xs text-slate-700">
+          <p className="font-medium text-slate-900">Total</p>
           <p>
-            {totals.latency_s.toFixed(1)} s · ${totals.cost_usd.toFixed(4)} · {totals.input_tokens.toLocaleString()} in /{" "}
-            {totals.output_tokens.toLocaleString()} out tokens · {totals.tavily_searches} Tavily searches
+            {totals.latency_s.toFixed(1)} s · ${totals.cost_usd.toFixed(4)} ·{" "}
+            {totals.input_tokens.toLocaleString("en-US")} in / {totals.output_tokens.toLocaleString("en-US")} out
+            tokens · {totals.tavily_searches} Tavily searches
           </p>
         </div>
       )}
@@ -329,13 +413,16 @@ function Timeline({ steps, totals }: { steps: Record<StepName, StepState>; total
 
 function StatusDot({ status, index }: { status: StepState["status"]; index: number }) {
   const styles = {
-    pending: "border-slate-300 text-slate-400",
-    running: "border-blue-500 text-blue-600 animate-pulse",
-    done: "border-emerald-500 bg-emerald-500 text-white",
-    failed: "border-red-500 bg-red-500 text-white",
+    pending: "border-slate-400 text-slate-600",
+    running: "border-blue-600 text-blue-700 animate-pulse",
+    done: "border-emerald-600 bg-emerald-600 text-white",
+    failed: "border-red-600 bg-red-600 text-white",
   }[status];
+  const label = { pending: "pending", running: "running", done: "done", failed: "failed" }[status];
   return (
     <span
+      role="img"
+      aria-label={`Step ${index}: ${label}`}
       className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs font-semibold ${styles}`}
     >
       {status === "done" ? "✓" : status === "failed" ? "!" : index}
@@ -344,12 +431,12 @@ function StatusDot({ status, index }: { status: StepState["status"]; index: numb
 }
 
 function MetricsLine({ metrics }: { metrics: StepMetrics }) {
-  const others = metrics.models.filter((m) => m !== metrics.final_model).map(shortModel);
+  const others = metrics.models.filter((m) => m !== metrics.final_model).map(modelLabel);
   return (
-    <p className="mt-1 text-[11px] text-slate-500">
+    <p className="mt-1 text-[11px] text-slate-600">
       {metrics.final_model ? (
-        <span title="Model that produced the final output of this step" className="font-medium text-slate-700">
-          {shortModel(metrics.final_model)}
+        <span title="Model that produced the final output of this step" className="font-medium text-slate-800">
+          {modelLabel(metrics.final_model)}
         </span>
       ) : (
         "no LLM"
@@ -366,7 +453,7 @@ function StepSummary({ step, result }: { step: StepName; result: any }) {
   let text: string | null = null;
   switch (step) {
     case "intake":
-      text = `${result.eps} · ${result.servicio_negado}`;
+      text = `${result.eps} · ${result.servicio_negado}${result.ciudad ? ` · ${result.ciudad}` : ""}`;
       if (result.datos_faltantes?.length) text += ` · ${result.datos_faltantes.length} open question(s)`;
       break;
     case "analysis":
@@ -380,119 +467,12 @@ function StepSummary({ step, result }: { step: StepName; result: any }) {
       if (result.citas_no_verificadas_iniciales?.length)
         text += ` (${result.citas_no_verificadas_iniciales.length} unverified before the check loop)`;
       break;
+    case "package":
+      if (result.canal_radicacion)
+        text = result.canal_radicacion.encontrado
+          ? `Official filing channel found for ${result.canal_radicacion.ciudad}`
+          : `No specific filing channel found for ${result.canal_radicacion.ciudad}`;
+      break;
   }
-  return text ? <p className="mt-1 text-xs text-slate-700">{text}</p> : null;
-}
-
-function Results({ pkg }: { pkg: FinalPackage }) {
-  const [copied, setCopied] = useState(false);
-  const citations: CitationCheck[] = [...pkg.verification.citas_verificadas, ...pkg.verification.citas_no_verificadas];
-
-  async function copy() {
-    await navigator.clipboard.writeText(pkg.draft.texto_completo);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  }
-
-  return (
-    <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-      <section className="rounded-lg border border-slate-200 bg-white p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Draft tutela (Spanish)</h2>
-          <button
-            type="button"
-            onClick={copy}
-            className="rounded-md border border-slate-300 px-2.5 py-1 text-xs hover:bg-slate-50"
-          >
-            {copied ? "Copied" : "Copy text"}
-          </button>
-        </div>
-        <pre lang="es" className="whitespace-pre-wrap font-serif text-[15px] leading-relaxed text-slate-900">
-          {pkg.draft.texto_completo}
-        </pre>
-        <p className="mt-4 rounded-md bg-slate-50 p-3 text-xs text-slate-600" lang="es">
-          {pkg.aviso}
-        </p>
-      </section>
-
-      <div className="space-y-6">
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Citations</h2>
-          {citations.length === 0 && <p className="text-sm text-slate-600">No rulings cited.</p>}
-          <ul className="space-y-2">
-            {citations.map((c) => (
-              <li key={c.sentencia_id} className="text-sm">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${
-                      c.estado === "verificada" ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {c.estado === "verificada" ? "Verified" : "Not verified"}
-                  </span>
-                  {c.url ? (
-                    <a href={c.url} target="_blank" rel="noreferrer" className="font-medium underline">
-                      {c.sentencia_id}
-                    </a>
-                  ) : (
-                    <span className="font-medium">{c.sentencia_id}</span>
-                  )}
-                </div>
-                <p className="mt-0.5 text-xs text-slate-500" lang="es">
-                  {c.detalle}
-                </p>
-              </li>
-            ))}
-          </ul>
-          {pkg.verification.ciclo.length > 0 && (
-            <>
-              <h3 className="mb-1 mt-4 text-xs font-semibold text-slate-700">Check loop</h3>
-              <ul className="space-y-1 text-xs text-slate-600">
-                {pkg.verification.ciclo.map((o) => (
-                  <li key={o.sentencia_id}>
-                    <span className="font-medium">{o.sentencia_id}</span>:{" "}
-                    {o.resultado === "verificada_busqueda_dirigida" ? "found by a targeted search" : "removed from the text"}{" "}
-                    (loop {o.iteracion})
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-          {pkg.verification.observaciones.length > 0 && (
-            <>
-              <h3 className="mb-1 mt-4 text-xs font-semibold text-slate-700">Review notes</h3>
-              <ul className="list-disc space-y-1 pl-4 text-xs text-slate-600" lang="es">
-                {pkg.verification.observaciones.map((o, i) => (
-                  <li key={i}>{o}</li>
-                ))}
-              </ul>
-            </>
-          )}
-        </section>
-
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Annex checklist</h2>
-          <ul className="space-y-1 text-sm" lang="es">
-            {pkg.checklist_anexos.map((item, i) => (
-              <li key={i} className="flex gap-2">
-                <input type="checkbox" className="mt-1" aria-label={item} />
-                <span>{item.replace(/^\d+\.\s*/, "")}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Where to file</h2>
-          <p className="text-sm leading-relaxed" lang="es">
-            {pkg.donde_radicar}
-          </p>
-          <h3 className="mb-1 mt-4 text-xs font-semibold text-slate-700">If the EPS does not comply</h3>
-          <p className="text-sm leading-relaxed" lang="es">
-            {pkg.que_hacer_si_no_cumplen}
-          </p>
-        </section>
-      </div>
-    </div>
-  );
+  return text ? <p className="mt-1 break-words text-xs text-slate-800">{text}</p> : null;
 }

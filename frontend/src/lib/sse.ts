@@ -1,4 +1,4 @@
-import type { CaseEvent, Refusal, SampleRun } from "./types";
+import type { CaseEvent, Refusal, SampleRun, TutelaDraft } from "./types";
 
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(/\/$/, "");
 
@@ -10,28 +10,57 @@ export class RunRefusedError extends Error {
   }
 }
 
-/** POST a narrative and yield each Server-Sent Event from the pipeline. */
-export async function* runCase(narrative: string, signal?: AbortSignal): AsyncGenerator<CaseEvent> {
-  const response = await fetch(`${API_URL}/api/cases/run`, {
+export interface ClarifyingAnswer {
+  question: string;
+  answer: string;
+}
+
+/** Throw a RunRefusedError for a limit refusal, or a plain Error otherwise. */
+async function throwApiError(response: Response): Promise<never> {
+  const detail = await response.text().catch(() => "");
+  let refusal: Refusal | null = null;
+  try {
+    const body = JSON.parse(detail);
+    if (typeof body?.error === "string" && typeof body?.message === "string") refusal = body;
+  } catch {
+    // not a JSON refusal
+  }
+  if (refusal && refusal.error !== "intake_failed") throw new RunRefusedError(refusal);
+  throw new Error(`API error ${response.status}: ${detail.slice(0, 300)}`);
+}
+
+/** Intake only: questions for critical missing information (may be empty). */
+export async function checkIntake(narrative: string, signal?: AbortSignal): Promise<{ questions: string[] }> {
+  const response = await fetch(`${API_URL}/api/cases/intake`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ narrative }),
     signal,
   });
-  if (!response.ok || !response.body) {
-    const detail = await response.text().catch(() => "");
-    let refusal: Refusal | null = null;
-    try {
-      const body = JSON.parse(detail);
-      if (typeof body?.error === "string" && typeof body?.message === "string") refusal = body;
-    } catch {
-      // not a JSON refusal
-    }
-    if (refusal) throw new RunRefusedError(refusal);
-    throw new Error(`API error ${response.status}: ${detail.slice(0, 300)}`);
-  }
+  if (!response.ok) await throwApiError(response);
+  return response.json();
+}
 
-  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+/** POST a narrative and yield each Server-Sent Event from the pipeline. */
+export async function* runCase(
+  narrative: string,
+  options: { englishSummary?: boolean; answers?: ClarifyingAnswer[] } = {},
+  signal?: AbortSignal,
+): AsyncGenerator<CaseEvent> {
+  const response = await fetch(`${API_URL}/api/cases/run`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      narrative,
+      english_summary: options.englishSummary ?? false,
+      answers: options.answers ?? [],
+    }),
+    signal,
+  });
+  if (!response.ok || !response.body) await throwApiError(response);
+  const body = response.body!;
+
+  const reader = body.pipeThrough(new TextDecoderStream()).getReader();
   let buffer = "";
   while (true) {
     const { value, done } = await reader.read();
@@ -82,4 +111,24 @@ export async function fetchUsageStatus(signal?: AbortSignal): Promise<UsageStatu
   } catch {
     return null;
   }
+}
+
+/** Generate the tutela as .docx or PDF on the API (no LLM involved) and save it. */
+export async function downloadDocument(draft: TutelaDraft, format: "docx" | "pdf"): Promise<void> {
+  const response = await fetch(`${API_URL}/api/documents/tutela.${format}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(draft),
+  });
+  if (!response.ok) throw new Error(`Could not generate the ${format.toUpperCase()} file (error ${response.status}).`);
+  const filename =
+    response.headers.get("Content-Disposition")?.match(/filename="([^"]+)"/)?.[1] ?? `tutela.${format}`;
+  const url = URL.createObjectURL(await response.blob());
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
