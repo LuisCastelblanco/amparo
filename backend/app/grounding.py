@@ -29,7 +29,7 @@ _VAGUE = {"nada", "algo", "eso", "esto", "todo", "ninguno", "ninguna", "nulo", "
 # Words that frame a descriptive field ("cobertura de transporte", "autorizacion de la cirugia")
 # instead of naming what was denied; they need not appear in the narrative.
 FRAMING = frozenset({
-    "cobertura", "cubrir", "autorizacion", "autorizar", "suministro", "suministrar", "entrega", "entregar",
+    "cobertura", "cubrimiento", "cubrir", "autorizacion", "autorizar", "suministro", "suministrar", "entrega", "entregar",
     "servicio", "servicios", "solicitud", "negacion", "negativa", "programacion", "programar", "realizacion",
     "realizar", "pago", "costo", "costos", "gastos", "paciente", "tratamiento", "procedimiento", "atencion",
 })
