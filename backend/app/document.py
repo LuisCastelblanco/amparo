@@ -34,8 +34,9 @@ def _clean_item(item: str) -> str:
 
 def _right_name(right: str) -> str:
     """'Derecho a la Salud' -> 'la salud', so it reads well after 'mis derechos fundamentales a'."""
-    name = re.sub(r"^(el\s+)?derecho\s+(fundamental\s+)?(a\s+|al\s+)?", "", right.strip(), flags=re.IGNORECASE)
-    return name.lower()
+    name = re.sub(r"\s*\([^)]*\)", "", right).strip()  # "(artículo 49 de la Constitución)" stays in section II
+    name = re.sub(r"^(el\s+)?derecho\s+(fundamental\s+)?(a\s+|al\s+)?", "", name, flags=re.IGNORECASE)
+    return name[:1].lower() + name[1:]
 
 
 # Placeholders such as [NOMBRE COMPLETO] or [CIUDAD] that a model may still write.

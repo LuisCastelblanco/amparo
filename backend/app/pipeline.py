@@ -18,9 +18,9 @@ from app.llm import ChatResult, Tier, chat, estimate_cost
 from app.schemas import (
     CaseFacts,
     ChannelExtraction,
-    ClarifyingQuestions,
     CitationCheck,
     CitationOutcome,
+    ClarifyingQuestions,
     CoherenceReview,
     FilingChannel,
     FinalPackage,
@@ -98,6 +98,8 @@ class StepUsage:
     escalations: list[dict[str, Any]] = field(default_factory=list)
     # Deterministic corrections made without an LLM call (e.g. an invented city set to null).
     notes: list[str] = field(default_factory=list)
+    # Model of the step's main output when calls run in parallel (otherwise the last call's model).
+    resolved_by: str | None = None
 
     def metrics(self) -> dict[str, Any]:
         costs = [c.cost_usd for c in self.calls]
@@ -106,7 +108,7 @@ class StepUsage:
         all_reasoning = [estimate_cost(reasoning, c.input_tokens, c.output_tokens) for c in self.calls]
         return {
             "models": list(dict.fromkeys(c.model for c in self.calls)),
-            "final_model": self.calls[-1].model if self.calls else None,
+            "final_model": self.resolved_by or (self.calls[-1].model if self.calls else None),
             "escalations": self.escalations,
             "notes": self.notes,
             "llm_calls": len(self.calls),
@@ -797,6 +799,21 @@ async def filing_channel(ciudad: str, usage: StepUsage) -> FilingChannel:
     )
 
 
+def summary_issues(summary: ReviewerSummary, tutela: TutelaDraft) -> list[str]:
+    """Deterministic consistency check of the English summary against the Spanish draft."""
+    issues = []
+    if len(summary.rights_invoked) > len(tutela.derechos_vulnerados) + 1:
+        issues.append(f"{len(summary.rights_invoked)} rights in the summary, {len(tutela.derechos_vulnerados)} in the draft")
+    if any(len(r.split()) > 10 for r in summary.rights_invoked):
+        issues.append("a right in the summary is a sentence, not a right")
+    if not summary.requests or len(summary.requests) > len(tutela.pretensiones) + 1:
+        issues.append(f"{len(summary.requests)} requests in the summary, {len(tutela.pretensiones)} in the draft")
+    eps_words = [w for w in grounding.fold(tutela.accionada).split() if w != "eps"]
+    if eps_words and not all(w in grounding.fold(summary.facts) for w in eps_words):
+        issues.append(f"the facts do not name the EPS {tutela.accionada!r}")
+    return issues
+
+
 async def reviewer_summary(tutela: TutelaDraft, report: VerificationReport, usage: StepUsage) -> ReviewerSummary:
     """English summary of the final draft; only verified rulings are kept."""
     verified = [c.sentencia_id for c in report.citas_verificadas]
@@ -805,6 +822,19 @@ async def reviewer_summary(tutela: TutelaDraft, report: VerificationReport, usag
     summary = await structured(
         "fast", ReviewerSummary, SUMMARY_SYSTEM, user, usage, max_tokens=MAX_TOKENS["summary"]
     )
+    issues = summary_issues(summary, tutela)
+    if issues:
+        escalation = {
+            "step": "package", "from_tier": "fast", "from_model": get_settings().model_for_tier("fast"),
+            "to_tier": "draft", "to_model": get_settings().model_for_tier("draft"), "reasons": issues,
+        }
+        logger.warning("reviewer summary inconsistent with the draft, escalating: %s", issues)
+        usage.emit("escalated", escalation)
+        summary = await structured(
+            "draft", ReviewerSummary, SUMMARY_SYSTEM, user, usage, max_tokens=MAX_TOKENS["summary"]
+        )
+        escalation["remaining_issues"] = summary_issues(summary, tutela)
+        usage.escalations.append(escalation)
     rulings: list[ReviewerRuling] = []
     for r in summary.rulings:
         ids = citations.find_citations(r.ruling_id)
@@ -829,11 +859,15 @@ async def package(
         f"Case facts:\n{_dump(facts)}\n\nUrgency: {legal.urgencia}\n\n"
         f"Draft annexes:\n{_numbered(tutela.pruebas_y_anexos)}"
     )
+    # Filing guidance is legal orientation the person reads as is: draft tier (the fast tier garbled it).
+    guidance_usage = StepUsage(budget=usage.budget)
     guidance, channel, summary = await asyncio.gather(
-        structured("fast", PackageGuidance, PACKAGE_SYSTEM, user, usage, max_tokens=MAX_TOKENS["package"]),
+        structured("draft", PackageGuidance, PACKAGE_SYSTEM, user, guidance_usage, max_tokens=MAX_TOKENS["package"]),
         filing_channel(facts.ciudad, usage) if facts.ciudad else _nothing(),
         reviewer_summary(tutela, report, usage) if english_summary else _nothing(),
     )
+    usage.calls += guidance_usage.calls
+    usage.resolved_by = guidance_usage.calls[-1].model
     allowed = {x for x in (channel.enlace, channel.correo, channel.fuente_url) if x} if channel else set()
     guidance = guidance.model_copy(update={
         "donde_radicar": scrub_contacts(guidance.donde_radicar, allowed),
