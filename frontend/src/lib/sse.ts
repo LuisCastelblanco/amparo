@@ -30,11 +30,15 @@ async function throwApiError(response: Response): Promise<never> {
 }
 
 /** Intake only: questions for critical missing information (may be empty). */
-export async function checkIntake(narrative: string, signal?: AbortSignal): Promise<{ questions: string[] }> {
+export async function checkIntake(
+  narrative: string,
+  judgeCode?: string,
+  signal?: AbortSignal,
+): Promise<{ questions: string[] }> {
   const response = await fetch(`${API_URL}/api/cases/intake`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ narrative }),
+    body: JSON.stringify({ narrative, judge_code: judgeCode || null }),
     signal,
   });
   if (!response.ok) await throwApiError(response);
@@ -44,7 +48,7 @@ export async function checkIntake(narrative: string, signal?: AbortSignal): Prom
 /** POST a narrative and yield each Server-Sent Event from the pipeline. */
 export async function* runCase(
   narrative: string,
-  options: { englishSummary?: boolean; answers?: ClarifyingAnswer[] } = {},
+  options: { englishSummary?: boolean; answers?: ClarifyingAnswer[]; judgeCode?: string } = {},
   signal?: AbortSignal,
 ): AsyncGenerator<CaseEvent> {
   const response = await fetch(`${API_URL}/api/cases/run`, {
@@ -54,6 +58,7 @@ export async function* runCase(
       narrative,
       english_summary: options.englishSummary ?? false,
       answers: options.answers ?? [],
+      judge_code: options.judgeCode || null,
     }),
     signal,
   });
@@ -108,6 +113,21 @@ export async function fetchUsageStatus(signal?: AbortSignal): Promise<UsageStatu
   try {
     const response = await fetch(`${API_URL}/api/usage`, { signal });
     return response.ok ? await response.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Whether a judge access code is valid (true/false), or null when the API cannot be reached. */
+export async function checkJudgeCode(judgeCode: string, signal?: AbortSignal): Promise<boolean | null> {
+  try {
+    const response = await fetch(`${API_URL}/api/judge/check`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ judge_code: judgeCode }),
+      signal,
+    });
+    return response.ok ? Boolean((await response.json()).valid) : null;
   } catch {
     return null;
   }

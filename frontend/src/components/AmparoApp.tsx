@@ -7,7 +7,7 @@ import QuestionsPanel, { type PendingQuestion } from "@/components/QuestionsPane
 import Results, { modelLabel } from "@/components/Results";
 import demoCases from "@/data/demoCases.json";
 import { SAMPLE_RUNS } from "@/data/samples";
-import { checkIntake, fetchUsageStatus, replaySample, runCase, RunRefusedError } from "@/lib/sse";
+import { checkIntake, checkJudgeCode, fetchUsageStatus, replaySample, runCase, RunRefusedError } from "@/lib/sse";
 import {
   STEPS,
   STEP_LABELS,
@@ -27,6 +27,8 @@ const initialSteps = (): Record<StepName, StepState> =>
 
 const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900";
 
+const JUDGE_CODE_KEY = "amparo-judge-code";
+
 export default function AmparoApp() {
   const [narrative, setNarrative] = useState("");
   const [englishSummary, setEnglishSummary] = useState(false);
@@ -42,7 +44,40 @@ export default function AmparoApp() {
   // null: not checked yet; []: checked, nothing missing.
   const [questions, setQuestions] = useState<PendingQuestion[] | null>(null);
   const [checking, setChecking] = useState(false);
+  const [judgeCode, setJudgeCode] = useState("");
+  // null: not checked (or the API was unreachable).
+  const [judgeValid, setJudgeValid] = useState<boolean | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Judge access: ?code=... (removed from the address bar so it is not shared by accident) or a code
+  // typed earlier in this tab.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    let code = url.searchParams.get("code")?.trim() ?? "";
+    if (code) {
+      url.searchParams.delete("code");
+      window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+    } else {
+      try {
+        code = sessionStorage.getItem(JUDGE_CODE_KEY) ?? "";
+      } catch {
+        // storage unavailable: the field starts empty
+      }
+    }
+    if (code) applyJudgeCode(code);
+  }, []);
+
+  async function applyJudgeCode(code: string) {
+    setJudgeCode(code);
+    setJudgeValid(null);
+    try {
+      if (code) sessionStorage.setItem(JUDGE_CODE_KEY, code);
+      else sessionStorage.removeItem(JUDGE_CODE_KEY);
+    } catch {
+      // storage unavailable: the code still works for this page load
+    }
+    if (code) setJudgeValid(await checkJudgeCode(code));
+  }
 
   useEffect(() => {
     const controller = new AbortController();
@@ -130,7 +165,7 @@ export default function AmparoApp() {
       .filter((q) => !q.skipped && q.answer.trim())
       .map((q) => ({ question: q.question, answer: q.answer.trim() }));
     setQuestions(null);
-    play((signal) => runCase(narrative, { englishSummary, answers }, signal), null);
+    play((signal) => runCase(narrative, { englishSummary, answers, judgeCode }, signal), null);
   }
 
   /** Ask the clarifying questions first, if the story misses something critical; then draft. */
@@ -140,7 +175,7 @@ export default function AmparoApp() {
     setError(null);
     setRefusal(null);
     try {
-      const { questions: asked } = await checkIntake(narrative);
+      const { questions: asked } = await checkIntake(narrative, judgeCode);
       if (asked.length > 0) {
         setQuestions(asked.map((question) => ({ question, answer: "", skipped: false })));
         return;
@@ -259,6 +294,7 @@ export default function AmparoApp() {
               </button>
             )}
           </div>
+          <JudgeAccess key={judgeCode} code={judgeCode} valid={judgeValid} disabled={running || checking} onApply={applyJudgeCode} />
           {questions && questions.length > 0 && (
             <QuestionsPanel
               questions={questions}
@@ -309,6 +345,68 @@ export default function AmparoApp() {
 
       {pkg && <Results pkg={pkg} steps={steps} totals={totals} />}
     </div>
+  );
+}
+
+/** Discreet field for the hackathon judges' access code, which lifts the public demo limits. */
+function JudgeAccess({
+  code,
+  valid,
+  disabled,
+  onApply,
+}: {
+  code: string;
+  valid: boolean | null;
+  disabled: boolean;
+  onApply: (code: string) => void;
+}) {
+  // The parent remounts this component (key) when the applied code changes, which resets the draft.
+  const [draft, setDraft] = useState(code);
+  const active = Boolean(code) && valid === true;
+  return (
+    <details className="mt-3 text-xs text-slate-700" open={Boolean(code) || undefined}>
+      <summary className={`cursor-pointer select-none text-slate-600 ${focusRing}`}>
+        {active ? "Judge access active" : "Judge access code"}
+      </summary>
+      <form
+        className="mt-2 flex flex-wrap items-center gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          onApply(draft.trim());
+        }}
+      >
+        <label htmlFor="judge-code" className="sr-only">
+          Judge access code
+        </label>
+        <input
+          id="judge-code"
+          type="text"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          autoComplete="off"
+          spellCheck={false}
+          disabled={disabled}
+          aria-describedby="judge-code-status"
+          className="min-w-0 flex-1 rounded-md border border-slate-400 px-2 py-1.5 font-mono text-xs sm:max-w-64"
+        />
+        <button
+          type="submit"
+          disabled={disabled || draft.trim() === code}
+          className={`rounded-md border border-slate-400 px-2.5 py-1.5 text-xs text-slate-900 hover:bg-slate-50 disabled:opacity-60 ${focusRing}`}
+        >
+          {draft.trim() || !code ? "Apply" : "Clear"}
+        </button>
+      </form>
+      <p id="judge-code-status" role="status" className="mt-1">
+        {!code
+          ? "For hackathon judges: lifts the public demo limits."
+          : valid === true
+            ? "Code accepted: public demo limits do not apply to your runs."
+            : valid === false
+              ? "This code is not valid. Clear it to use the public demo."
+              : "Checking the code…"}
+      </p>
+    </details>
   );
 }
 

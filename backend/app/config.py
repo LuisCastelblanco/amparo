@@ -69,6 +69,14 @@ class Settings(BaseSettings):
     intake_rate_limit_per_hour: int = 10
     max_clarifying_questions: int = 3
     max_tavily_searches_per_case: int = 10
+    # --- Judge access ---
+    # A valid code skips the per-IP and public daily limits; judges have their own daily allowance,
+    # counted apart from the public one. Empty: judge access is off. LIVE_RUNS_ENABLED applies to judges too.
+    judge_access_code: str = ""
+    judge_daily_case_limit: int = 100
+    judge_daily_cost_limit_usd: float = 3.0
+    # Extra running cases per instance reserved for judges on top of MAX_CONCURRENT_CASES.
+    judge_extra_concurrent_cases: int = 2
     # "firestore" keeps counters across restarts and instances; "memory" is for local development.
     usage_store: str = "memory"
     firestore_project: str = ""  # empty: the project of the default credentials

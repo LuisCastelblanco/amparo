@@ -55,14 +55,19 @@ API keys are read from the local `.env` and piped, never typed on the command li
 grep '^NEBIUS_API_KEY=' .env | cut -d= -f2- | tr -d '\r\n' | gcloud secrets create nebius-api-key --data-file=-
 grep '^TAVILY_API_KEY=' .env | cut -d= -f2- | tr -d '\r\n' | gcloud secrets create tavily-api-key --data-file=-
 python -c "import secrets,sys;sys.stdout.write(secrets.token_hex(32))" | gcloud secrets create ip-hash-key --data-file=-
+# Judge access code: random (about 100 bits), never printed or committed
+python -c "import secrets,sys;a='abcdefghjkmnpqrstuvwxyz23456789';sys.stdout.write('judge-'+'-'.join(''.join(secrets.choice(a) for _ in range(5)) for _ in range(4)))"   | gcloud secrets create judge-access-code --data-file=-
 ```
+
+Read the judge code to hand it to the judges (it is not stored anywhere else):
+`gcloud secrets versions access latest --secret judge-access-code`.
 
 The service runs as a dedicated service account that can only read those secrets and use Firestore:
 
 ```bash
 gcloud iam service-accounts create amparo-api --display-name="Amparo API (Cloud Run)"
 SA="amparo-api@$PROJECT_ID.iam.gserviceaccount.com"
-for s in nebius-api-key tavily-api-key ip-hash-key; do
+for s in nebius-api-key tavily-api-key ip-hash-key judge-access-code; do
   gcloud secrets add-iam-policy-binding "$s" --member="serviceAccount:$SA" --role=roles/secretmanager.secretAccessor
 done
 gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:$SA" --role=roles/datastore.user --condition=None
@@ -76,7 +81,7 @@ A new service account can take a few seconds to become visible to IAM; retry a b
 ```bash
 gcloud run deploy amparo-api --source backend --region us-central1 --allow-unauthenticated \
   --service-account "$SA" \
-  --set-secrets NEBIUS_API_KEY=nebius-api-key:latest,TAVILY_API_KEY=tavily-api-key:latest,IP_HASH_KEY=ip-hash-key:latest \
+  --set-secrets NEBIUS_API_KEY=nebius-api-key:latest,TAVILY_API_KEY=tavily-api-key:latest,IP_HASH_KEY=ip-hash-key:latest,JUDGE_ACCESS_CODE=judge-access-code:latest \
   --set-env-vars "^@^MODEL_FAST=nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B@MODEL_DRAFT=nvidia/nemotron-3-super-120b-a12b@MODEL_REASONING=nvidia/Nemotron-3-Ultra-550b-a55b@USAGE_STORE=firestore@FIRESTORE_PROJECT=$PROJECT_ID@FRONTEND_ORIGIN=http://localhost:3000" \
   --timeout 300 --max-instances 2 --min-instances 0 --memory 512Mi
 ```
@@ -129,6 +134,9 @@ All limits are environment variables on the Cloud Run service; counters are per 
 | `MAX_CONCURRENT_CASES` | 2 | running cases per instance; others get "try again in a minute" |
 | `MAX_NARRATIVE_CHARS` / `MAX_TAVILY_SEARCHES_PER_CASE` | 4000 / 10 | input size and search budget |
 | `LIVE_RUNS_ENABLED` | true | kill switch: `false` leaves only the recorded sample runs |
+| `JUDGE_ACCESS_CODE` | secret `judge-access-code` | a valid code skips the per-IP and public daily limits (not the kill switch) |
+| `JUDGE_DAILY_CASE_LIMIT` / `JUDGE_DAILY_COST_LIMIT_USD` | 100 / 3 | judges' own daily allowance, counted in `judge-day-<date>` apart from the public `day-<date>` |
+| `JUDGE_EXTRA_CONCURRENT_CASES` | 2 | running cases per instance reserved for judges on top of `MAX_CONCURRENT_CASES` |
 | `INTAKE_RATE_LIMIT_PER_HOUR` | 10 | clarifying-question checks per client IP and instance; each is a Nano + Super call whose spend counts toward the daily budget |
 
 ```bash
@@ -139,6 +147,12 @@ gcloud run services update amparo-api --region us-central1 --update-env-vars LIV
 
 A limit was verified end to end by setting `DAILY_CASE_LIMIT=1` after 3 cases: the API answered
 429 `daily_case_limit` and the UI explained it and offered the sample run; the value was then restored to 150.
+
+Judge access was verified from the public URLs with `DAILY_CASE_LIMIT=0`: without a code the UI showed the
+public limit message with the sample run; a wrong code got 403 `invalid_judge_code`; with `?code=` (the code
+left the address bar) demo case 1 completed in 55 s on a 375 px viewport and both files downloaded. `/api/usage`
+counted those runs under `judges`, leaving the public counters unchanged. The limit was then restored to 150.
+Judge instructions: [TESTING.md](TESTING.md).
 
 Document export (`POST /api/documents/tutela.docx|pdf`) uses python-docx and fpdf2 with fpdf2's built-in
 fonts, so the image needs no system packages or font files. It takes the draft JSON and calls no model, so it

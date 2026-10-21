@@ -3,6 +3,9 @@
 Counters live in Firestore (USAGE_STORE=firestore) so they survive restarts and scale-to-zero, and are
 shared by every instance; USAGE_STORE=memory keeps them in-process for local development. Days and
 hours are UTC. Client IPs are stored only as HMAC-SHA256 hashes, and per-IP documents expire.
+
+Judges use an access code instead: no per-IP or public daily limits, but their own daily allowance, counted
+in separate documents so the public demo and the judges never use up each other's capacity.
 """
 
 import asyncio
@@ -36,6 +39,11 @@ MESSAGES = {
     "daily_case_limit": "The public demo has reached its limit of {limit} cases for today. "
     "It resets at 00:00 UTC; meanwhile you can watch a recorded sample run.",
     "daily_cost_limit": "The public demo has reached today's budget for live runs. "
+    "It resets at 00:00 UTC; meanwhile you can watch a recorded sample run.",
+    "invalid_judge_code": "That judge access code is not valid. Check it, or clear the field to use the public demo.",
+    "judge_daily_case_limit": "Judge access has reached its limit of {limit} cases for today. "
+    "It resets at 00:00 UTC; meanwhile you can watch a recorded sample run.",
+    "judge_daily_cost_limit": "Judge access has reached today's budget for live runs. "
     "It resets at 00:00 UTC; meanwhile you can watch a recorded sample run.",
 }
 
@@ -87,18 +95,43 @@ def check_limits(
     return None
 
 
+def check_judge_limits(settings: Settings, now: datetime, day: dict[str, Any]) -> Refusal | None:
+    """The judges' own daily allowance; the public counters are not consulted."""
+    if day.get("cost_usd", 0.0) >= settings.judge_daily_cost_limit_usd:
+        return Refusal("judge_daily_cost_limit", MESSAGES["judge_daily_cost_limit"], 429, _seconds_to_next_day(now))
+    if day.get("cases", 0) >= settings.judge_daily_case_limit:
+        msg = MESSAGES["judge_daily_case_limit"].format(limit=settings.judge_daily_case_limit)
+        return Refusal("judge_daily_case_limit", msg, 429, _seconds_to_next_day(now))
+    return None
+
+
+def is_judge_code(code: str | None) -> bool:
+    expected = get_settings().judge_access_code
+    if not expected or not code:
+        return False
+    return hmac.compare_digest(code.strip().encode(), expected.encode())
+
+
+def _day_id(now: datetime, judge: bool) -> str:
+    return f"{'judge-day' if judge else 'day'}-{_day(now)}"
+
+
 class UsageStore(Protocol):
     async def reserve(self, ip_hash: str, now: datetime) -> Refusal | None:
         """Atomically check the limits and, if allowed, count one case for the day and the IP."""
 
-    async def record_result(self, now: datetime, cost_usd: float, completed: bool) -> None: ...
+    async def reserve_judge(self, now: datetime) -> Refusal | None:
+        """Atomically check the judges' allowance and, if allowed, count one judge case."""
 
-    async def record_refusal(self, now: datetime, code: str) -> None: ...
+    # judge=True counts in the judges' documents instead of the public ones.
+    async def record_result(self, now: datetime, cost_usd: float, completed: bool, judge: bool = False) -> None: ...
 
-    async def record_intake(self, now: datetime, cost_usd: float) -> None:
+    async def record_refusal(self, now: datetime, code: str, judge: bool = False) -> None: ...
+
+    async def record_intake(self, now: datetime, cost_usd: float, judge: bool = False) -> None:
         """Count a clarifying-question check and its spend against the daily budget."""
 
-    async def day(self, now: datetime) -> dict[str, Any]: ...
+    async def day(self, now: datetime, judge: bool = False) -> dict[str, Any]: ...
 
 
 class MemoryStore:
@@ -107,8 +140,10 @@ class MemoryStore:
         self.days: dict[str, dict[str, Any]] = {}
         self.ips: dict[str, int] = {}
 
-    def _day_doc(self, now: datetime) -> dict[str, Any]:
-        return self.days.setdefault(_day(now), {"cases": 0, "completed": 0, "failed": 0, "cost_usd": 0.0, "refused": {}})
+    def _day_doc(self, now: datetime, judge: bool = False) -> dict[str, Any]:
+        return self.days.setdefault(
+            _day_id(now, judge), {"cases": 0, "completed": 0, "failed": 0, "cost_usd": 0.0, "refused": {}}
+        )
 
     async def reserve(self, ip_hash: str, now: datetime) -> Refusal | None:
         day = self._day_doc(now)
@@ -120,26 +155,34 @@ class MemoryStore:
             self.ips[day_key] = self.ips.get(day_key, 0) + 1
         return refusal
 
-    async def record_result(self, now: datetime, cost_usd: float, completed: bool) -> None:
-        day = self._day_doc(now)
+    async def reserve_judge(self, now: datetime) -> Refusal | None:
+        day = self._day_doc(now, judge=True)
+        refusal = check_judge_limits(self.settings, now, day)
+        if refusal is None:
+            day["cases"] += 1
+        return refusal
+
+    async def record_result(self, now: datetime, cost_usd: float, completed: bool, judge: bool = False) -> None:
+        day = self._day_doc(now, judge)
         day["cost_usd"] += cost_usd
         day["completed" if completed else "failed"] += 1
 
-    async def record_refusal(self, now: datetime, code: str) -> None:
-        refused = self._day_doc(now)["refused"]
+    async def record_refusal(self, now: datetime, code: str, judge: bool = False) -> None:
+        refused = self._day_doc(now, judge)["refused"]
         refused[code] = refused.get(code, 0) + 1
 
-    async def record_intake(self, now: datetime, cost_usd: float) -> None:
-        day = self._day_doc(now)
+    async def record_intake(self, now: datetime, cost_usd: float, judge: bool = False) -> None:
+        day = self._day_doc(now, judge)
         day["cost_usd"] += cost_usd
         day["intake_checks"] = day.get("intake_checks", 0) + 1
 
-    async def day(self, now: datetime) -> dict[str, Any]:
-        return dict(self._day_doc(now))
+    async def day(self, now: datetime, judge: bool = False) -> dict[str, Any]:
+        return dict(self._day_doc(now, judge))
 
 
 class FirestoreStore:
-    """Documents in one collection: day-<date> (totals) and ip-<hash>-<window> (per-IP counts, with TTL)."""
+    """Documents in one collection: day-<date> (public totals), judge-day-<date> (judges' totals) and
+    ip-<hash>-<window> (per-IP counts, with TTL)."""
 
     def __init__(self, settings: Settings) -> None:
         from google.cloud import firestore
@@ -171,6 +214,23 @@ class FirestoreStore:
                 transaction.set(ipday_ref, {"count": fs.Increment(1), "expire_at": expire_at}, merge=True)
             return refusal
 
+        return await self._run(txn)
+
+    async def reserve_judge(self, now: datetime) -> Refusal | None:
+        fs = self.fs
+        day_ref = self.col.document(_day_id(now, judge=True))
+
+        @fs.async_transactional
+        async def txn(transaction: Any) -> Refusal | None:
+            day = (await day_ref.get(transaction=transaction)).to_dict() or {}
+            refusal = check_judge_limits(self.settings, now, day)
+            if refusal is None:
+                transaction.set(day_ref, {"cases": fs.Increment(1), "date": _day(now)}, merge=True)
+            return refusal
+
+        return await self._run(txn)
+
+    async def _run(self, txn: Any) -> Refusal | None:
         from google.api_core.exceptions import Aborted
 
         # Concurrent reservations contend on the day document; the SDK does not retry an abort
@@ -184,23 +244,23 @@ class FirestoreStore:
                 await asyncio.sleep(0.05 * 2**attempt + random.uniform(0, 0.1))
         raise AssertionError("unreachable")
 
-    async def record_result(self, now: datetime, cost_usd: float, completed: bool) -> None:
+    async def record_result(self, now: datetime, cost_usd: float, completed: bool, judge: bool = False) -> None:
         fs = self.fs
-        await self.col.document(f"day-{_day(now)}").set(
+        await self.col.document(_day_id(now, judge)).set(
             {"cost_usd": fs.Increment(cost_usd), ("completed" if completed else "failed"): fs.Increment(1)},
             merge=True,
         )
 
-    async def record_refusal(self, now: datetime, code: str) -> None:
-        await self.col.document(f"day-{_day(now)}").set({"refused": {code: self.fs.Increment(1)}}, merge=True)
+    async def record_refusal(self, now: datetime, code: str, judge: bool = False) -> None:
+        await self.col.document(_day_id(now, judge)).set({"refused": {code: self.fs.Increment(1)}}, merge=True)
 
-    async def record_intake(self, now: datetime, cost_usd: float) -> None:
-        await self.col.document(f"day-{_day(now)}").set(
+    async def record_intake(self, now: datetime, cost_usd: float, judge: bool = False) -> None:
+        await self.col.document(_day_id(now, judge)).set(
             {"cost_usd": self.fs.Increment(cost_usd), "intake_checks": self.fs.Increment(1)}, merge=True
         )
 
-    async def day(self, now: datetime) -> dict[str, Any]:
-        snap = await self.col.document(f"day-{_day(now)}").get()
+    async def day(self, now: datetime, judge: bool = False) -> dict[str, Any]:
+        snap = await self.col.document(_day_id(now, judge)).get()
         return snap.to_dict() or {}
 
 
@@ -263,9 +323,11 @@ class Concurrency:
         for token in [t for t, started in self._slots.items() if started < cutoff]:
             del self._slots[token]
 
-    def try_acquire(self) -> int | None:
-        """A slot token, or None when the instance is full."""
-        if self.running >= get_settings().max_concurrent_cases:
+    def try_acquire(self, judge: bool = False) -> int | None:
+        """A slot token, or None when the instance is full. Judges may also use the reserved extra slots."""
+        settings = get_settings()
+        limit = settings.max_concurrent_cases + (settings.judge_extra_concurrent_cases if judge else 0)
+        if self.running >= limit:
             return None
         token = secrets.randbits(63)
         self._slots[token] = time.monotonic()

@@ -4,7 +4,7 @@ An AI agent that helps people in Colombia draft an *acción de tutela* when thei
 
 > Amparo is a drafting aid, not legal advice.
 
-Live demo: https://amparo-swart.vercel.app (rate-limited; "Watch a sample run" replays a recorded run without spending tokens).
+Live demo: https://amparo-swart.vercel.app (rate-limited; "Watch a sample run" replays a recorded run without spending tokens). Judges: see [docs/TESTING.md](docs/TESTING.md).
 
 ## How it works
 
@@ -14,7 +14,7 @@ Live demo: https://amparo-swart.vercel.app (rate-limited; "Watch a sample run" r
 3. **Case-law search**: Constitutional Court rulings via Tavily (parallel queries), screened for relevance (Nano); ruling pages are fetched with their real charset to restore the accents Tavily drops.
 4. **Drafting**: the tutela in Spanish, citing only the rulings found (Nemotron Super), in the usual Colombian format with [COMPLETAR] fields for personal data.
 5. **Citation check**: every cited ruling is checked against the sources; unverified ones get a targeted Tavily search, or their paragraph is rewritten without them (Super), up to 2 iterations, so no unverified citation reaches the document. Plus a coherence review (Ultra).
-6. **Delivery**: annex checklist and filing guidance (Nano); the official online filing channel for the person's city, searched with Tavily on .gov.co sites (every link or e-mail shown comes from a source found); an optional English summary for reviewers (Nano).
+6. **Delivery**: annex checklist and filing guidance (Super); the official online filing channel for the person's city, searched with Tavily on .gov.co sites (every link or e-mail shown comes from a source found); an optional English summary for reviewers (Nano).
 
 The document downloads as .docx or PDF (generated on the API, no LLM). The results panel shows which model resolved each step and the cost against running every call on Ultra.
 
