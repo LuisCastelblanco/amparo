@@ -59,6 +59,13 @@ export default function AmparoApp() {
     return () => controller.abort();
   }, []);
 
+  // ?sample=1|2|3 replays that recorded run on load (a direct link for reviewers).
+  useEffect(() => {
+    const index = Number(new URLSearchParams(window.location.search).get("sample")) - 1;
+    if (index >= 0 && index < SAMPLE_RUNS.length) watchSample(index);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const updateStep = (step: StepName, patch: (prev: StepState) => Partial<StepState>) =>
     setSteps((prev) => ({ ...prev, [step]: { ...prev[step], ...patch(prev[step]) } }));
 
