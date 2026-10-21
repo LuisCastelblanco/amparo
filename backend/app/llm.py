@@ -35,6 +35,7 @@ class ChatResult:
     latency_s: float
     cost_usd: float | None
     used_fallback: bool
+    finish_reason: str | None
     raw: Any
 
 
@@ -98,6 +99,10 @@ def chat(
     model = settings.model_for_tier(tier)
     if response_format is not None:
         kwargs["response_format"] = response_format
+    if not settings.thinking_for_tier(tier):
+        extra_body = dict(kwargs.pop("extra_body", None) or {})
+        extra_body.setdefault("chat_template_kwargs", {"enable_thinking": False})
+        kwargs["extra_body"] = extra_body
 
     used_fallback = False
     start = time.perf_counter()
@@ -125,8 +130,12 @@ def chat(
         f"{cost:.6f}" if cost is not None else "unknown", used_fallback,
     )
 
+    choice = response.choices[0]
+    if choice.finish_reason == "length":
+        logger.warning("llm output truncated tier=%s model=%s max_tokens=%s", tier, served_model, kwargs.get("max_tokens"))
+
     return ChatResult(
-        content=(response.choices[0].message.content or "").strip(),
+        content=(choice.message.content or "").strip(),
         model=served_model,
         tier=tier,
         input_tokens=input_tokens,
@@ -134,5 +143,6 @@ def chat(
         latency_s=latency,
         cost_usd=cost,
         used_fallback=used_fallback,
+        finish_reason=choice.finish_reason,
         raw=response,
     )

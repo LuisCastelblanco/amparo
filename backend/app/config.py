@@ -40,8 +40,15 @@ class Settings(BaseSettings):
         default_factory=lambda: dict(DEFAULT_MODEL_PRICING)
     )
 
+    # Nemotron "thinking" per tier, toggled via chat_template_kwargs.enable_thinking.
+    thinking_fast: bool = False
+    thinking_draft: bool = False
+    thinking_reasoning: bool = True
+
+    frontend_origin: str = "http://localhost:3000"
+
     llm_max_retries: int = 3
-    llm_timeout_seconds: float = 120.0
+    llm_timeout_seconds: float = 300.0
 
     def model_for_tier(self, tier: str) -> str:
         models = {
@@ -52,6 +59,13 @@ class Settings(BaseSettings):
         if tier not in models:
             raise ValueError(f"Unknown tier {tier!r}; expected one of {sorted(models)}")
         return models[tier]
+
+    def thinking_for_tier(self, tier: str) -> bool:
+        return {"fast": self.thinking_fast, "draft": self.thinking_draft, "reasoning": self.thinking_reasoning}[tier]
+
+    @property
+    def cors_origins(self) -> list[str]:
+        return [o.strip() for o in self.frontend_origin.split(",") if o.strip()]
 
 
 @lru_cache
