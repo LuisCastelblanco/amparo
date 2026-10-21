@@ -1,22 +1,29 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import demoCases from "@/data/demoCases.json";
-import { runCase } from "@/lib/sse";
+import { SAMPLE_RUNS } from "@/data/samples";
+import { fetchUsageStatus, replaySample, runCase, RunRefusedError } from "@/lib/sse";
 import {
   STEPS,
   STEP_LABELS,
+  type CaseEvent,
   type CitationCheck,
   type FinalPackage,
+  type Refusal,
   type StepMetrics,
   type StepName,
   type StepState,
   type Totals,
 } from "@/lib/types";
 
+const MAX_NARRATIVE_CHARS = 4000;
+
 const initialSteps = (): Record<StepName, StepState> =>
   Object.fromEntries(STEPS.map((s) => [s, { status: "pending" }])) as Record<StepName, StepState>;
+
+const shortModel = (model: string | null | undefined) => (model ? model.split("/").pop() : "");
 
 export default function AmparoApp() {
   const [narrative, setNarrative] = useState("");
@@ -24,13 +31,61 @@ export default function AmparoApp() {
   const [pkg, setPkg] = useState<FinalPackage | null>(null);
   const [totals, setTotals] = useState<Totals | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [refusal, setRefusal] = useState<Refusal | null>(null);
   const [running, setRunning] = useState(false);
+  const [sampleTitle, setSampleTitle] = useState<string | null>(null);
+  const [liveEnabled, setLiveEnabled] = useState(true);
+  const [selectedDemo, setSelectedDemo] = useState(0);
   const abortRef = useRef<AbortController | null>(null);
 
-  const updateStep = (step: StepName, patch: Partial<StepState>) =>
-    setSteps((prev) => ({ ...prev, [step]: { ...prev[step], ...patch } }));
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchUsageStatus(controller.signal).then((status) => {
+      if (status && !status.live_runs_enabled) {
+        setLiveEnabled(false);
+        setRefusal({
+          error: "live_runs_disabled",
+          message: "Live runs are switched off for now. You can still watch a recorded sample run.",
+          retry_after_s: null,
+        });
+      }
+    });
+    return () => controller.abort();
+  }, []);
 
-  async function start() {
+  const updateStep = (step: StepName, patch: (prev: StepState) => Partial<StepState>) =>
+    setSteps((prev) => ({ ...prev, [step]: { ...prev[step], ...patch(prev[step]) } }));
+
+  function handle({ event, data }: CaseEvent) {
+    switch (event) {
+      case "step_started":
+        updateStep(data.step, () => ({ status: "running" }));
+        break;
+      case "escalated":
+        updateStep(data.step, (s) => ({ escalations: [...(s.escalations ?? []), data] }));
+        break;
+      case "verify_iteration":
+        updateStep("verify", (s) => ({ iterations: [...(s.iterations ?? []), data] }));
+        break;
+      case "step_completed":
+        updateStep(data.step, () => ({ status: "done", result: data.result, metrics: data.metrics }));
+        break;
+      case "step_failed":
+        updateStep(data.step, () => ({ status: "failed", error: data.error, metrics: data.metrics }));
+        setError(`Step "${STEP_LABELS[data.step].title}" failed: ${data.error}`);
+        break;
+      case "case_failed":
+        if (data.totals) setTotals(data.totals);
+        if (data.error) setError(data.error);
+        break;
+      case "case_completed":
+        setPkg(data.package);
+        setTotals(data.totals);
+        break;
+    }
+  }
+
+  async function play(source: (signal: AbortSignal) => AsyncGenerator<CaseEvent>, sample: string | null) {
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -38,36 +93,30 @@ export default function AmparoApp() {
     setPkg(null);
     setTotals(null);
     setError(null);
+    setRefusal(null);
+    setSampleTitle(sample);
     setRunning(true);
     try {
-      for await (const { event, data } of runCase(narrative, controller.signal)) {
-        switch (event) {
-          case "step_started":
-            updateStep(data.step, { status: "running" });
-            break;
-          case "step_completed":
-            updateStep(data.step, { status: "done", result: data.result, metrics: data.metrics });
-            break;
-          case "step_failed":
-            updateStep(data.step, { status: "failed", error: data.error, metrics: data.metrics });
-            setError(`Step "${STEP_LABELS[data.step].title}" failed: ${data.error}`);
-            break;
-          case "case_failed":
-            if (data.totals) setTotals(data.totals);
-            if (data.error) setError(data.error);
-            break;
-          case "case_completed":
-            setPkg(data.package);
-            setTotals(data.totals);
-            break;
-        }
-      }
+      for await (const event of source(controller.signal)) handle(event);
     } catch (err) {
-      if (!controller.signal.aborted) setError(err instanceof Error ? err.message : String(err));
+      if (controller.signal.aborted) return;
+      if (err instanceof RunRefusedError) setRefusal(err.refusal);
+      else setError(err instanceof Error ? err.message : String(err));
     } finally {
-      setRunning(false);
+      if (abortRef.current === controller) setRunning(false);
     }
   }
+
+  const startLive = () => play((signal) => runCase(narrative, signal), null);
+
+  function watchSample(index: number) {
+    const sample = SAMPLE_RUNS[index];
+    setSelectedDemo(index);
+    setNarrative(sample.narrative);
+    play((signal) => replaySample(sample, signal), sample.title);
+  }
+
+  const tooLong = narrative.length > MAX_NARRATIVE_CHARS;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
@@ -94,7 +143,10 @@ export default function AmparoApp() {
             placeholder="Ej.: Mi EPS me negó el medicamento que me formuló el médico porque..."
             className="w-full resize-y rounded-md border border-slate-300 p-3 text-sm leading-relaxed focus:border-slate-500 focus:outline-none"
           />
-          <div className="mt-3 flex flex-wrap items-center gap-2">
+          <p className={`mt-1 text-right text-xs ${tooLong ? "text-red-700" : "text-slate-400"}`}>
+            {narrative.length.toLocaleString()} / {MAX_NARRATIVE_CHARS.toLocaleString()} characters
+          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
             <span className="text-xs text-slate-500">Load a synthetic demo case:</span>
             {demoCases.map((c, i) => (
               <button
@@ -102,34 +154,70 @@ export default function AmparoApp() {
                 type="button"
                 title={c.title}
                 disabled={running}
-                onClick={() => setNarrative(c.narrative)}
+                onClick={() => {
+                  setSelectedDemo(i);
+                  setNarrative(c.narrative);
+                }}
                 className="rounded-md border border-slate-300 px-2.5 py-1 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50"
               >
                 {i + 1}. {c.title}
               </button>
             ))}
           </div>
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-4 flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={start}
-              disabled={running || narrative.trim().length < 20}
+              onClick={startLive}
+              disabled={running || !liveEnabled || tooLong || narrative.trim().length < 20}
               className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
             >
-              {running ? "Running…" : "Draft my tutela"}
+              {running && !sampleTitle ? "Running…" : "Draft my tutela"}
             </button>
+            <SampleMenu disabled={running} selected={selectedDemo} onSelect={setSelectedDemo} onWatch={watchSample} />
             {running && (
               <button
                 type="button"
-                onClick={() => abortRef.current?.abort()}
+                onClick={() => {
+                  abortRef.current?.abort();
+                  setRunning(false);
+                }}
                 className="text-sm text-slate-600 underline"
               >
                 Cancel
               </button>
             )}
           </div>
+          {refusal && (
+            <div className="mt-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+              <p>{refusal.message}</p>
+              <button
+                type="button"
+                onClick={() => watchSample(selectedDemo)}
+                className="mt-2 rounded-md bg-amber-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-800"
+              >
+                Watch a sample run
+              </button>
+            </div>
+          )}
           {error && (
-            <p className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</p>
+            <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+              <p>{error}</p>
+              {!sampleTitle && (
+                <button
+                  type="button"
+                  onClick={() => watchSample(selectedDemo)}
+                  className="mt-2 text-xs font-medium underline"
+                >
+                  Watch a recorded sample run instead
+                </button>
+              )}
+            </div>
+          )}
+          {sampleTitle && (
+            <p className="mt-4 rounded-md border border-sky-200 bg-sky-50 p-3 text-sm text-sky-900">
+              Replaying a recorded run of the synthetic case “{sampleTitle}”. No tokens are spent; the models, times
+              and costs shown are those of the original run.
+            </p>
           )}
         </section>
 
@@ -138,6 +226,44 @@ export default function AmparoApp() {
 
       {pkg && <Results pkg={pkg} />}
     </div>
+  );
+}
+
+function SampleMenu({
+  disabled,
+  selected,
+  onSelect,
+  onWatch,
+}: {
+  disabled: boolean;
+  selected: number;
+  onSelect: (index: number) => void;
+  onWatch: (index: number) => void;
+}) {
+  return (
+    <span className="flex items-center gap-1.5">
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => onWatch(selected)}
+        className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-800 hover:bg-slate-50 disabled:opacity-50"
+      >
+        Watch a sample run
+      </button>
+      <select
+        aria-label="Sample case"
+        value={selected}
+        disabled={disabled}
+        onChange={(e) => onSelect(Number(e.target.value))}
+        className="max-w-40 rounded-md border border-slate-300 bg-white px-1.5 py-2 text-xs text-slate-700"
+      >
+        {SAMPLE_RUNS.map((s, i) => (
+          <option key={i} value={i}>
+            {i + 1}. {s.title}
+          </option>
+        ))}
+      </select>
+    </span>
   );
 }
 
@@ -155,6 +281,24 @@ function Timeline({ steps, totals }: { steps: Record<StepName, StepState>; total
                 <p className="text-sm font-medium">{STEP_LABELS[name].title}</p>
                 <p className="text-xs text-slate-500">{STEP_LABELS[name].description}</p>
                 {s.metrics && <MetricsLine metrics={s.metrics} />}
+                {s.escalations?.map((e, k) => (
+                  <p key={k} className="mt-1 rounded bg-violet-50 px-1.5 py-1 text-[11px] text-violet-900">
+                    Escalated {shortModel(e.from_model)} → {shortModel(e.to_model)}: {e.reasons.join("; ")}
+                  </p>
+                ))}
+                {s.iterations
+                  ?.filter((it) => it.phase === "done")
+                  .map((it) => (
+                    <p key={it.iteration} className="mt-1 rounded bg-slate-50 px-1.5 py-1 text-[11px] text-slate-700">
+                      Check loop {it.iteration}: {it.found?.length ? `found ${it.found.join(", ")}` : "none found"}
+                      {it.removed?.length ? ` · rewrote without ${it.removed.join(", ")}` : ""}
+                    </p>
+                  ))}
+                {s.status === "running" && s.iterations?.at(-1)?.phase === "searching" && (
+                  <p className="mt-1 text-[11px] text-blue-700">
+                    Searching for {s.iterations.at(-1)?.unverified?.join(", ")}…
+                  </p>
+                )}
                 {s.status === "done" && <StepSummary step={name} result={s.result} />}
                 {s.status === "failed" && <p className="mt-1 text-xs text-red-700">{s.error}</p>}
                 {s.result && (
@@ -200,10 +344,18 @@ function StatusDot({ status, index }: { status: StepState["status"]; index: numb
 }
 
 function MetricsLine({ metrics }: { metrics: StepMetrics }) {
-  const models = metrics.models.map((m) => m.split("/").pop()).join(", ");
+  const others = metrics.models.filter((m) => m !== metrics.final_model).map(shortModel);
   return (
     <p className="mt-1 text-[11px] text-slate-500">
-      {models || "no LLM"} · {metrics.latency_s.toFixed(1)} s · ${metrics.cost_usd.toFixed(4)}
+      {metrics.final_model ? (
+        <span title="Model that produced the final output of this step" className="font-medium text-slate-700">
+          {shortModel(metrics.final_model)}
+        </span>
+      ) : (
+        "no LLM"
+      )}
+      {others.length > 0 && ` (also ${others.join(", ")})`} · {metrics.latency_s.toFixed(1)} s · $
+      {metrics.cost_usd.toFixed(4)}
       {metrics.tavily_searches > 0 && ` · ${metrics.tavily_searches} Tavily`}
     </p>
   );
@@ -225,6 +377,8 @@ function StepSummary({ step, result }: { step: StepName; result: any }) {
       break;
     case "verify":
       text = `${result.citas_verificadas.length} verified · ${result.citas_no_verificadas.length} unverified`;
+      if (result.citas_no_verificadas_iniciales?.length)
+        text += ` (${result.citas_no_verificadas_iniciales.length} unverified before the check loop)`;
       break;
   }
   return text ? <p className="mt-1 text-xs text-slate-700">{text}</p> : null;
@@ -290,6 +444,20 @@ function Results({ pkg }: { pkg: FinalPackage }) {
               </li>
             ))}
           </ul>
+          {pkg.verification.ciclo.length > 0 && (
+            <>
+              <h3 className="mb-1 mt-4 text-xs font-semibold text-slate-700">Check loop</h3>
+              <ul className="space-y-1 text-xs text-slate-600">
+                {pkg.verification.ciclo.map((o) => (
+                  <li key={o.sentencia_id}>
+                    <span className="font-medium">{o.sentencia_id}</span>:{" "}
+                    {o.resultado === "verificada_busqueda_dirigida" ? "found by a targeted search" : "removed from the text"}{" "}
+                    (loop {o.iteracion})
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
           {pkg.verification.observaciones.length > 0 && (
             <>
               <h3 className="mb-1 mt-4 text-xs font-semibold text-slate-700">Review notes</h3>
