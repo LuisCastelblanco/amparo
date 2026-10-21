@@ -47,6 +47,12 @@ class Settings(BaseSettings):
 
     frontend_origin: str = "http://localhost:3000"
 
+    # Intake grounding: share of a descriptive field's content words (denied service, special condition)
+    # that must appear in the narrative, in some form, to accept it without escalating.
+    grounding_min_overlap: float = 0.75
+    # The special condition is usually inferred and paraphrased; a lower bar still rejects invented ones.
+    grounding_min_overlap_condition: float = 0.5
+
     llm_max_retries: int = 3
     llm_timeout_seconds: float = 300.0
 
@@ -59,6 +65,9 @@ class Settings(BaseSettings):
     daily_cost_limit_usd: float = 2.0  # estimated LLM spend per UTC day, all clients
     max_concurrent_cases: int = 2  # per instance
     max_narrative_chars: int = 4000
+    # Clarifying-question checks (intake only, fast tier) per client IP per hour, per instance.
+    intake_rate_limit_per_hour: int = 10
+    max_clarifying_questions: int = 3
     max_tavily_searches_per_case: int = 10
     # "firestore" keeps counters across restarts and instances; "memory" is for local development.
     usage_store: str = "memory"

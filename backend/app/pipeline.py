@@ -7,18 +7,22 @@ import re
 import time
 from collections.abc import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from typing import Any, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
-from app import citations, grounding, sources
+from app import citations, document, grounding, sources
 from app.config import get_settings
-from app.llm import ChatResult, Tier, chat
+from app.llm import ChatResult, Tier, chat, estimate_cost
 from app.schemas import (
     CaseFacts,
+    ChannelExtraction,
+    ClarifyingQuestions,
     CitationCheck,
     CitationOutcome,
     CoherenceReview,
+    FilingChannel,
     FinalPackage,
     LegalAnalysis,
     PackageGuidance,
@@ -26,11 +30,13 @@ from app.schemas import (
     Precedent,
     Precedents,
     RelevanceReview,
+    ReviewerRuling,
+    ReviewerSummary,
     TutelaDraft,
     TutelaSections,
     VerificationReport,
 )
-from app.search import SearchResult, asearch_jurisprudence
+from app.search import OFFICIAL_DOMAINS, SearchResult, asearch_jurisprudence, asearch_official
 
 logger = logging.getLogger("amparo.pipeline")
 
@@ -50,6 +56,9 @@ MAX_TOKENS = {
     "rewrite": 4096,
     "coherence": 12288,
     "package": 4096,
+    "channel": 2048,
+    "summary": 3072,
+    "questions": 1024,
 }
 DISCLAIMER = (
     "Amparo es una herramienta de ayuda para la redacción y no constituye asesoría legal. "
@@ -87,19 +96,27 @@ class StepUsage:
     # Sends an intermediate SSE event (escalations, verification iterations) while the step runs.
     emit: Callable[[str, dict[str, Any]], None] = lambda event, data: None
     escalations: list[dict[str, Any]] = field(default_factory=list)
+    # Deterministic corrections made without an LLM call (e.g. an invented city set to null).
+    notes: list[str] = field(default_factory=list)
 
     def metrics(self) -> dict[str, Any]:
         costs = [c.cost_usd for c in self.calls]
+        # Counterfactual: the same calls, with the same token counts, priced at the reasoning tier.
+        reasoning = get_settings().model_for_tier("reasoning")
+        all_reasoning = [estimate_cost(reasoning, c.input_tokens, c.output_tokens) for c in self.calls]
         return {
             "models": list(dict.fromkeys(c.model for c in self.calls)),
             "final_model": self.calls[-1].model if self.calls else None,
             "escalations": self.escalations,
+            "notes": self.notes,
             "llm_calls": len(self.calls),
             "input_tokens": sum(c.input_tokens for c in self.calls),
             "output_tokens": sum(c.output_tokens for c in self.calls),
             "llm_latency_s": round(sum(c.latency_s for c in self.calls), 2),
             "cost_usd": round(sum(c for c in costs if c is not None), 6),
             "cost_complete": all(c is not None for c in costs),
+            "tiers": list(dict.fromkeys(c.tier for c in self.calls)),
+            "cost_all_reasoning_usd": round(sum(c for c in all_reasoning if c is not None), 6),
             "tavily_searches": self.tavily_searches,
         }
 
@@ -181,17 +198,24 @@ Rules:
 - Copy drug, procedure and diagnosis names exactly as the user wrote them.
 - servicio_negado: a short noun phrase (at most 8 words) naming only what was denied, in the user's words.
 - eps: the EPS name exactly as written. edad: the age in years if the narrative states it.
+- ciudad: just the name of the municipality where the person lives (e.g. "Sogamoso"), or of the department if that is all the narrative names (e.g. "Boyacá"); null if it names neither. Not the city of a clinic they are sent to.
 - Include every date the user mentions in fechas_relevantes and every document in anexos_mencionados.
 - Use null for an unknown age or special condition.
 - In datos_faltantes, ask short questions only for information that is critical to draft the tutela \
-(e.g. which EPS, what was denied, whether there is a medical prescription). Leave it empty otherwise.
+(e.g. which EPS, what was denied, whether there is a medical prescription), at most 3. Never ask for the \
+person's name, ID number, address or contact data; the document leaves those to fill in. Leave it empty otherwise.
 {OUTPUT_LANGUAGE}"""
 
 
 async def intake(narrative: str, usage: StepUsage) -> CaseFacts:
-    """Extract facts with the fast tier; escalate to the draft tier if any fact is not grounded."""
+    """Extract facts with the fast tier; escalate to the draft tier if a core fact is not grounded.
+
+    Ungrounded optional facts (city, special condition) are set to null instead.
+    """
     user = f"Narrative:\n{narrative}"
     facts = await structured("fast", CaseFacts, INTAKE_SYSTEM, user, usage, max_tokens=MAX_TOKENS["intake"])
+    facts, dropped = grounding.drop_ungrounded_optional(facts, narrative)
+    usage.notes += dropped
     issues = grounding.check(facts, narrative)
     if not issues:
         return facts
@@ -206,9 +230,31 @@ async def intake(narrative: str, usage: StepUsage) -> CaseFacts:
     logger.warning("intake not grounded, escalating to draft tier: %s", issues)
     usage.emit("escalated", escalation)
     facts = await structured("draft", CaseFacts, INTAKE_SYSTEM, user, usage, max_tokens=MAX_TOKENS["intake"])
+    facts, dropped = grounding.drop_ungrounded_optional(facts, narrative)
+    usage.notes += dropped
     escalation["remaining_issues"] = grounding.check(facts, narrative)
     usage.escalations.append(escalation)
     return facts
+
+
+QUESTIONS_SYSTEM = """You help a person in Colombia prepare an acción de tutela against their EPS. Read their \
+narrative and decide whether something CRITICAL to draft the tutela is missing. Critical means one of:
+- the name of the EPS;
+- what exactly was denied or delayed (drug, procedure, appointment, transport...);
+- whether a doctor prescribed or ordered it;
+- what the EPS did (denied it, never answered, authorized but did not deliver) and roughly when.
+Ask at most 3 short, plain questions in Spanish (usted), one per missing item, most important first.
+Never ask about something the narrative already says, even vaguely or in other words. Never ask for the person's \
+name, ID number, address or contact data. If nothing critical is missing, return an empty list."""
+
+
+async def clarifying_questions(narrative: str, usage: StepUsage, limit: int) -> list[str]:
+    """Questions for critical missing information, with the draft tier (the fast tier asks about what is there)."""
+    result = await structured(
+        "draft", ClarifyingQuestions, QUESTIONS_SYSTEM, f"Narrative:\n{narrative}", usage,
+        max_tokens=MAX_TOKENS["questions"],
+    )
+    return [q.strip() for q in result.preguntas if q.strip()][:limit]
 
 
 # --- Step 2: legal analysis --------------------------------------------------
@@ -339,7 +385,7 @@ cite every one that applies (normally 2 to 4), written as "Sentencia T-123 de 20
 each one says, based on its relevance note. Cite ONLY rulings from that list; never any other ruling, even \
 well-known ones. If the list is empty, cite no rulings.
 - pretensiones: concrete orders (e.g. authorize and deliver the service within 48 hours, comprehensive treatment).
-- Use bracket placeholders for personal data you do not have: [NOMBRE COMPLETO], [NÚMERO DE CÉDULA], [CIUDAD].
+- Never write the person's name, ID number, address or contact data; the document template adds them as \n[COMPLETAR: ...] placeholders. If a fact needs one, write a placeholder such as [COMPLETAR: nombre del médico].
 - juramento: state under oath that no other tutela has been filed for the same facts and rights.
 {OUTPUT_LANGUAGE}"""
 
@@ -360,62 +406,11 @@ def _numbered(items: list[str]) -> str:
     return "\n".join(f"{i}. {item}" for i, item in enumerate(clean, 1))
 
 
-def _right_name(right: str) -> str:
-    """'Derecho a la salud' -> 'la salud', so it reads well after 'mis derechos fundamentales a'."""
-    return re.sub(r"^(el\s+)?derecho\s+(fundamental\s+)?(a\s+|al\s+)?", "", right.strip(), flags=re.IGNORECASE)
-
-
-def assemble_tutela(facts: CaseFacts, s: TutelaSections) -> str:
-    derechos = ", ".join(_right_name(r) for r in s.derechos_vulnerados)
-    return f"""SEÑOR(A) JUEZ DE LA REPÚBLICA (REPARTO)
-[CIUDAD]
-E. S. D.
-
-REFERENCIA: ACCIÓN DE TUTELA
-ACCIONANTE: [NOMBRE COMPLETO], C.C. [NÚMERO DE CÉDULA]
-ACCIONADA: {facts.eps}
-
-[NOMBRE COMPLETO], mayor de edad, identificado(a) con cédula de ciudadanía No. [NÚMERO DE CÉDULA], \
-domiciliado(a) en [CIUDAD], actuando en nombre propio, presento ACCIÓN DE TUTELA contra {facts.eps}, \
-con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se \
-protejan mis derechos fundamentales a: {derechos}, con base en lo siguiente:
-
-I. HECHOS
-
-{_numbered(s.hechos)}
-
-II. DERECHOS VULNERADOS
-
-{_numbered(s.derechos_vulnerados)}
-
-III. FUNDAMENTOS JURÍDICOS
-
-{s.fundamentos_juridicos}
-
-IV. PRETENSIONES
-
-{_numbered(s.pretensiones)}
-
-V. PRUEBAS Y ANEXOS
-
-{_numbered(s.pruebas_y_anexos)}
-
-VI. JURAMENTO
-
-{s.juramento}
-
-VII. NOTIFICACIONES
-
-Accionante: [DIRECCIÓN], [TELÉFONO], [CORREO ELECTRÓNICO]
-Accionada: {facts.eps}, [DIRECCIÓN DE NOTIFICACIONES JUDICIALES DE LA EPS]
-
-Atentamente,
-
-
-______________________________
-[NOMBRE COMPLETO]
-C.C. [NÚMERO DE CÉDULA]
-"""
+def build_draft(facts: CaseFacts, sections: TutelaSections) -> TutelaDraft:
+    blocks = document.tutela_blocks(facts.eps, facts.ciudad, sections)
+    return TutelaDraft(
+        **sections.model_dump(), accionada=facts.eps, ciudad=facts.ciudad, texto_completo=document.render_text(blocks)
+    )
 
 
 async def draft(
@@ -434,7 +429,7 @@ async def draft(
             'ALLOWED RULINGS as "Sentencia T-123 de 2024".'
         )
         sections = await structured("draft", TutelaSections, DRAFT_SYSTEM, user + reminder, usage, max_tokens=budget)
-    return TutelaDraft(**sections.model_dump(), texto_completo=assemble_tutela(facts, sections))
+    return build_draft(facts, sections)
 
 
 # --- Step 5: verification ----------------------------------------------------
@@ -592,7 +587,7 @@ async def rewrite_without(
         # Never keep a flagged citation, even if the model left one behind.
         units[name][i] = strip_sentences(new, flagged) if _cites_any(new, flagged) else new
     sections = _rebuild(sections, units)
-    return TutelaDraft(**sections.model_dump(), texto_completo=assemble_tutela(facts, sections))
+    return build_draft(facts, sections)
 
 
 async def verify(
@@ -644,7 +639,7 @@ async def verify(
         sections = TutelaSections(**tutela.model_dump(include=set(_TEXT_FIELDS)))
         units = {name: [strip_sentences(u, flagged) for u in items] for name, items in _units(sections).items()}
         sections = _rebuild(sections, units)
-        tutela = TutelaDraft(**sections.model_dump(), texto_completo=assemble_tutela(facts, sections))
+        tutela = build_draft(facts, sections)
         outcomes += [
             CitationOutcome(
                 sentencia_id=sid, resultado="retirada_automatica", iteracion=iteration,
@@ -694,8 +689,123 @@ based on the case and the draft's annexes;
 reparto, online filing through the Rama Judicial's virtual filing service, no lawyer needed, the judge has \
 10 business days to decide; mention an interim measure (medida provisional) when urgency is high);
 - que_hacer_si_no_cumplen: what to do if the EPS does not comply (incidente de desacato before the same judge).
-Keep it short, concrete and in plain language.
+Keep it short, concrete and in plain language. Never write web addresses, e-mail addresses, phone numbers or \
+street addresses.
 {OUTPUT_LANGUAGE}"""
+
+CHANNEL_SYSTEM = f"""You read search results from official Colombian websites to tell a person how to file an \
+acción de tutela online in a given city. Pick the one result that best describes an official channel for filing \
+a tutela (an online filing service, or the e-mail of the oficina judicial / de reparto) that applies to that city \
+or to the whole country, and describe it in one or two sentences using only what that result says.
+- enlace and correo: copy them only if they appear verbatim in that result's text and are for filing; else null.
+- If no result describes a channel for filing a tutela, return fuente = -1.
+{OUTPUT_LANGUAGE}"""
+
+GENERAL_CHANNEL = (
+    "No se encontró en fuentes oficiales un canal específico para su ciudad. Puede presentar la tutela ante "
+    "cualquier juez del lugar donde ocurre la vulneración, en la oficina judicial o de reparto, o por el servicio "
+    "“Tutela en línea” de la Rama Judicial. No necesita abogado."
+)
+
+SUMMARY_SYSTEM = """You summarize a Colombian acción de tutela (written in Spanish) in English for reviewers who \
+do not read Spanish. Be faithful to the draft: no facts, rights, requests or rulings that are not in it. Keep it \
+short and plain. For each cited ruling, say in one sentence why the draft cites it.
+All text values in the JSON must be written in English."""
+
+_URL_RE = re.compile(r"(?:https?://|www\.)[^\s)\]>\"'<,;]+", re.IGNORECASE)
+_EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+
+
+def _contact_key(value: str) -> str:
+    return re.sub(r"^(https?://)?(www\.)?", "", value.strip().rstrip(".:").lower()).rstrip("/")
+
+
+def appears_in(value: str, text: str) -> bool:
+    """Whether a URL or e-mail address appears in `text` (ignoring scheme, www and case)."""
+    key = _contact_key(value)
+    haystack = re.sub(r"(https?://)|(www\.)", "", text.lower())
+    return bool(key) and key in haystack
+
+
+def scrub_contacts(text: str, allowed: set[str]) -> str:
+    """Remove every URL and e-mail address that does not come from a source that was found."""
+    keys = {_contact_key(a) for a in allowed if a}
+
+    def keep(m: re.Match) -> str:
+        return m.group() if _contact_key(m.group()) in keys else ""
+
+    text = _URL_RE.sub(keep, _EMAIL_RE.sub(keep, text))
+    text = re.sub(r"\(\s*\)|\[\s*\]", "", text)
+    return re.sub(r"[ \t]{2,}", " ", re.sub(r"[ \t]+([.,;:])", r"\1", text)).strip()
+
+
+async def filing_channel(ciudad: str, usage: StepUsage) -> FilingChannel:
+    """The official channel to file a tutela online in `ciudad`, from .gov.co sources found with Tavily."""
+    consulted = datetime.now(UTC).date().isoformat()
+    general = FilingChannel(ciudad=ciudad, encontrado=False, descripcion=GENERAL_CHANNEL, consultado=consulted)
+    queries = [
+        (f"recepción de tutelas en línea {ciudad} Rama Judicial", ["ramajudicial.gov.co"]),
+        (f"radicar acción de tutela en {ciudad}", OFFICIAL_DOMAINS),
+    ][: usage.budget.take(2)]
+    if not queries:
+        return general
+    outcomes = await asyncio.gather(*(asearch_official(q, d) for q, d in queries), return_exceptions=True)
+    usage.tavily_searches += len(queries)
+    results: list[SearchResult] = []
+    for (query, _), outcome in zip(queries, outcomes):
+        if isinstance(outcome, BaseException):
+            logger.warning("channel search failed query=%r error=%r", query, outcome)
+            continue
+        seen = {r.url for r in results}
+        results += [r for r in outcome if r.url not in seen]
+    results = results[:8]
+    if not results:
+        return general
+
+    listing = "\n\n".join(
+        f"[{i}] url: {r.url}\ntitle: {r.title}\ntext: {r.content[:SCREENING_CHARS]}" for i, r in enumerate(results)
+    )
+    extraction = await structured(
+        "fast", ChannelExtraction, CHANNEL_SYSTEM, f"City: {ciudad}\n\nResults:\n{listing}", usage,
+        max_tokens=MAX_TOKENS["channel"],
+    )
+    if not 0 <= extraction.fuente < len(results):
+        return general
+    source = results[extraction.fuente]
+    source_text = f"{source.url} {source.title} {source.content[:SCREENING_CHARS]}"
+    # Never show a link or e-mail address that is not in the source the model was shown.
+    enlace = extraction.enlace if extraction.enlace and appears_in(extraction.enlace, source_text) else None
+    correo = extraction.correo if extraction.correo and appears_in(extraction.correo, source_text) else None
+    return FilingChannel(
+        ciudad=ciudad,
+        encontrado=True,
+        descripcion=scrub_contacts(extraction.descripcion, {enlace or "", correo or "", source.url}),
+        enlace=enlace,
+        correo=correo,
+        fuente_url=source.url,
+        fuente_titulo=source.title or None,
+        consultado=consulted,
+    )
+
+
+async def reviewer_summary(tutela: TutelaDraft, report: VerificationReport, usage: StepUsage) -> ReviewerSummary:
+    """English summary of the final draft; only verified rulings are kept."""
+    verified = [c.sentencia_id for c in report.citas_verificadas]
+    sections = json.dumps(tutela.model_dump(include=set(_TEXT_FIELDS)), ensure_ascii=False, indent=2)
+    user = f"Draft sections (Spanish):\n{sections}\n\nCited rulings: {', '.join(verified) or 'none'}"
+    summary = await structured(
+        "fast", ReviewerSummary, SUMMARY_SYSTEM, user, usage, max_tokens=MAX_TOKENS["summary"]
+    )
+    rulings: list[ReviewerRuling] = []
+    for r in summary.rulings:
+        ids = citations.find_citations(r.ruling_id)
+        if ids and ids[0] in verified and ids[0] not in {x.ruling_id for x in rulings}:
+            rulings.append(r.model_copy(update={"ruling_id": ids[0]}))
+    return summary.model_copy(update={"rulings": rulings})
+
+
+async def _nothing() -> None:
+    return None
 
 
 async def package(
@@ -704,15 +814,26 @@ async def package(
     tutela: TutelaDraft,
     report: VerificationReport,
     usage: StepUsage,
+    english_summary: bool = False,
 ) -> FinalPackage:
     user = (
         f"Case facts:\n{_dump(facts)}\n\nUrgency: {legal.urgencia}\n\n"
         f"Draft annexes:\n{_numbered(tutela.pruebas_y_anexos)}"
     )
-    guidance = await structured(
-        "fast", PackageGuidance, PACKAGE_SYSTEM, user, usage, max_tokens=MAX_TOKENS["package"]
+    guidance, channel, summary = await asyncio.gather(
+        structured("fast", PackageGuidance, PACKAGE_SYSTEM, user, usage, max_tokens=MAX_TOKENS["package"]),
+        filing_channel(facts.ciudad, usage) if facts.ciudad else _nothing(),
+        reviewer_summary(tutela, report, usage) if english_summary else _nothing(),
     )
-    return FinalPackage(**guidance.model_dump(), draft=tutela, verification=report, aviso=DISCLAIMER)
+    allowed = {x for x in (channel.enlace, channel.correo, channel.fuente_url) if x} if channel else set()
+    guidance = guidance.model_copy(update={
+        "donde_radicar": scrub_contacts(guidance.donde_radicar, allowed),
+        "que_hacer_si_no_cumplen": scrub_contacts(guidance.que_hacer_si_no_cumplen, allowed),
+    })
+    return FinalPackage(
+        **guidance.model_dump(), draft=tutela, verification=report, canal_radicacion=channel,
+        resumen_revisores=summary, aviso=DISCLAIMER,
+    )
 
 
 # --- Orchestration -----------------------------------------------------------
@@ -720,12 +841,24 @@ async def package(
 STEPS = ("intake", "analysis", "research", "draft", "verify", "package")
 
 
-async def run_case(narrative: str) -> AsyncIterator[tuple[str, dict[str, Any]]]:
-    """Run all steps, yielding (event, payload) tuples for each step and the final result."""
+def with_answers(narrative: str, answers: list[tuple[str, str]]) -> str:
+    """The narrative plus the person's answers to the clarifying questions (skipped ones are left out)."""
+    answered = [(q.strip(), a.strip()) for q, a in answers if a.strip()]
+    if not answered:
+        return narrative
+    lines = "\n".join(f"- Pregunta: {q}\n  Respuesta: {a}" for q, a in answered)
+    return f"{narrative}\n\nRespuestas a preguntas aclaratorias:\n{lines}"
+
+
+async def run_case(narrative: str, english_summary: bool = False) -> AsyncIterator[tuple[str, dict[str, Any]]]:
+    """Run all steps, yielding (event, payload) tuples for each step and the final result.
+
+    english_summary adds an English summary of the final draft for reviewers (fast tier).
+    """
     state: dict[str, Any] = {}
     totals = {
         "input_tokens": 0, "output_tokens": 0, "cost_usd": 0.0, "latency_s": 0.0, "tavily_searches": 0,
-        "escalations": 0,
+        "escalations": 0, "cost_all_reasoning_usd": 0.0,
     }
 
     async def step_intake(u: StepUsage) -> BaseModel:
@@ -751,7 +884,9 @@ async def run_case(narrative: str) -> AsyncIterator[tuple[str, dict[str, Any]]]:
         return state["report"]
 
     async def step_package(u: StepUsage) -> BaseModel:
-        state["package"] = await package(state["facts"], state["legal"], state["draft"], state["report"], u)
+        state["package"] = await package(
+            state["facts"], state["legal"], state["draft"], state["report"], u, english_summary
+        )
         return state["package"]
 
     runners: dict[str, Callable[[StepUsage], Awaitable[BaseModel]]] = {
@@ -801,13 +936,17 @@ async def run_case(narrative: str) -> AsyncIterator[tuple[str, dict[str, Any]]]:
 
 
 def _accumulate(totals: dict[str, Any], metrics: dict[str, Any]) -> None:
-    for key in ("input_tokens", "output_tokens", "cost_usd", "latency_s", "tavily_searches"):
+    for key in ("input_tokens", "output_tokens", "cost_usd", "cost_all_reasoning_usd", "latency_s", "tavily_searches"):
         totals[key] += metrics[key]
     totals["escalations"] += len(metrics["escalations"])
 
 
 def _round(totals: dict[str, Any]) -> dict[str, Any]:
-    return totals | {"cost_usd": round(totals["cost_usd"], 6), "latency_s": round(totals["latency_s"], 2)}
+    return totals | {
+        "cost_usd": round(totals["cost_usd"], 6),
+        "cost_all_reasoning_usd": round(totals["cost_all_reasoning_usd"], 6),
+        "latency_s": round(totals["latency_s"], 2),
+    }
 
 
 def _error_message(exc: Exception) -> str:

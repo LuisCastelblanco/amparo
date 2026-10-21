@@ -49,12 +49,19 @@ def fmt_metrics(m: dict) -> str:
     return " ".join(parts)
 
 
-async def run(title: str, narrative: str, quiet: bool) -> tuple[dict, list[dict]]:
+def fmt_routing(t: dict) -> str:
+    """Real cost against the counterfactual of running every call on the reasoning tier."""
+    real, ultra = t.get("cost_usd", 0), t.get("cost_all_reasoning_usd", 0)
+    ratio = f"{ultra / real:.1f}x cheaper" if real else "n/a"
+    return f"real=${real:.6f} all-reasoning=${ultra:.6f} ({ratio})"
+
+
+async def run(title: str, narrative: str, quiet: bool, english_summary: bool) -> tuple[dict, list[dict]]:
     print(f"\n{'#' * 78}\n# {title}\n{'#' * 78}")
     summary: dict = {"title": title, "steps": {}, "completed": False, "escalations": []}
     recorded: list[dict] = []
     start = time.perf_counter()
-    async for event, data in run_case(narrative):
+    async for event, data in run_case(narrative, english_summary=english_summary):
         recorded.append({"t": round(time.perf_counter() - start, 2), "event": event, "data": data})
         if event == "escalated":
             summary["escalations"].append(data)
@@ -79,9 +86,17 @@ async def run(title: str, narrative: str, quiet: bool) -> tuple[dict, list[dict]
             summary["totals"] = data["totals"]
         elif event == "case_completed":
             pkg = data["package"]
-            summary.update(completed=True, totals=data["totals"], verification=pkg["verification"])
+            summary.update(
+                completed=True, totals=data["totals"], verification=pkg["verification"],
+                channel=pkg.get("canal_radicacion"), reviewer_summary=bool(pkg.get("resumen_revisores")),
+            )
             if not quiet:
-                guidance = {k: pkg[k] for k in ("checklist_anexos", "donde_radicar", "que_hacer_si_no_cumplen", "aviso")}
+                guidance = {
+                    k: pkg.get(k) for k in (
+                        "checklist_anexos", "donde_radicar", "que_hacer_si_no_cumplen", "canal_radicacion",
+                        "resumen_revisores", "aviso",
+                    )
+                }
                 print(f"\n{'=' * 78}\nDRAFT\n{'=' * 78}\n{pkg['draft']['texto_completo']}")
                 print(f"\n{'=' * 78}\nVERIFICATION\n{'=' * 78}")
                 print(json.dumps(pkg["verification"], ensure_ascii=False, indent=2))
@@ -92,6 +107,7 @@ async def run(title: str, narrative: str, quiet: bool) -> tuple[dict, list[dict]
         f"\nTOTAL tokens in/out={t.get('input_tokens')}/{t.get('output_tokens')} "
         f"latency={t.get('latency_s')}s cost=${t.get('cost_usd', 0):.6f}"
     )
+    print(f"ROUTING {fmt_routing(t)}")
     return summary, recorded
 
 
@@ -111,12 +127,21 @@ def print_summary(summaries: list[dict]) -> None:
             )
             for o in v["ciclo"]:
                 print(f"    {o['sentencia_id']}: {o['resultado']} (iteration {o['iteracion']})")
+        if s.get("channel"):
+            c = s["channel"]
+            print(f"  filing channel ({c['ciudad']}): found={c['encontrado']} source={c.get('fuente_url')}")
+        if "reviewer_summary" in s:
+            print(f"  english summary: {'yes' if s['reviewer_summary'] else 'no'}")
         for e in s["escalations"]:
             print(f"  escalated {e['step']}: {e['from_model']} -> {e['to_model']} ({'; '.join(e['reasons'])})")
         for step, m in s["steps"].items():
             print(f"  {step:<9} {fmt_metrics(m)}")
         t = s.get("totals", {})
         print(f"  {'TOTAL':<9} latency={t.get('latency_s')}s cost=${t.get('cost_usd', 0):.6f}")
+        print(f"  {'ROUTING':<9} {fmt_routing(t)}")
+        print("  models per step: " + ", ".join(
+            f"{step}={(m.get('final_model') or '-').split('/')[-1]}" for step, m in s["steps"].items()
+        ))
 
 
 async def main() -> None:
@@ -126,6 +151,7 @@ async def main() -> None:
     parser.add_argument("--quiet", action="store_true", help="only print metrics")
     parser.add_argument("--verbose", action="store_true", help="show LLM call logs")
     parser.add_argument("--record", metavar="DIR", help="save every SSE event of each case as DIR/<case>.json")
+    parser.add_argument("--english-summary", action="store_true", help="add the English reviewer summary")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING)
     logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -134,7 +160,8 @@ async def main() -> None:
     summaries = []
     for path in paths:
         title, narrative = load_case(path)
-        summary, recorded = await run(title, narrative, args.quiet)
+        # Recorded sample runs always include the English reviewer summary.
+        summary, recorded = await run(title, narrative, args.quiet, args.english_summary or bool(args.record))
         summaries.append(summary)
         if args.record:
             out = Path(args.record) / f"{Path(path).stem}.json"

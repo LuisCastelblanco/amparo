@@ -26,6 +26,8 @@ MESSAGES = {
     "live_runs_disabled": "Live runs are switched off for now. You can still watch a recorded sample run.",
     "usage_unavailable": "Live runs are temporarily unavailable. Please try again in a minute, "
     "or watch a recorded sample run.",
+    "intake_limit": "You have checked too many stories in the last hour. Please try again later, "
+    "or watch a recorded sample run.",
     "busy": "Amparo is already drafting the maximum number of cases at once. Please try again in a minute.",
     "ip_hourly_limit": "You have reached the limit of {limit} cases per hour. Please try again later, "
     "or watch a recorded sample run.",
@@ -93,6 +95,9 @@ class UsageStore(Protocol):
 
     async def record_refusal(self, now: datetime, code: str) -> None: ...
 
+    async def record_intake(self, now: datetime, cost_usd: float) -> None:
+        """Count a clarifying-question check and its spend against the daily budget."""
+
     async def day(self, now: datetime) -> dict[str, Any]: ...
 
 
@@ -123,6 +128,11 @@ class MemoryStore:
     async def record_refusal(self, now: datetime, code: str) -> None:
         refused = self._day_doc(now)["refused"]
         refused[code] = refused.get(code, 0) + 1
+
+    async def record_intake(self, now: datetime, cost_usd: float) -> None:
+        day = self._day_doc(now)
+        day["cost_usd"] += cost_usd
+        day["intake_checks"] = day.get("intake_checks", 0) + 1
 
     async def day(self, now: datetime) -> dict[str, Any]:
         return dict(self._day_doc(now))
@@ -183,6 +193,11 @@ class FirestoreStore:
 
     async def record_refusal(self, now: datetime, code: str) -> None:
         await self.col.document(f"day-{_day(now)}").set({"refused": {code: self.fs.Increment(1)}}, merge=True)
+
+    async def record_intake(self, now: datetime, cost_usd: float) -> None:
+        await self.col.document(f"day-{_day(now)}").set(
+            {"cost_usd": self.fs.Increment(cost_usd), "intake_checks": self.fs.Increment(1)}, merge=True
+        )
 
     async def day(self, now: datetime) -> dict[str, Any]:
         snap = await self.col.document(f"day-{_day(now)}").get()
@@ -261,6 +276,32 @@ class Concurrency:
 
 
 concurrency = Concurrency()
+
+
+class IntakeLimiter:
+    """Sliding one-hour window of clarifying-question checks per hashed IP, in this instance.
+
+    A check is a single fast-tier call; its spend still counts against the shared daily budget.
+    """
+
+    WINDOW_S = 3600.0
+
+    def __init__(self) -> None:
+        self._hits: dict[str, list[float]] = {}
+
+    def allow(self, ip_hash: str) -> bool:
+        now = time.monotonic()
+        hits = [t for t in self._hits.get(ip_hash, []) if t > now - self.WINDOW_S]
+        if len(hits) >= get_settings().intake_rate_limit_per_hour:
+            self._hits[ip_hash] = hits
+            return False
+        self._hits[ip_hash] = [*hits, now]
+        if len(self._hits) > 10_000:  # bound memory: drop idle IPs
+            self._hits = {k: v for k, v in self._hits.items() if v and v[-1] > now - self.WINDOW_S}
+        return True
+
+
+intake_limiter = IntakeLimiter()
 
 
 def now_utc() -> datetime:
