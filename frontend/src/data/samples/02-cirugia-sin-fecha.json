@@ -12,32 +12,24 @@
    }
   },
   {
-   "t": 1.46,
+   "t": 2.1,
    "event": "step_completed",
    "data": {
     "step": "intake",
     "index": 1,
     "result": {
      "eps": "Vida Plena Salud",
-     "servicio_negado": "cirugía",
+     "servicio_negado": "cirugía de microdiscectomía",
      "diagnostico": "hernia discal L4-L5",
      "ciudad": null,
      "fechas_relevantes": [
       {
-       "fecha": "marzo de este año",
-       "evento": "inicio de dolor en espalda que baja por pierna izquierda"
-      },
-      {
        "fecha": "15 de abril de 2026",
-       "evento": "orden de la cirugía (microdiscectomía)"
+       "evento": "orden de la cirugía"
       },
       {
-       "fecha": "2 de mayo",
+       "fecha": "2 de mayo de 2026",
        "evento": "autorización de la cirugía por la EPS"
-      },
-      {
-       "fecha": "julio",
-       "evento": "presentación de queja ante la Superintendencia de Salud"
       }
      ],
      "situacion_del_paciente": {
@@ -45,13 +37,12 @@
       "condicion_especial": null
      },
      "anexos_mencionados": [
-      "orden de la cirugía (microdiscectomía) - 15 de abril de 2026",
-      "autorización de la EPS - 2 de mayo"
+      "orden de la cirugía (microdiscectomía)",
+      "papel de autorización de la EPS Vida Plena Salud"
      ],
      "datos_faltantes": [
-      "¿Cuál EPS aparece en la autorización?",
-      "¿Qué fue lo que le negaron?",
-      "¿Existe alguna incapacidad médica documentada?"
+      "¿Cuál es el número de identificación del afiliado que envía la EPS? (necesario para verificar los rechazos)",
+      "¿Existe alguna prescripción escrita del ortopedista que justifique la cirugía programada? (para documentar la urgencia)"
      ]
     },
     "metrics": {
@@ -61,25 +52,26 @@
      "final_model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
      "escalations": [],
      "notes": [
-      "city not found in the narrative, ignored: 'Sogamoso'"
+      "city not found in the narrative, ignored: 'Boyacá'",
+      "special condition not found in the narrative, ignored: 'incapacidad laboral total por dolor y debilidad en pierna izquierda; caídas recientes en casa que requieren atención médica.'"
      ],
      "llm_calls": 1,
      "input_tokens": 607,
-     "output_tokens": 334,
-     "llm_latency_s": 1.46,
-     "cost_usd": 0.000117,
+     "output_tokens": 315,
+     "llm_latency_s": 2.09,
+     "cost_usd": 0.000112,
      "cost_complete": true,
      "tiers": [
       "fast"
      ],
-     "cost_all_reasoning_usd": 0.001609,
+     "cost_all_reasoning_usd": 0.001552,
      "tavily_searches": 0,
-     "latency_s": 1.46
+     "latency_s": 2.1
     }
    }
   },
   {
-   "t": 1.46,
+   "t": 2.1,
    "event": "step_started",
    "data": {
     "step": "analysis",
@@ -88,7 +80,7 @@
    }
   },
   {
-   "t": 4.55,
+   "t": 4.92,
    "event": "step_completed",
    "data": {
     "step": "analysis",
@@ -99,19 +91,18 @@
       "vida digna",
       "seguridad social",
       "dignidad humana",
-      "trabajo",
-      "protección de la familia"
+      "trabajo"
      ],
      "procedencia_tutela": {
       "procede": true,
-      "razon": "La EPS autorizó la cirugía pero no la programa desde hace más de cinco meses, agotando la vía ordinaria (queja en Superintendencia sin resultado) y generando un daño irreparable por la incapacidad laboral y el riesgo neurológico progresivo."
+      "razon": "Se agotaron vías ordinarias: la EPS autorizó pero no ejecutó la cirugía en >5 meses y la queja en Superintendencia (julio) no tuvo resolución; hay riesgo inminente de daño neurológico irreversible y colapso socioeconómico familiar."
      },
      "urgencia": "alta",
      "queries_de_busqueda": [
-      "tutela hernia discal microdiscectomía retraso cirugía autorizada EPS",
-      "acción de tutela derecho salud cirugía columna vertebral demora irrazonable",
-      "tutela EPS autorización cirugía no programación agenda dignidad humana",
-      "sentencia tutela trabajador conductor hernia discal incapacidad laboral"
+      "tutela microdiscectomía hernia discal L4-L5 demora injustificada EPS autorización",
+      "acción tutela cirugía columna vertebral urgencia neurológica caída riesgo déficit irreversible",
+      "tutela derecho salud seguridad social trabajador conductor bus hernia discal providencia familiar",
+      "sentencia tutela incumplimiento autorización quirúrgica EPS Superintendencia ineficaz"
      ]
     },
     "metrics": {
@@ -122,22 +113,22 @@
      "escalations": [],
      "notes": [],
      "llm_calls": 1,
-     "input_tokens": 783,
-     "output_tokens": 849,
-     "llm_latency_s": 3.09,
-     "cost_usd": 0.00333,
+     "input_tokens": 738,
+     "output_tokens": 697,
+     "llm_latency_s": 2.82,
+     "cost_usd": 0.002829,
      "cost_complete": true,
      "tiers": [
       "reasoning"
      ],
-     "cost_all_reasoning_usd": 0.00333,
+     "cost_all_reasoning_usd": 0.002829,
      "tavily_searches": 0,
-     "latency_s": 3.09
+     "latency_s": 2.82
     }
    }
   },
   {
-   "t": 4.55,
+   "t": 4.92,
    "event": "step_started",
    "data": {
     "step": "research",
@@ -146,7 +137,7 @@
    }
   },
   {
-   "t": 17.8,
+   "t": 23.76,
    "event": "step_completed",
    "data": {
     "step": "research",
@@ -156,11 +147,11 @@
       {
        "sentencia_id": "T-549/23",
        "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-549-23.htm",
-       "resumen_relevancia": "Reafirma que una cirugía (microdiscectomía) es necesaria y debe autorizarse cuando el médico tratante la prescribe, como en este caso; demuestra que la EPS puede ser obligada a responder a la urgencia de la intervención por el riesgo a la salud del paciente.",
-       "extracto_fuente": "6. De la misma\nmanera, la tutelante solicitó que se le conceda la garantía de atención integral,\npues considera que necesita atención permanente e inmediata. Además, la\naccionante pidió que se tuviera en cuenta la tardanza de la entidad Nueva EPS\nfrente al procedimiento quirúrgico que, en su caso, no tiene un propósito\nestético, sino que es necesario para su salud(#_ftn7).\n\n \n\n7. El conocimiento de\nla acción de tutela le correspondió al Juzgado Quinto Administrativo Oral del Circuito\nde Cúcuta. Tras la admisión de la acción, el juez orden oficiar a la Nueva EPS\ny al médico tratante con el propósito de indagar por el carácter funcional de\nla intervención prescrita y la razones por las que la EPS permanecía renuente a\nsu realización(#_ftn8).\n\n \n\nRespuestas\na la acción de tutela [...] 9. La Sala\ntambién considera que el requisito de inmediatez está satisfecho. Actualmente, a la accionante no se le ha practicado el\nprocedimiento pretendido ni ha recibido la autorización para ello por parte de\nla EPS, por lo que esta última omisión, que podría estimarse como violatoria de\nlos derechos fundamentales de la tutelante, está vigente. De tal manera, la\ninterposición de la acción de tutela es razonable y proporcionada. [..",
+       "resumen_relevancia": "Este fallo reconoce la vulneración del derecho a la salud al no garantizar oportunamente una cirugía plástica programada y señala que la EPS incurre en responsabilidad cuando retrasa la intervención después de haber sido ordenada por el juez.",
+       "extracto_fuente": "41. En\nprimer lugar, como se expuso previamente, en el caso de la señora Laura\nes apreciable que la Nueva EPS ha incurrido en demoras injustificadas respecto\nde la garantía de los servicios médicos requeridos por la accionante. En un\nprimer momento, la señora Laura tuvo que acudir a una acción de tutela\nprevia con la finalidad de que se le ordenara a la accionada autorizar y\ngarantizar la valoración por la especialidad de cirugía plástica.\nPosteriormente, si bien la Nueva EPS cumplió el referido fallo de tutela,\nextendió su actuar omisivo a la realización de la intervención quirúrgica\nordenada por el médico tratante Raúl. Esta nueva barrera no es\njustificable si se tiene en cuenta el hecho de que el concepto del profesional [...] En este sentido, la Sala concluyó que la EPS accionada\nvulneró los derechos fundamentales de la accionante como consecuencia de la\ndilación injustificada en la realización del procedimiento. Como remedio\njudicial a esa situación, la Sala orden a la Nueva EPS garantizar la\nmaterialización inmediata del procedimiento. Adicionalmente, la Sala evidenció\nla importancia de ordenar el tratamiento integral por el diagnóstico al que se\nrefirió esta acción de tutela dado que el actuar de la",
        "origen": "busqueda",
        "charset": "windows-1252",
-       "acentos_restaurados": 30,
+       "acentos_restaurados": 25,
        "citas_mencionadas": [
         "SU-508/20",
         "T-414/16",
@@ -197,80 +188,44 @@
        ]
       },
       {
-       "sentencia_id": "T-041/19",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2019/t-041-19.htm",
-       "resumen_relevancia": "Subraya que la denegación de un procedimiento quirúrgico que pone en peligro la dignidad humana y la vida del individuo constituye violación del derecho fundamental a la salud, lo cual es directamente aplicable al caso de hernia discal L4-L5 y la postergación de la cirugía autorizada.",
-       "extracto_fuente": "Dicha\nrelación también implica que las afectación o puesta en peligro del derecho a\nla salud, niegue la dignidad humana del sujeto y comprometa su derecho a vivir\nbien, a no recibir tratos crueles inhumanos o degradantes y a contar con las\ncondiciones mínimas de existencia.\n\n \n\n39. En la sentencia T-499 de\n1992, la Corte estudió una acción de tutela interpuesta por quien padecía\nuna lesión en la columna vertebral que le ocasionada severos dolores; su médico\ntratante le había ordenado la realización de un procedimiento quirúrgico; sin\nembargo el mismo no había sido realizado por la EPS accionada. En esa oportunidad\nprecisó la Corporación: [...] 9. Con fundamento en lo anterior solicitó la\nprotección de los derechos invocados y, en consecuencia, se ordene a la Unión\nTemporal Iluminación del Oriente: i) proceder al reintegro; ii) cancelar los\nsalarios y prestaciones sociales adeudadas desde marzo de 2018 hasta la fecha\nen que se haga efectivo el reintegro, y iii) cancelar el valor de las sanciones\na que haya lugar. De otro lado, requirió ordenar la realización de la cirugía neurólisis\nquímica de columna posterior T7 a T9 guiada por fluroscopia.\n\nTraslado y contestación a\nla acción de tutela",
+       "sentencia_id": "SU-096/18",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2018/su096-18",
+       "resumen_relevancia": "Aunque la EPS menciona la negativa inicial a realizar un procedimiento, el caso destaca la obligación de los entes de salud de no demorar tratamientos médicos urgentes, lo que es pertinente para la dilación sufrida por el paciente para operarse la hernia discal.",
+       "extracto_fuente": "El 05 de enero de 2018 la accionante presentó acción de tutela contra la EPS Compensar ante la negativa de esta y de sus IPS de practicarle el procedimiento",
+       "origen": "busqueda",
+       "charset": "utf-8",
+       "acentos_restaurados": 0,
+       "citas_mencionadas": []
+      },
+      {
+       "sentencia_id": "T-936/09",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2009/T-936-09.htm",
+       "resumen_relevancia": "Aborda la responsabilidad de las EPS cuando se niegan a autorizar intervenciones médicas esenciales; el razonamiento se aplica para fundamentar la exigencia de pronta cirugía para la hernia discal del patient.",
+       "extracto_fuente": "Respuestas de las entidades\ndemandadas\n\n10. El da veintitrés (23) de\njunio de 2009, Seguros Colpatria - Administradora de Riesgos Profesionales,\nresponde la acción de tutela reseñando que la enfermedad hernia discal L4 y\nL5, no es producto del accidente de trabajo que padeció el actor, sino que por\nel contrario es de origen común y que actualmente el dictamen de la Junta de\nCalificación de Invalidez Regional, se encuentra en apelación en la Junta\nNacional de Calificación de Invalidez.\n\nFinalmente arguye Seguros\nColpatria, que no ha vulnerado derecho alguno al accionante, pues de su\nconducta no afecta los derechos solicitados por el actor.(#_ftn33) [...] A. Caso 1\n\nExpediente T-2.326.074\n\nEl pasado veintitrés (23) de\nabril de dos mil nueve (2009), el ciudadano José Dandy Peña Carabali, interpuso\nacción de tutela por intermedio de la abogada de la defensoría pública, Liliana\nPatricia Delgado Sanabria, solicitando el amparo de sus derechos fundamentales\nal trabajo, la seguridad social, igualdad, debido proceso, salud, dignidad,\nprotección a la familia, al mínimo vital y a la vida, los cuales, en su\nopinión, han sido vulnerados por Sypel & Cia Ltda y Aseguradora de Riesgos\nProfesionales Seguros Bolívar.",
        "origen": "busqueda",
        "charset": "windows-1252",
-       "acentos_restaurados": 26,
+       "acentos_restaurados": 18,
        "citas_mencionadas": [
-        "C-543/92",
-        "T-426/18",
-        "T-151/17",
-        "T-405/15",
-        "T-442/17",
-        "T-317/17",
-        "T-198/06",
-        "T-340/17",
-        "SU-049/17",
-        "T-320/16",
-        "T-050/11",
-        "T-461/12",
-        "T-502/17",
-        "T-305/18",
-        "T-697/14",
-        "T-033/13",
-        "T-499/92",
-        "T-365/06",
-        "T-690/06",
-        "C-313/14",
-        "T-030/18",
-        "T-334/16",
-        "T-325/18",
-        "T-395/18",
-        "T-019/18",
-        "SU-961/99",
-        "T-243/08",
-        "T-246/15",
-        "T-080/18",
-        "T-245/18",
-        "SU-047/17",
-        "T-1023/08",
-        "T-449/08",
-        "T-002/11",
-        "T-520/17",
-        "T-440/17",
-        "T-437/09",
-        "T-928/14",
+        "T-062/07",
+        "C-453/02",
         "C-531/00",
-        "T-784/09",
-        "T-417/10",
-        "T-1040/01",
-        "T-613/11",
-        "T-132/11",
-        "T-111/12",
-        "T-056/14",
-        "T-432/13",
-        "T-016/07",
-        "T-138/12",
-        "T-065/10",
-        "C-077/17",
-        "T-527/08",
-        "T-855/12",
-        "T-512/17",
-        "T-379/18",
-        "T-664/17"
+        "T-307/08",
+        "T-351/03",
+        "T-198/06",
+        "T-449/08",
+        "T-1083/07",
+        "T-263/09",
+        "T-072/07"
        ]
       },
       {
        "sentencia_id": "T-152/26",
        "url": "https://www.corteconstitucional.gov.co/relatoria/2026/T-152-26.htm",
-       "resumen_relevancia": "Reitera que la EPS debe haber valorado los diagnósticos y los factores de riesgo antes de negar o tardar en autorizar un procedimiento quirúrgico, indicando que la falta de valoración adecuada vulnera el derecho a la salud y permite la acción de tutela.",
-       "extracto_fuente": "\n\nEn este sentido,\nla Sala encuentra satisfecho el requisito de subsidiariedad, de conformidad\ncon el numeral 1 del artículo 6 del Decreto 2591 de 1991.\n\n \n\n8. Problema jurídico y metodología de la decisión\n\n \n\n21. Problema\njurídico.En vista de que la\nacción de tutela es procedente para la protección de los derechos fundamentales\na la salud y a la dignidad humana de la accionante, los cuales presuntamente\nfueron transgredidos por la EPS Sanitas al no haber autorizado un procedimiento\nquirúrgico por lipodistrofia sin valorar para el efecto los diagnósticos de la\nsalud física y mental de la accionante, a la Sala Cuarta de Revisión le\ncorresponde resolver el siguiente problema jurídico: [...] | Qué consideró la Corte? | La Sala reiteró la jurisprudencia sobre el derecho fundamental a la salud y su relación intrínseca con el derecho a la dignidad humana. También abordó el ejercicio de la acción de tutela para la realización de cirugías plásticas reconstructivas con fines funcionales, así como la valoración de la salud física y mental de los pacientes para determinar la funcionalidad de los procedimientos.     Al estudiar el caso concreto, la Sala encontró que la EPS Sanitas omitió evaluar de forma integral las co",
+       "resumen_relevancia": "Establece que la tutela es el medio idóneo para proteger derechos de salud vulnerados por una EPS y señala la urgencia de atender esas vulneraciones, lo que sustenta la utilidad de esta ruta para reclamar la autorización inmediata de la microdiscectomía.",
+       "extracto_fuente": "de la impugnación, del término para proferir la decisión de segunda instancia y de los mecanismos para garantizar el cumplimiento de la decisión.     Este aspecto fue precisado en la Sentencia SU-508 de 2020(#_ftn18), en la cual se indicó que el trámite ante la Superintendencia Nacional de Salud no es un mecanismo idóneo ni eficaz por las limitaciones operativas que tiene y los vacíos en su regulación. Por lo anterior, la acción de tutela es el mecanismo judicial para proteger el derecho a la salud presuntamente vulnerado, por la negativa de la EPS Sanitas de realizarle a la accionante una valoración en junta médica que estableciera si resulta apta para la práctica de una cirugía.     En este contexto, en relación con el caso concreto, la Sala estima que la eventual negativa o [...] Este\naspecto fue precisado en la Sentencia SU-508 de 2020(#_ftn18),\nen la cual se indicó que el trámite ante la Superintendencia Nacional de\nSalud no es un mecanismo idóneo ni eficaz por las limitaciones operativas que\ntiene y los vacíos en su regulación. Por lo anterior, la acción de tutela es\nel mecanismo judicial para proteger el derecho a la salud presuntamente\nvulnerado, por la negativa de la EPS Sanitas de realizarle ",
        "origen": "busqueda",
        "charset": "windows-1252",
-       "acentos_restaurados": 28,
+       "acentos_restaurados": 21,
        "citas_mencionadas": [
         "SU-508/20",
         "T-259/19",
@@ -326,48 +281,9 @@
        ]
       },
       {
-       "sentencia_id": "T-293/22",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2022/t-293-22.htm",
-       "resumen_relevancia": "",
-       "extracto_fuente": "10.           \nLa ARL Sura indicó que el accionante tuvo cobertura de afiliación\npor parte de la Aseguradora desde el 10 de noviembre de 2020 hasta el 30 de\njunio de 2021. Indicó que el accidente de trabajo ocurrió el 27 de noviembre de\n2020 y que persistía la incapacidad laboral por hernia discal. La ARL\nsolicitó su desvinculación del presente trámite y que se negara por\nimprocedente la tutela incoada(#_ftn9).\n\n \n\n11.           \nMedimás\nEPS indicó que el accionante registró una relación laboral con la empresa desde\nel 10 de noviembre de 2020 hasta el 30 de junio de 2021. Indicó que no le ha\nnegado ningún servicio al accionante y solicitó su desvinculación.\n\n \n\n3. Sentencias objeto de revisión [...] 61.           \nSegún\nlo expuesto por el accionante, el 1 de mayo de 2020 ingresó a trabajar en la\nempresa Palmar(#_ftn48). El 27 de noviembre de\n2020 sufrió un accidente laboral. Dicho accidente se presentó cuando el actor\nrealizaba las labores propias del cargo de conductor al servicio de la empresa\naccionada(#_ftn49). El accionante fue diagnosticado con ruptura traumática de disco\nintervertebral lumbar(#_ftn50). Esto le\nocasionó una hernia con tratamiento quirúrgico(#_ftn51)\nque le impidió continuar con sus a",
-       "origen": "busqueda",
-       "charset": "windows-1252",
-       "acentos_restaurados": 25,
-       "citas_mencionadas": [
-        "C-531/00",
-        "C-824/11",
-        "T-1040/01",
-        "T-1083/07",
-        "T-106/15",
-        "T-351/15",
-        "SU-049/17",
-        "T-305/18",
-        "T-041/19",
-        "T-478/19",
-        "T-273/20",
-        "SU-380/21",
-        "C-200/19",
-        "T-201/18",
-        "T-029/16",
-        "T-589/17",
-        "SU-075/18",
-        "T-151/17",
-        "T-834/05",
-        "T-887/09",
-        "T-427/19",
-        "SU-961/99",
-        "SU-108/18",
-        "T-405/15",
-        "T-317/17",
-        "T-340/17",
-        "T-442/17",
-        "T-449/08"
-       ]
-      },
-      {
        "sentencia_id": "T-461/05",
        "url": "https://www.corteconstitucional.gov.co/Relatoria/2005/T-461-05.htm",
-       "resumen_relevancia": "",
+       "resumen_relevancia": "Reitera que la tutela protege derechos de los menores y pacientes frente a la negativa de EPS de autorizar cirugías vitales, indicando que la dilación resulta en vulneración del derecho fundamental a la salud.",
        "extracto_fuente": "Finalmente,\nexpresó que ha realizado las gestiones pertinentes ante la EPS demandada, pero\nno ha sido posible la autorización de la intervención quirúrgica del menor, a\nsabiendas que la requiere con urgencia.\n\n \n\nB. Trámite procesal\n\n \n\nUna vez admitida la acción, el\nJuzgado Primero Penal Municipal de Santa Marta ordenó la notificación a la\nentidad demandada, a fin de que se pronuncie sobre la veracidad de los hechos\nque dieron origen a la tutela y explicar así las razones por las cuales ha\nprocedido de esa manera. Igualmente ordenó como medida provisional realizar las\ngestiones tendientes a la realización de la cirugía programada en varias\nocasiones.\n\nC.\nRespuesta de la entidad demandada al juez de tutela. [...] Sentencia T-461/05\n\n \n\nDERECHO A LA SALUD DEL\nMENOR-Cirugía\nde hernia\n\n \n\nEn aras de proteger los derechos\nvulnerados, se ordenará a la EPS, que en el término de cuarenta y ocho horas\n(48), contadas a partir de la notificación de esta providencia, si aún no lo\nhubiere hecho, autorice la práctica de la intervención quirúrgica determinada\npor el médico tratante para la Hernía Inguinal Izquierda y Hernía Umbilical,\nsolicitado por la señora Yoyce Bahamon Perdomo en representación de su menor\nhijo Stev",
        "origen": "busqueda",
        "charset": "windows-1252",
@@ -391,172 +307,136 @@
        ]
       },
       {
-       "sentencia_id": "T-688/98",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/1998/t-688-98.htm",
-       "resumen_relevancia": "Establece que incluso una cirugía no urgente puede ser protegida mediante acción de tutela cuando hay retardo en su programación, lo que evidencia que la autoridad judicial puede exigir la autorización inmediata del procedimiento solicitado.",
-       "extracto_fuente": "Sentencia T-688/98\n\nACCION DE TUTELA-Procedencia por retardo en programación de\ncirugía no urgente/DERECHO A LA SALUD-Retardo en programación de cirugía\nno urgente\n\n \n\nEl retardo en la\nprogramación de una cirugía, que no tiene el carácter urgente, pues no está de\npor medio un riesgo inminente a la vida, puede ser protegido a través de la\nacción de tutela.\n\nPRINCIPIO DE\nDIGNIDAD HUMANA-Suministro\na afiliado de fecha exacta sobre intervención quirúrgica/DERECHO A LA SALUD-Suministro\na afiliado de fecha exacta sobre intervención quirúrgica [...] a) El retardo en\nla programación de una cirugía, que no tiene el carácter urgente, pues no está\nde por medio un riego inminente a la vida, puede ser protegido a través de la\nacción de tutela.\n\n \n\nLa Corte\nConstitucional, en numerosas sentencias, ha fijado los siguientes criterios\ngenerales sobre la procedencia de la tutela en estos casos :\n\n \n\n- El derecho a la\nseguridad social y a la salud pueden ser fundamentales por conexidad, según el\ncaso concreto. Además, constituyen un elemento indispensable para tener una\nvida en condiciones dignas (sentencia T-042 de 1996). [...] I. ANTECEDENTES.\n\n \n\nLa señora Magola Orozco Salazar presentó\nacción de tutela el 18 de agosto de",
+       "sentencia_id": "T-789/05",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2005/t-789-05.htm",
+       "resumen_relevancia": "Detalla que la tutela es procedente when se vulnera el derecho a la salud por falta de autorización o dilación en tratamientos médicos, un precedente que respalda la pertinencia de la acción judicial actual.",
+       "extracto_fuente": "I. ANTECEDENTES\n\n \n\nEl 17 de agosto de 2004, Albeiro Montoya\nGiraldo promovió acción de tutela contra Coomeva EPS, por estimar vulnerados\nsus derechos fundamentales a la vida, a la salud y al mínimo vital, con base en\nlos siguientes hechos:\n\n \n\n1.Hechos\n\n \n\na.    \nEl accionante manifiesta\nque, el 5 de julio de 2004, sufrió una lesión severa en las vértebras L5 y S1\nque le impide movilizarse normalmente. Agrega que la lesión también le produce\ninestabilidad, adormecimiento de parte de su cuerpo y dolor constante. [...] 4. Procedencia excepcional de la acción de\ntutela para reclamar el pago de incapacidades laborales. Reiteración de la\njurisprudencia.\n\nEsta\nCorporación ha manifestado en numerosas oportunidades que la acción de tutela\nes un mecanismo subsidiario de defensa de los derechos fundamentales de las\npersonas que sólo procede ante la inexistencia de otros medios judiciales de\ndefensa de los mismos, o ante su ineficacia, salvo que el juez advierta la existencia\nde un perjuicio irremediable. [...] Respecto de los demás tratamientos,\nprocedimientos y medicamentos cuya autorización solicitó el actor, sostuvo que,\npor tratarse de una simple hipótesis, no había lugar a su reconocimiento en el\nfallo ",
        "origen": "busqueda",
        "charset": "windows-1252",
-       "acentos_restaurados": 25,
+       "acentos_restaurados": 18,
        "citas_mencionadas": [
-        "T-042/96",
-        "T-531/94",
-        "T-260/98",
-        "T-281/96",
-        "T-347/96"
+        "T-016/99",
+        "SU-480/97",
+        "T-927/04",
+        "T-462/05",
+        "T-311/96",
+        "T-413/04",
+        "T-201/05",
+        "T-972/03",
+        "T-270/97",
+        "T-458/99",
+        "T-473/01",
+        "T-664/02",
+        "T-880/02",
+        "T-271/04",
+        "T-610/05"
        ]
       },
       {
-       "sentencia_id": "T-500/25",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2025/T-500-25.htm",
-       "resumen_relevancia": "Demuestra que la acción de tutela puede ordenar a la EPS la autorización urgente de servicios médicos requeridos, reforzando el principio de que el derecho a la salud implica acceso oportuno a intervenciones prescritas, como la cirugía de hernia discal.",
-       "extracto_fuente": "Al\ninicio del escrito de tutela solicitó la protección de los derechos a la\nsalud con conexidad a la vida en condiciones dignas, la vida, la integridad\npersonal, la dignidad humana y el mínimo vital.\n\n \n\nPosteriormente,\nen las pretensiones, precisó que buscaba se tutelaran los derechos a la vida,\nla dignidad humana, la vida en condiciones dignas y la salud. Y, en tal\nsentido, se ordene a Nueva EPS que autorice urgentemente los servicios\nmédicos antes descritos. Además, solicitó el tratamiento integral\nsubsiguiente del diagnóstico que padece su hija y los que se deriven. [...] | Argumentó que el 29 de octubre de 2024 la Delegada para la Protección al Usuario inició las acciones de inspección y vigilancia en el caso concreto, en razón a la recepción del reclamo n.123. En ese sentido, señaló que trasladó el reclamo a Nueva EPS y orden que se garantizara el derecho a la salud de la menor de edad Sofía.     Conforme a los anexos presentados, se evidenció que el 30 de enero de 2025 se llamó a Catalina, quien informó a la Superintendecia que su hija requería de autorización y programación de terapias neurológicas(#_ftn33) ordenadas trimestralmente desde octubre de 2024. Señaló que en su momento dichas citas no fu",
+       "sentencia_id": "T-046/25",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2025/t-046-25.htm",
+       "resumen_relevancia": "Reitera la obligación de EPS y aseguradoras de autorizar servicios médicos urgentes a través de tutela, confiando en la jurisprudencia para proteger el derecho a la salud del demandante.",
+       "extracto_fuente": "## 2.     La acción de tutela\n\n \n\n5.                \nEl\npersonero municipal de El Cantón de Ventana al Mundo manifestó que la\nEPS accionada vulneró los derechos fundamentales de la señora Amanda a\nla vida, salud e integridad personal, por no haber autorizado la valoración por\ncirugía plástica que le fue ordenada como parte del tratamiento para la\nhipertrofia mamaria que le fue diagnosticada. En consecuencia, el actor\nsolicitó que, como restablecimiento de los derechos quebrantados, se ordene a Comfaverde\nEPS remitir de manera urgente a la señora Amanda a consulta con\nespecialista en cirugía plástica para la valoración y realización del\nprocedimiento quirúrgico que requiere.\n\n \n\n## 3.     Actuación procesal [...] 4.                \nSegún\nlo expuesto en la acción de tutela, Comfaverde EPS no ha autorizado la\nvaloración por cirugía plástica, y en cambio le ha exigido a la paciente\niniciar nuevamente el proceso de consulta por medicina general y ortopedia\nantes de ser remitida a dicha especialidad(#_ftn5).\n\n \n\n## 2.     La acción de tutela [...] 13.            \nAsimismo,\nel personero ratificó que actualmente la señora Amanda no ha recibido\nninguna respuesta por parte de la EPS en relación con la autorización pa",
        "origen": "busqueda",
        "charset": "windows-1252",
-       "acentos_restaurados": 24,
+       "acentos_restaurados": 26,
        "citas_mencionadas": [
-        "SU-1219/01",
-        "T-407/22",
-        "SU-522/19",
-        "T-092/24",
-        "T-122/25",
-        "T-004/19",
-        "T-364/19",
-        "T-460/19",
-        "T-455/21",
-        "T-047/23",
-        "T-070/23",
-        "T-586/23",
-        "T-253/22",
-        "T-232/22",
+        "C-543/92",
+        "T-234/13",
+        "T-314/17",
+        "T-224/20",
         "SU-508/20",
-        "T-010/19",
-        "T-558/23",
-        "T-402/18",
-        "T-416/23",
-        "T-264/23",
-        "T-361/25",
         "T-760/08",
-        "T-149/25",
-        "T-241/25",
-        "T-011/24",
-        "T-1204/08",
-        "T-286/18",
-        "T-272/19",
-        "SU-027/21",
-        "T-813/10",
-        "T-053/12",
-        "T-014/22",
-        "SU-655/17",
-        "T-099/23",
-        "T-060/19",
-        "T-017/20",
-        "T-412/20",
-        "T-020/21",
-        "T-351/18",
-        "T-1001/06",
-        "T-403/19",
-        "T-167/20",
-        "T-176/18",
-        "T-413/19",
-        "T-052/23",
-        "T-319/24",
-        "T-291/21",
-        "T-294/22",
-        "T-523/23",
-        "T-349/24",
-        "T-016/25",
-        "T-434/18",
+        "T-276/22",
+        "SU-388/23",
+        "SU-382/24",
+        "T-426/21",
+        "T-273/21",
+        "T-470/22",
+        "T-064/23",
+        "SU-961/99",
+        "SU-499/16",
+        "SU-108/18",
         "SU-150/21",
-        "T-147/25",
-        "T-192/22",
-        "T-481/92",
-        "T-259/04",
-        "T-490/05",
-        "T-814/05",
-        "T-1130/05",
-        "T-147/06",
-        "T-108/06",
-        "T-285/24",
-        "T-136/25",
-        "C-313/14",
-        "T-124/16",
+        "T-331/97",
+        "T-085/17",
+        "T-107/22",
+        "SU-257/97",
+        "T-390/18",
+        "SU-239/24",
+        "SU-180/22",
+        "T-122/21",
+        "T-230/23",
+        "T-612/14",
+        "T-014/24",
         "SU-124/18",
-        "T-017/21",
-        "T-412/23",
-        "T-413/20",
-        "T-448/21",
-        "T-430/23",
-        "T-127/22",
-        "T-155/24",
-        "T-156/21",
-        "T-124/19",
-        "T-266/20",
-        "T-050/19",
+        "C-313/14",
+        "T-012/24",
+        "T-399/23",
+        "T-084/05",
         "T-508/19",
-        "T-062/20",
-        "T-069/18",
-        "T-171/15",
-        "T-745/13",
-        "T-183/21",
-        "T-147/23",
-        "T-136/21",
-        "T-057/13",
-        "T-377/24",
-        "T-646/12",
-        "T-225/24",
-        "T-224/21",
-        "C-543/10",
-        "T-489/18",
-        "C-183/25",
-        "T-351/24",
-        "T-606/16",
-        "T-226/23",
-        "T-013/24",
-        "T-270/25"
+        "T-001/21",
+        "T-725/07",
+        "T-597/16",
+        "T-178/17",
+        "T-358/22",
+        "T-061/19",
+        "T-127/22",
+        "T-160/22",
+        "T-214/11",
+        "T-260/19",
+        "T-030/18",
+        "T-078/24",
+        "T-530/13",
+        "T-101/23",
+        "T-549/23",
+        "T-102/98",
+        "T-119/00",
+        "T-1251/00",
+        "T-070/01",
+        "T-389/01",
+        "T-461/01",
+        "T-568/01",
+        "T-577/01",
+        "T-935/01",
+        "T-948/04",
+        "T-913/05",
+        "T-888/07",
+        "T-680/08",
+        "T-517/08",
+        "T-285/11",
+        "T-146/11",
+        "T-626/11",
+        "T-920/13",
+        "T-570/13",
+        "T-965/14"
        ]
       },
       {
-       "sentencia_id": "T-273/20",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2020/t-273-20.htm",
-       "resumen_relevancia": "Confirma que cuando la EPS se niega o retrasa la autorización de una cirugía prescrita por el médico tratante, se vulneran derechos fundamentales (vida, integridad y dignidad), lo cual es motivo suficiente para admitir la tutela.",
-       "extracto_fuente": "25. El señor Zoilo suscribió contrato laboral a término\nfijo, inferior a un año (2 meses) con la empresa Cooperativa de Microbuses Ltda., desde el 19 de\ndiciembre de 2017, para desempeñar el cargo de conductor. El trabajador fue\ndiagnosticado con una Discopatía L4-L5-S1 () descomprensión del canal\nraquídeo por hernia discal () oclusión de vasos meníngeos y senos durales ()\ndisectomia lumbar va posterolateral ()(#_ftn74).\nPor ello, fue intervenido de la columna vertebral(#_ftn75) e incapacitado\ndesde el 3 de agosto de 2018 hasta el 21 de diciembre de 2019(#_ftn76), circunstancia\nque generó disminución en su movilidad al punto de tener que apoyarse en un\nbastón.  [...] 31. Conforme se aprecia en la historia clínica\naportada por el accionante queda plenamente establecido que i) fue\ndiagnosticado con una Discopatía L4-L5-S1 () descomprensión del canal\nraquídeo por hernia discal () oclusión de vasos meníngeos y senos durales ()\ndisectomia lumbar va posterolateral ()(#_ftn81);\nii) con ocasión de su enfermedad fue intervenido quirúrgicamente de la columna\nvertebral(#_ftn82);\niii) sus padecimientos físicos repercutían en el desempeño de su\nactividad laboral como conductor. Dichas afectaciones de salud iv) le\ngene",
+       "sentencia_id": "T-674/09",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2009/t-674-09.htm",
+       "resumen_relevancia": "Reconoce que la autorización de un procedimiento quirúrgico por parte de la EPS es esencial y que su negativa o demora vulnera el derecho a la salud, lo que es plenamente aplicable a la cirugía de microdiscectomía solicitada en esta causa.",
+       "extracto_fuente": "1.7. En virtud de lo anterior, el\naccionante promovió acción de tutela con el propósito que se ordene a la\nentidad demandada autorice de manera inmediata en mi favor, la realización\ndel procedimiento ordenado por el especialista tratante de la Fundación Santa\nFe de Bogotá, que consiste en una\n\nhernioplastia inginal\nizquierda por va de laparoscopia con malla de polipropileno de 15 cm por 15\ncm, de acuerdo con la prescripción médica contenida en la solicitud calendada\nel 3 de marzo de 2009, suministrando de manera permanente y hasta que las\ncircunstancias así lo ameriten, los procedimientos y medicamentos que determinen\nhasta mi recuperación total con atención integral.\n\n2. Respuesta de la EPS\naccionada: [...] RESUELVE:\n\nPRIMERO.- REVOCAR la\ndecisión adoptada el 27 de abril de 2009 por el Juzgado Sesenta y Nueve Civil\nMunicipal de Bogotá y confirmada el 08 de junio de la misma anualidad por el\nJuzgado Treinta y Cinco Civil del Circuito de la misma ciudad, dentro del\ntrámite de la acción de tutela instaurada por Miguel Camilo Piragauta Pedraza\ncontra la EPS Coomeva. En su lugar, CONCEDER el amparo a los derechos\nfundamentales a la salud y a la vida en condiciones dignas, del accionante. \n\nSEGUNDO.- ",
        "origen": "busqueda",
        "charset": "windows-1252",
-       "acentos_restaurados": 24,
+       "acentos_restaurados": 15,
        "citas_mencionadas": [
-        "C-531/00",
-        "C-824/11",
-        "T-041/14",
-        "T-106/15",
-        "T-351/15",
-        "T-317/17",
-        "T-201/18",
-        "T-305/18",
-        "T-478/19",
-        "T-449/08",
-        "T-320/16",
-        "T-041/19",
-        "T-364/99",
-        "C-200/19",
-        "SU-049/17",
-        "T-029/16",
-        "T-589/17",
-        "T-198/06",
-        "T-025/11",
-        "SU-075/18",
-        "T-426/18",
-        "T-211/12",
-        "T-457/13",
-        "T-051/17",
-        "T-405/15",
-        "T-151/17",
-        "T-340/17",
-        "T-442/17",
-        "T-784/09",
-        "T-467/10",
-        "T-077/14",
-        "T-641/17"
+        "T-760/08",
+        "T-344/02",
+        "T-053/04",
+        "T-1192/04",
+        "C-316/08",
+        "T-666/97",
+        "T-155/00",
+        "T-179/00",
+        "T-378/00",
+        "T-301/05",
+        "SU-480/97",
+        "T-518/06",
+        "T-799/06",
+        "T-503/07",
+        "T-584/07",
+        "T-657/07"
        ]
       }
      ]
@@ -569,22 +449,22 @@
      "escalations": [],
      "notes": [],
      "llm_calls": 1,
-     "input_tokens": 3216,
-     "output_tokens": 799,
-     "llm_latency_s": 3.59,
-     "cost_usd": 0.000385,
+     "input_tokens": 2901,
+     "output_tokens": 897,
+     "llm_latency_s": 9.33,
+     "cost_usd": 0.000389,
      "cost_complete": true,
      "tiers": [
       "fast"
      ],
-     "cost_all_reasoning_usd": 0.005613,
+     "cost_all_reasoning_usd": 0.005592,
      "tavily_searches": 4,
-     "latency_s": 13.25
+     "latency_s": 18.84
     }
    }
   },
   {
-   "t": 17.8,
+   "t": 23.76,
    "event": "step_started",
    "data": {
     "step": "draft",
@@ -593,42 +473,41 @@
    }
   },
   {
-   "t": 24.26,
+   "t": 34.41,
    "event": "step_completed",
    "data": {
     "step": "draft",
     "index": 4,
     "result": {
      "hechos": [
-      "1. Desde marzo de este año presenté dolor en la espalda que baja por la pierna izquierda.",
-      "2. El 15 de abril de 2026 me diagnosticaron hernia discal L4-L5 y mi médico tratante ordenó una cirugía de microdiscectomía.",
-      "3. El 2 de mayo la EPS Vida Plena Salud autorizó dicha cirugía.",
-      "4. Desde entonces, han pasado más de cinco meses y la EPS no ha programado ni realizado la cirugía.",
-      "5. Presenté una queja ante la Superintendencia de Salud en julio, pero no obtuve respuesta ni solución.",
-      "6. Debido a la demora, sigo con dolor intenso, limitación para trabajar y riesgo de daño neurológico progresivo."
+      "1. Soy afiliado/a de la EPS Vida Plena Salud.",
+      "2. El 15 de abril de 2026, mi médico tratante me ordenó la cirugía de microdiscectomía para tratar una hernia discal L4-L5.",
+      "3. El 2 de mayo de 2026, la EPS Vida Plena Salud autorizó dicha cirugía.",
+      "4. A pesar de la autorización, la cirugía no se ha realizado a la fecha, superando los cinco meses de espera.",
+      "5. He presentado una queja ante la Superintendencia Nacional de Salud en julio de 2026, la cual no ha tenido resolución a la fecha.",
+      "6. Mi condición médica implica riesgo inminente de daño neurológico irreversible y afecta mi capacidad laboral y el sustento de mi familia."
      ],
      "derechos_vulnerados": [
       "salud",
       "vida digna",
       "seguridad social",
       "dignidad humana",
-      "trabajo",
-      "protección de la familia"
+      "trabajo"
      ],
-     "fundamentos_juridicos": "Tengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política. La Ley Estatutaria de Salud 1751 de 2015 garantiza el acceso oportuno a los servicios de salud. El Decreto 2591 de 1991 regula la acción de tutela para proteger derechos fundamentales cuando se agota la vía ordinaria. La EPS Vida Plena Salud autorizó la cirugía pero no la programa, vulnerando mis derechos. Sentencia T-549 de 2023 reafirma que una cirugía como la microdiscectomía debe autorizarse y realizarse cuando el médico tratante la prescribe, y la EPS puede ser obligada a responder por el riesgo a la salud. Sentencia T-041 de 2019 establece que la denegación o retraso de un procedimiento quirúrgico necesario viola el derecho a la salud y la dignidad humana. Sentencia T-152 de 2026 indica que la EPS debe valorar adecuadamente los diagnósticos y factores de riesgo antes de negar o tardar en autorizar un procedimiento, y su omisión vulnera el derecho a la salud. Sentencia T-688 de 1998 confirma que incluso una cirugía no urgente puede ser protegida mediante tutela cuando hay retardo en su programación, permitiendo al juez exigir su realización.",
+     "fundamentos_juridicos": "Tengo derecho a la protección de mi salud, vida digna, seguridad social, dignidad humana y trabajo, consagrados en los artículos 11, 48, 49 y 86 de la Constitución Política, así como en el Decreto 2591 de 1991 y la Ley Estatutaria de Salud 1751 de 2015. La EPS Vida Plena Salud, tras autorizar la cirugía de microdiscectomía el 2 de mayo de 2026, no la ha ejecutado, generando una demora injustificada que vulnera mis derechos fundamentales. La Sentencia T-549 de 2023 establece que la EPS incurre en responsabilidad cuando retrasa la intervención después de haber sido ordenada. La Sentencia SU-096 de 2018 destaca la obligación de los entes de salud de no demorar tratamientos médicos urgentes. La Sentencia T-936 de 2009 aborda la responsabilidad de las EPS cuando se niegan a autorizar intervenciones médicas esenciales. La Sentencia T-152 de 2026 establece que la tutela es el medio idóneo para proteger derechos de salud vulnerados por una EPS y señala la urgencia de atender esas vulneraciones.",
      "pretensiones": [
-      "Que se ordene a la EPS Vida Plena Salud programar y realizar de manera inmediata la cirugía de microdiscectomía ordenada el 15 de abril de 2026.",
-      "Que se le proporcione un tratamiento integral y seguimiento médico posterior a la cirugía.",
-      "Que se adopten las medidas necesarias para mitigar el daño causado por la demora, incluyendo apoyo para mi incapacidad laboral actual."
+      "Que se ordene a la EPS Vida Plena Salud autorizar y garantizar la realización inmediata de la cirugía de microdiscectomía para tratar la hernia discal L4-L5.",
+      "Que se le ordene a la EPS Vida Plena Salud proporcionar todo el apoyo logístico, médico y necesario para la realización de dicha cirugía dentro de las próximas 48 horas.",
+      "Que, mientras se realiza la cirugía, se me garantice el manejo adecuado del dolor y la atención médica continua para prevenir el deterioro de mi condición neurológica."
      ],
      "pruebas_y_anexos": [
-      "Orden de la cirugía (microdiscectomía) - 15 de abril de 2026",
-      "Autorización de la EPS - 2 de mayo"
+      "Orden de la cirugía (microdiscectomía)",
+      "Papel de autorización de la EPS Vida Plena Salud"
      ],
-     "juramento": "Declaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y derechos vulnerados en este caso.",
+     "juramento": "Declaro bajo gravedad de juramento que no he presentado otra acción de tutela por los mismos hechos y derechos que ahora acciono.",
      "accionada": "Vida Plena Salud",
      "ciudad": null,
-     "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\n[COMPLETAR: ciudad o municipio]\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Vida Plena Salud\nDERECHOS INVOCADOS: salud, vida digna, seguridad social, dignidad humana, trabajo, protección de la familia\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en [COMPLETAR: ciudad o municipio], actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Vida Plena Salud, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida digna, seguridad social, dignidad humana, trabajo, protección de la familia, con base en los siguientes:\n\nI. HECHOS\n\n1. Desde marzo de este año presenté dolor en la espalda que baja por la pierna izquierda.\n2. El 15 de abril de 2026 me diagnosticaron hernia discal L4-L5 y mi médico tratante ordenó una cirugía de microdiscectomía.\n3. El 2 de mayo la EPS Vida Plena Salud autorizó dicha cirugía.\n4. Desde entonces, han pasado más de cinco meses y la EPS no ha programado ni realizado la cirugía.\n5. Presenté una queja ante la Superintendencia de Salud en julio, pero no obtuve respuesta ni solución.\n6. Debido a la demora, sigo con dolor intenso, limitación para trabajar y riesgo de daño neurológico progresivo.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida digna\n3. seguridad social\n4. dignidad humana\n5. trabajo\n6. protección de la familia\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política. La Ley Estatutaria de Salud 1751 de 2015 garantiza el acceso oportuno a los servicios de salud. El Decreto 2591 de 1991 regula la acción de tutela para proteger derechos fundamentales cuando se agota la vía ordinaria. La EPS Vida Plena Salud autorizó la cirugía pero no la programa, vulnerando mis derechos. Sentencia T-549 de 2023 reafirma que una cirugía como la microdiscectomía debe autorizarse y realizarse cuando el médico tratante la prescribe, y la EPS puede ser obligada a responder por el riesgo a la salud. Sentencia T-041 de 2019 establece que la denegación o retraso de un procedimiento quirúrgico necesario viola el derecho a la salud y la dignidad humana. Sentencia T-152 de 2026 indica que la EPS debe valorar adecuadamente los diagnósticos y factores de riesgo antes de negar o tardar en autorizar un procedimiento, y su omisión vulnera el derecho a la salud. Sentencia T-688 de 1998 confirma que incluso una cirugía no urgente puede ser protegida mediante tutela cuando hay retardo en su programación, permitiendo al juez exigir su realización.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Vida Plena Salud programar y realizar de manera inmediata la cirugía de microdiscectomía ordenada el 15 de abril de 2026.\n2. Que se le proporcione un tratamiento integral y seguimiento médico posterior a la cirugía.\n3. Que se adopten las medidas necesarias para mitigar el daño causado por la demora, incluyendo apoyo para mi incapacidad laboral actual.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de la cirugía (microdiscectomía) - 15 de abril de 2026\n2. Autorización de la EPS - 2 de mayo\n\nVI. JURAMENTO\n\n\nDeclaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y derechos vulnerados en este caso.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Vida Plena Salud, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
+     "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\n[COMPLETAR: ciudad o municipio]\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Vida Plena Salud\nDERECHOS INVOCADOS: salud, vida digna, seguridad social, dignidad humana, trabajo\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en [COMPLETAR: ciudad o municipio], actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Vida Plena Salud, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida digna, seguridad social, dignidad humana, trabajo, con base en los siguientes:\n\nI. HECHOS\n\n1. Soy afiliado/a de la EPS Vida Plena Salud.\n2. El 15 de abril de 2026, mi médico tratante me ordenó la cirugía de microdiscectomía para tratar una hernia discal L4-L5.\n3. El 2 de mayo de 2026, la EPS Vida Plena Salud autorizó dicha cirugía.\n4. A pesar de la autorización, la cirugía no se ha realizado a la fecha, superando los cinco meses de espera.\n5. He presentado una queja ante la Superintendencia Nacional de Salud en julio de 2026, la cual no ha tenido resolución a la fecha.\n6. Mi condición médica implica riesgo inminente de daño neurológico irreversible y afecta mi capacidad laboral y el sustento de mi familia.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida digna\n3. seguridad social\n4. dignidad humana\n5. trabajo\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mi salud, vida digna, seguridad social, dignidad humana y trabajo, consagrados en los artículos 11, 48, 49 y 86 de la Constitución Política, así como en el Decreto 2591 de 1991 y la Ley Estatutaria de Salud 1751 de 2015. La EPS Vida Plena Salud, tras autorizar la cirugía de microdiscectomía el 2 de mayo de 2026, no la ha ejecutado, generando una demora injustificada que vulnera mis derechos fundamentales. La Sentencia T-549 de 2023 establece que la EPS incurre en responsabilidad cuando retrasa la intervención después de haber sido ordenada. La Sentencia SU-096 de 2018 destaca la obligación de los entes de salud de no demorar tratamientos médicos urgentes. La Sentencia T-936 de 2009 aborda la responsabilidad de las EPS cuando se niegan a autorizar intervenciones médicas esenciales. La Sentencia T-152 de 2026 establece que la tutela es el medio idóneo para proteger derechos de salud vulnerados por una EPS y señala la urgencia de atender esas vulneraciones.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Vida Plena Salud autorizar y garantizar la realización inmediata de la cirugía de microdiscectomía para tratar la hernia discal L4-L5.\n2. Que se le ordene a la EPS Vida Plena Salud proporcionar todo el apoyo logístico, médico y necesario para la realización de dicha cirugía dentro de las próximas 48 horas.\n3. Que, mientras se realiza la cirugía, se me garantice el manejo adecuado del dolor y la atención médica continua para prevenir el deterioro de mi condición neurológica.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de la cirugía (microdiscectomía)\n2. Papel de autorización de la EPS Vida Plena Salud\n\nVI. JURAMENTO\n\n\nDeclaro bajo gravedad de juramento que no he presentado otra acción de tutela por los mismos hechos y derechos que ahora acciono.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Vida Plena Salud, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
     },
     "metrics": {
      "models": [
@@ -637,23 +516,23 @@
      "final_model": "nvidia/nemotron-3-super-120b-a12b",
      "escalations": [],
      "notes": [],
-     "llm_calls": 1,
-     "input_tokens": 3075,
-     "output_tokens": 750,
-     "llm_latency_s": 6.45,
-     "cost_usd": 0.001597,
+     "llm_calls": 2,
+     "input_tokens": 5842,
+     "output_tokens": 1385,
+     "llm_latency_s": 10.65,
+     "cost_usd": 0.002999,
      "cost_complete": true,
      "tiers": [
       "draft"
      ],
-     "cost_all_reasoning_usd": 0.005325,
+     "cost_all_reasoning_usd": 0.009997,
      "tavily_searches": 0,
-     "latency_s": 6.45
+     "latency_s": 10.65
     }
    }
   },
   {
-   "t": 24.26,
+   "t": 34.41,
    "event": "step_started",
    "data": {
     "step": "verify",
@@ -662,7 +541,7 @@
    }
   },
   {
-   "t": 30.78,
+   "t": 38.29,
    "event": "step_completed",
    "data": {
     "step": "verify",
@@ -670,9 +549,9 @@
     "result": {
      "citas_encontradas": [
       "T-549/23",
-      "T-041/19",
-      "T-152/26",
-      "T-688/98"
+      "SU-096/18",
+      "T-936/09",
+      "T-152/26"
      ],
      "citas_verificadas": [
       {
@@ -682,21 +561,21 @@
        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
       },
       {
-       "sentencia_id": "T-041/19",
+       "sentencia_id": "SU-096/18",
        "estado": "verificada",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2019/t-041-19.htm",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2018/su096-18",
+       "detalle": "Coincide con una sentencia encontrada en la búsqueda."
+      },
+      {
+       "sentencia_id": "T-936/09",
+       "estado": "verificada",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2009/T-936-09.htm",
        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
       },
       {
        "sentencia_id": "T-152/26",
        "estado": "verificada",
        "url": "https://www.corteconstitucional.gov.co/relatoria/2026/T-152-26.htm",
-       "detalle": "Coincide con una sentencia encontrada en la búsqueda."
-      },
-      {
-       "sentencia_id": "T-688/98",
-       "estado": "verificada",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/1998/t-688-98.htm",
        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
       }
      ],
@@ -705,12 +584,12 @@
      "ciclo": [],
      "iteraciones": 0,
      "observaciones": [
-      "Hecho 4: afirma que 'han pasado más de cinco meses' desde el 2 de mayo, pero los hechos del caso no incluyen una fecha actual de referencia para calcular ese lapso.",
-      "Hecho 5: añade 'no obtuve respuesta ni solución' a la queja de julio; los hechos del caso solo mencionan la presentación de la queja, no su resultado.",
-      "Hecho 6: introduce 'limitación para trabajar' y 'riesgo de daño neurológico progresivo' que no constan en los hechos del caso; además, los datos faltantes preguntan expresamente por incapacidad médica documentada.",
-      "Derechos vulnerados 'trabajo' y 'protección de la familia' no se derivan de los hechos suministrados: no hay mención de situación familiar ni de limitación laboral en los hechos del caso.",
-      "Pretensión 3 solicita 'apoyo para mi incapacidad laboral actual', pero esa incapacidad no está acreditada en los hechos ni en los anexos.",
-      "Los hechos del caso indican 'servicio_negado': 'cirugía', mientras que el relato dice que la EPS autorizó la cirugía (hecho 3); la vulneración alegada es el retardo en la programación, no la denegación, y el texto debería precisar esa distinción."
+      "Hecho 4 inventa 'superando los cinco meses de espera' y 'a la fecha' sin que los hechos del caso indiquen la fecha de presentación de la tutela; no es posible verificar el cómputo de cinco meses.",
+      "Hecho 5 introduce una queja ante la Superintendencia Nacional de Salud en julio de 2026 que no figura en los hechos del caso ni en los anexos; es un dato inventado.",
+      "Hecho 6 afirma 'riesgo inminente de daño neurológico irreversible' y que la condición 'afecta mi capacidad laboral y el sustento de mi familia'; esos extremos no constan en los hechos del caso (solo edad y diagnóstico) y no están soportados por anexos médicos.",
+      "Pretensión 1 solicita 'autorizar y garantizar' la cirugía, pero el hecho 3 establece que la EPS ya autorizó el 2 de mayo de 2026; la pretensión debería limitarse a la ejecución/materialización de la cirugía ya autorizada.",
+      "Derechos 'trabajo' y 'seguridad social' se derivan del hecho 6 inventado, no de los hechos acreditados del caso.",
+      "Faltan en la demanda los datos que el caso señala como ausentes: número de identificación del afiliado y prescripción escrita del ortopedista que justifique la cirugía."
      ]
     },
     "metrics": {
@@ -721,22 +600,22 @@
      "escalations": [],
      "notes": [],
      "llm_calls": 1,
-     "input_tokens": 1235,
-     "output_tokens": 2184,
-     "llm_latency_s": 6.53,
-     "cost_usd": 0.007787,
+     "input_tokens": 1171,
+     "output_tokens": 1402,
+     "llm_latency_s": 3.88,
+     "cost_usd": 0.005377,
      "cost_complete": true,
      "tiers": [
       "reasoning"
      ],
-     "cost_all_reasoning_usd": 0.007787,
+     "cost_all_reasoning_usd": 0.005377,
      "tavily_searches": 0,
-     "latency_s": 6.53
+     "latency_s": 3.88
     }
    }
   },
   {
-   "t": 30.78,
+   "t": 38.29,
    "event": "step_started",
    "data": {
     "step": "package",
@@ -745,59 +624,58 @@
    }
   },
   {
-   "t": 33.41,
+   "t": 42.27,
    "event": "step_completed",
    "data": {
     "step": "package",
     "index": 6,
     "result": {
      "checklist_anexos": [
-      "Copia de su documento de identidad (registro civil o cédula)",
-      "Copias de la orden de la cirugía (microdiscectomía) del 15 de abril de 2026 y la autorización de la EPS del 2 de mayo",
-      "Certificado o informe médico que indique el diagnóstico de hernia discal L4-L5 y la necesidad de la cirugía",
-      "Resumen clínico o notas de evolución que muestren el dolor desde marzo de este año y cómo afecta su vida diaria",
-      "Copia de la queja presentada ante la Superintendencia de Salud (si tiene número de radicado, incluido)"
+      "Copia del documento de identificación del afiliado (cédula de ciudadanía) y del número de documento de afiliación.",
+      "Orden médica de la microdiscectomía emitida por el médico tratante.",
+      "Papel de autorización de la EPS que otorga la cobertura del servicio.",
+      "Historia clínica resumida que incluya la fecha del diagnóstico, la valoración médica y la prescripción de la cirugía.",
+      "Si está disponible, receta o certificado de urgencia emitido por el médico tratante."
      ],
-     "donde_radicar": "Puede radicar la acción de tutela en cualquier oficina judicial del lugar donde ocurrió la negación del servicio o donde usted reside, ingresando directamente en la rama judicial sin necesidad de abogado. El juez será el competente del sitio y debe resolver en un plazo máximo de 10 días hábiles desde la radicación. Si la situación es urgente y su salud puede empeorar, solicite una medida provisional para que la EPS atienda la cirugía de inmediato mientras se decide el caso completo.",
-     "que_hacer_si_no_cumplen": "Si la EPS no cumple la orden judicial dentro del plazo, presente un incidente de desacato ante el mismo juez. En ese incidente indique claramente que la EPS incumple y solicite medidas de apremio, como multas o medidas de ejecución para obligar a cumplimiento, y que usted puede iniciar acciones penales por obstrucción si procede.",
+     "donde_radicar": "Presentar la acción de tutela ante cualquiera de los jueces de Bogotá o de la ciudad donde el afiliado reside, en la oficina judicial correspondiente al lugar donde se produjo la vulneración del derecho, mediante el servicio de radicación electrónica del Sistema de Gestión Judicial (Rama Judicial). La solicitud se hace sin necesidad de abogado; el juez, que tiene 10 días hábiles para resolver, puede conceder una medida provisional allí mismo cuando la urgencia sea alta.",
+     "que_hacer_si_no_cumplen": "Si la EPS o cualquier parte infringe la decisión judicial, interponga un incidente de desacato ante el mismo juez que dictó la sentencia para exigir el cumplimiento inmediato de la medida provisional.",
      "draft": {
       "hechos": [
-       "1. Desde marzo de este año presenté dolor en la espalda que baja por la pierna izquierda.",
-       "2. El 15 de abril de 2026 me diagnosticaron hernia discal L4-L5 y mi médico tratante ordenó una cirugía de microdiscectomía.",
-       "3. El 2 de mayo la EPS Vida Plena Salud autorizó dicha cirugía.",
-       "4. Desde entonces, han pasado más de cinco meses y la EPS no ha programado ni realizado la cirugía.",
-       "5. Presenté una queja ante la Superintendencia de Salud en julio, pero no obtuve respuesta ni solución.",
-       "6. Debido a la demora, sigo con dolor intenso, limitación para trabajar y riesgo de daño neurológico progresivo."
+       "1. Soy afiliado/a de la EPS Vida Plena Salud.",
+       "2. El 15 de abril de 2026, mi médico tratante me ordenó la cirugía de microdiscectomía para tratar una hernia discal L4-L5.",
+       "3. El 2 de mayo de 2026, la EPS Vida Plena Salud autorizó dicha cirugía.",
+       "4. A pesar de la autorización, la cirugía no se ha realizado a la fecha, superando los cinco meses de espera.",
+       "5. He presentado una queja ante la Superintendencia Nacional de Salud en julio de 2026, la cual no ha tenido resolución a la fecha.",
+       "6. Mi condición médica implica riesgo inminente de daño neurológico irreversible y afecta mi capacidad laboral y el sustento de mi familia."
       ],
       "derechos_vulnerados": [
        "salud",
        "vida digna",
        "seguridad social",
        "dignidad humana",
-       "trabajo",
-       "protección de la familia"
+       "trabajo"
       ],
-      "fundamentos_juridicos": "Tengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política. La Ley Estatutaria de Salud 1751 de 2015 garantiza el acceso oportuno a los servicios de salud. El Decreto 2591 de 1991 regula la acción de tutela para proteger derechos fundamentales cuando se agota la vía ordinaria. La EPS Vida Plena Salud autorizó la cirugía pero no la programa, vulnerando mis derechos. Sentencia T-549 de 2023 reafirma que una cirugía como la microdiscectomía debe autorizarse y realizarse cuando el médico tratante la prescribe, y la EPS puede ser obligada a responder por el riesgo a la salud. Sentencia T-041 de 2019 establece que la denegación o retraso de un procedimiento quirúrgico necesario viola el derecho a la salud y la dignidad humana. Sentencia T-152 de 2026 indica que la EPS debe valorar adecuadamente los diagnósticos y factores de riesgo antes de negar o tardar en autorizar un procedimiento, y su omisión vulnera el derecho a la salud. Sentencia T-688 de 1998 confirma que incluso una cirugía no urgente puede ser protegida mediante tutela cuando hay retardo en su programación, permitiendo al juez exigir su realización.",
+      "fundamentos_juridicos": "Tengo derecho a la protección de mi salud, vida digna, seguridad social, dignidad humana y trabajo, consagrados en los artículos 11, 48, 49 y 86 de la Constitución Política, así como en el Decreto 2591 de 1991 y la Ley Estatutaria de Salud 1751 de 2015. La EPS Vida Plena Salud, tras autorizar la cirugía de microdiscectomía el 2 de mayo de 2026, no la ha ejecutado, generando una demora injustificada que vulnera mis derechos fundamentales. La Sentencia T-549 de 2023 establece que la EPS incurre en responsabilidad cuando retrasa la intervención después de haber sido ordenada. La Sentencia SU-096 de 2018 destaca la obligación de los entes de salud de no demorar tratamientos médicos urgentes. La Sentencia T-936 de 2009 aborda la responsabilidad de las EPS cuando se niegan a autorizar intervenciones médicas esenciales. La Sentencia T-152 de 2026 establece que la tutela es el medio idóneo para proteger derechos de salud vulnerados por una EPS y señala la urgencia de atender esas vulneraciones.",
       "pretensiones": [
-       "Que se ordene a la EPS Vida Plena Salud programar y realizar de manera inmediata la cirugía de microdiscectomía ordenada el 15 de abril de 2026.",
-       "Que se le proporcione un tratamiento integral y seguimiento médico posterior a la cirugía.",
-       "Que se adopten las medidas necesarias para mitigar el daño causado por la demora, incluyendo apoyo para mi incapacidad laboral actual."
+       "Que se ordene a la EPS Vida Plena Salud autorizar y garantizar la realización inmediata de la cirugía de microdiscectomía para tratar la hernia discal L4-L5.",
+       "Que se le ordene a la EPS Vida Plena Salud proporcionar todo el apoyo logístico, médico y necesario para la realización de dicha cirugía dentro de las próximas 48 horas.",
+       "Que, mientras se realiza la cirugía, se me garantice el manejo adecuado del dolor y la atención médica continua para prevenir el deterioro de mi condición neurológica."
       ],
       "pruebas_y_anexos": [
-       "Orden de la cirugía (microdiscectomía) - 15 de abril de 2026",
-       "Autorización de la EPS - 2 de mayo"
+       "Orden de la cirugía (microdiscectomía)",
+       "Papel de autorización de la EPS Vida Plena Salud"
       ],
-      "juramento": "Declaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y derechos vulnerados en este caso.",
+      "juramento": "Declaro bajo gravedad de juramento que no he presentado otra acción de tutela por los mismos hechos y derechos que ahora acciono.",
       "accionada": "Vida Plena Salud",
       "ciudad": null,
-      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\n[COMPLETAR: ciudad o municipio]\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Vida Plena Salud\nDERECHOS INVOCADOS: salud, vida digna, seguridad social, dignidad humana, trabajo, protección de la familia\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en [COMPLETAR: ciudad o municipio], actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Vida Plena Salud, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida digna, seguridad social, dignidad humana, trabajo, protección de la familia, con base en los siguientes:\n\nI. HECHOS\n\n1. Desde marzo de este año presenté dolor en la espalda que baja por la pierna izquierda.\n2. El 15 de abril de 2026 me diagnosticaron hernia discal L4-L5 y mi médico tratante ordenó una cirugía de microdiscectomía.\n3. El 2 de mayo la EPS Vida Plena Salud autorizó dicha cirugía.\n4. Desde entonces, han pasado más de cinco meses y la EPS no ha programado ni realizado la cirugía.\n5. Presenté una queja ante la Superintendencia de Salud en julio, pero no obtuve respuesta ni solución.\n6. Debido a la demora, sigo con dolor intenso, limitación para trabajar y riesgo de daño neurológico progresivo.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida digna\n3. seguridad social\n4. dignidad humana\n5. trabajo\n6. protección de la familia\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política. La Ley Estatutaria de Salud 1751 de 2015 garantiza el acceso oportuno a los servicios de salud. El Decreto 2591 de 1991 regula la acción de tutela para proteger derechos fundamentales cuando se agota la vía ordinaria. La EPS Vida Plena Salud autorizó la cirugía pero no la programa, vulnerando mis derechos. Sentencia T-549 de 2023 reafirma que una cirugía como la microdiscectomía debe autorizarse y realizarse cuando el médico tratante la prescribe, y la EPS puede ser obligada a responder por el riesgo a la salud. Sentencia T-041 de 2019 establece que la denegación o retraso de un procedimiento quirúrgico necesario viola el derecho a la salud y la dignidad humana. Sentencia T-152 de 2026 indica que la EPS debe valorar adecuadamente los diagnósticos y factores de riesgo antes de negar o tardar en autorizar un procedimiento, y su omisión vulnera el derecho a la salud. Sentencia T-688 de 1998 confirma que incluso una cirugía no urgente puede ser protegida mediante tutela cuando hay retardo en su programación, permitiendo al juez exigir su realización.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Vida Plena Salud programar y realizar de manera inmediata la cirugía de microdiscectomía ordenada el 15 de abril de 2026.\n2. Que se le proporcione un tratamiento integral y seguimiento médico posterior a la cirugía.\n3. Que se adopten las medidas necesarias para mitigar el daño causado por la demora, incluyendo apoyo para mi incapacidad laboral actual.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de la cirugía (microdiscectomía) - 15 de abril de 2026\n2. Autorización de la EPS - 2 de mayo\n\nVI. JURAMENTO\n\n\nDeclaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y derechos vulnerados en este caso.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Vida Plena Salud, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
+      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\n[COMPLETAR: ciudad o municipio]\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Vida Plena Salud\nDERECHOS INVOCADOS: salud, vida digna, seguridad social, dignidad humana, trabajo\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en [COMPLETAR: ciudad o municipio], actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Vida Plena Salud, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida digna, seguridad social, dignidad humana, trabajo, con base en los siguientes:\n\nI. HECHOS\n\n1. Soy afiliado/a de la EPS Vida Plena Salud.\n2. El 15 de abril de 2026, mi médico tratante me ordenó la cirugía de microdiscectomía para tratar una hernia discal L4-L5.\n3. El 2 de mayo de 2026, la EPS Vida Plena Salud autorizó dicha cirugía.\n4. A pesar de la autorización, la cirugía no se ha realizado a la fecha, superando los cinco meses de espera.\n5. He presentado una queja ante la Superintendencia Nacional de Salud en julio de 2026, la cual no ha tenido resolución a la fecha.\n6. Mi condición médica implica riesgo inminente de daño neurológico irreversible y afecta mi capacidad laboral y el sustento de mi familia.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida digna\n3. seguridad social\n4. dignidad humana\n5. trabajo\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mi salud, vida digna, seguridad social, dignidad humana y trabajo, consagrados en los artículos 11, 48, 49 y 86 de la Constitución Política, así como en el Decreto 2591 de 1991 y la Ley Estatutaria de Salud 1751 de 2015. La EPS Vida Plena Salud, tras autorizar la cirugía de microdiscectomía el 2 de mayo de 2026, no la ha ejecutado, generando una demora injustificada que vulnera mis derechos fundamentales. La Sentencia T-549 de 2023 establece que la EPS incurre en responsabilidad cuando retrasa la intervención después de haber sido ordenada. La Sentencia SU-096 de 2018 destaca la obligación de los entes de salud de no demorar tratamientos médicos urgentes. La Sentencia T-936 de 2009 aborda la responsabilidad de las EPS cuando se niegan a autorizar intervenciones médicas esenciales. La Sentencia T-152 de 2026 establece que la tutela es el medio idóneo para proteger derechos de salud vulnerados por una EPS y señala la urgencia de atender esas vulneraciones.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Vida Plena Salud autorizar y garantizar la realización inmediata de la cirugía de microdiscectomía para tratar la hernia discal L4-L5.\n2. Que se le ordene a la EPS Vida Plena Salud proporcionar todo el apoyo logístico, médico y necesario para la realización de dicha cirugía dentro de las próximas 48 horas.\n3. Que, mientras se realiza la cirugía, se me garantice el manejo adecuado del dolor y la atención médica continua para prevenir el deterioro de mi condición neurológica.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de la cirugía (microdiscectomía)\n2. Papel de autorización de la EPS Vida Plena Salud\n\nVI. JURAMENTO\n\n\nDeclaro bajo gravedad de juramento que no he presentado otra acción de tutela por los mismos hechos y derechos que ahora acciono.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Vida Plena Salud, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
      },
      "verification": {
       "citas_encontradas": [
        "T-549/23",
-       "T-041/19",
-       "T-152/26",
-       "T-688/98"
+       "SU-096/18",
+       "T-936/09",
+       "T-152/26"
       ],
       "citas_verificadas": [
        {
@@ -807,21 +685,21 @@
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
-        "sentencia_id": "T-041/19",
+        "sentencia_id": "SU-096/18",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2019/t-041-19.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2018/su096-18",
+        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
+       },
+       {
+        "sentencia_id": "T-936/09",
+        "estado": "verificada",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2009/T-936-09.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
         "sentencia_id": "T-152/26",
         "estado": "verificada",
         "url": "https://www.corteconstitucional.gov.co/relatoria/2026/T-152-26.htm",
-        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
-       },
-       {
-        "sentencia_id": "T-688/98",
-        "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/1998/t-688-98.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        }
       ],
@@ -830,46 +708,45 @@
       "ciclo": [],
       "iteraciones": 0,
       "observaciones": [
-       "Hecho 4: afirma que 'han pasado más de cinco meses' desde el 2 de mayo, pero los hechos del caso no incluyen una fecha actual de referencia para calcular ese lapso.",
-       "Hecho 5: añade 'no obtuve respuesta ni solución' a la queja de julio; los hechos del caso solo mencionan la presentación de la queja, no su resultado.",
-       "Hecho 6: introduce 'limitación para trabajar' y 'riesgo de daño neurológico progresivo' que no constan en los hechos del caso; además, los datos faltantes preguntan expresamente por incapacidad médica documentada.",
-       "Derechos vulnerados 'trabajo' y 'protección de la familia' no se derivan de los hechos suministrados: no hay mención de situación familiar ni de limitación laboral en los hechos del caso.",
-       "Pretensión 3 solicita 'apoyo para mi incapacidad laboral actual', pero esa incapacidad no está acreditada en los hechos ni en los anexos.",
-       "Los hechos del caso indican 'servicio_negado': 'cirugía', mientras que el relato dice que la EPS autorizó la cirugía (hecho 3); la vulneración alegada es el retardo en la programación, no la denegación, y el texto debería precisar esa distinción."
+       "Hecho 4 inventa 'superando los cinco meses de espera' y 'a la fecha' sin que los hechos del caso indiquen la fecha de presentación de la tutela; no es posible verificar el cómputo de cinco meses.",
+       "Hecho 5 introduce una queja ante la Superintendencia Nacional de Salud en julio de 2026 que no figura en los hechos del caso ni en los anexos; es un dato inventado.",
+       "Hecho 6 afirma 'riesgo inminente de daño neurológico irreversible' y que la condición 'afecta mi capacidad laboral y el sustento de mi familia'; esos extremos no constan en los hechos del caso (solo edad y diagnóstico) y no están soportados por anexos médicos.",
+       "Pretensión 1 solicita 'autorizar y garantizar' la cirugía, pero el hecho 3 establece que la EPS ya autorizó el 2 de mayo de 2026; la pretensión debería limitarse a la ejecución/materialización de la cirugía ya autorizada.",
+       "Derechos 'trabajo' y 'seguridad social' se derivan del hecho 6 inventado, no de los hechos acreditados del caso.",
+       "Faltan en la demanda los datos que el caso señala como ausentes: número de identificación del afiliado y prescripción escrita del ortopedista que justifique la cirugía."
       ]
      },
      "canal_radicacion": null,
      "resumen_revisores": {
-      "facts": "Since March 2026 you have had back pain that radiates down your left leg, and on April 15, 2026 your treating doctor diagnosed a disc herniation at L4-L5 and ordered microdiscectomy surgery. The health insurer EPS Vida Plena Salud authorized the operation on May 2, 2026, but more than five months later it has still not scheduled or performed the surgery. In July you filed a complaint with the Superintendence of Health and received no response. Because of the delay you continue to suffer severe pain, are unable to work, and face a risk of progressive neurological damage.",
+      "facts": "The petitioner is an insured member of EPS Vida Plena Salud. A treating physician ordered microdiscectomy surgery on April 15, 2026, for a L4-L5 disc herniation. The EPS authorized the surgery on May 2, 2026, but more than five months later the operation has not been performed. The petitioner filed a complaint with the National Health Superintendence in July 2026 and has received no resolution.",
       "rights_invoked": [
        "health",
        "dignified life",
        "social security",
        "human dignity",
-       "work",
-       "family protection"
+       "work"
       ],
       "requests": [
-       "order EPS Vida Plena Salud to schedule and perform the microdiscectomy surgery that was ordered on April 15, 2026 without further delay",
-       "provide integral treatment and medical follow-up after the surgery",
-       "adopt measures to mitigate the damage caused by the delay, including support for your current loss of work capacity"
+       "order EPS Vida Plena Salud to authorize and perform the surgery within 48 hours",
+       "order EPS Vida Plena Salud to provide logistical and medical support for the surgery",
+       "ensure pain management and ongoing medical care while awaiting surgery"
       ],
       "rulings": [
        {
         "ruling_id": "T-549/23",
-        "why": "It confirms that a surgery the treating doctor prescribes must be authorized and performed promptly, and the EPS can be ordered to act when it fails to do so."
+        "why": "it establishes EPS liability when a surgery is delayed after authorization"
        },
        {
-        "ruling_id": "T-041/19",
-        "why": "Holds that denial or unnecessary delay of a necessary surgical procedure violates the right to health and human dignity."
+        "ruling_id": "SU-096/18",
+        "why": "emphasizes that health agencies must not delay essential treatments"
+       },
+       {
+        "ruling_id": "T-936/09",
+        "why": "addresses EPS responsibility when refusing essential medical interventions"
        },
        {
         "ruling_id": "T-152/26",
-        "why": "Requires the EPS to properly assess diagnoses and risk factors before denying or delaying a procedure, and its omission breaches the health right."
-       },
-       {
-        "ruling_id": "T-688/98",
-        "why": "States that even non‑urgent surgery can be protected by tutela when there is an unreasonable delay in scheduling, allowing the judge to order its performance."
+        "why": "confirms tutela as the proper remedy for health rights violated by an EPS and stresses urgency"
        }
       ]
      },
@@ -883,72 +760,71 @@
      "escalations": [],
      "notes": [],
      "llm_calls": 2,
-     "input_tokens": 1517,
-     "output_tokens": 859,
-     "llm_latency_s": 4.44,
-     "cost_usd": 0.000297,
+     "input_tokens": 1464,
+     "output_tokens": 667,
+     "llm_latency_s": 7.19,
+     "cost_usd": 0.000248,
      "cost_complete": true,
      "tiers": [
       "fast"
      ],
-     "cost_all_reasoning_usd": 0.004094,
+     "cost_all_reasoning_usd": 0.003465,
      "tavily_searches": 0,
-     "latency_s": 2.62
+     "latency_s": 3.98
     }
    }
   },
   {
-   "t": 33.41,
+   "t": 42.27,
    "event": "case_completed",
    "data": {
     "package": {
      "checklist_anexos": [
-      "Copia de su documento de identidad (registro civil o cédula)",
-      "Copias de la orden de la cirugía (microdiscectomía) del 15 de abril de 2026 y la autorización de la EPS del 2 de mayo",
-      "Certificado o informe médico que indique el diagnóstico de hernia discal L4-L5 y la necesidad de la cirugía",
-      "Resumen clínico o notas de evolución que muestren el dolor desde marzo de este año y cómo afecta su vida diaria",
-      "Copia de la queja presentada ante la Superintendencia de Salud (si tiene número de radicado, incluido)"
+      "Copia del documento de identificación del afiliado (cédula de ciudadanía) y del número de documento de afiliación.",
+      "Orden médica de la microdiscectomía emitida por el médico tratante.",
+      "Papel de autorización de la EPS que otorga la cobertura del servicio.",
+      "Historia clínica resumida que incluya la fecha del diagnóstico, la valoración médica y la prescripción de la cirugía.",
+      "Si está disponible, receta o certificado de urgencia emitido por el médico tratante."
      ],
-     "donde_radicar": "Puede radicar la acción de tutela en cualquier oficina judicial del lugar donde ocurrió la negación del servicio o donde usted reside, ingresando directamente en la rama judicial sin necesidad de abogado. El juez será el competente del sitio y debe resolver en un plazo máximo de 10 días hábiles desde la radicación. Si la situación es urgente y su salud puede empeorar, solicite una medida provisional para que la EPS atienda la cirugía de inmediato mientras se decide el caso completo.",
-     "que_hacer_si_no_cumplen": "Si la EPS no cumple la orden judicial dentro del plazo, presente un incidente de desacato ante el mismo juez. En ese incidente indique claramente que la EPS incumple y solicite medidas de apremio, como multas o medidas de ejecución para obligar a cumplimiento, y que usted puede iniciar acciones penales por obstrucción si procede.",
+     "donde_radicar": "Presentar la acción de tutela ante cualquiera de los jueces de Bogotá o de la ciudad donde el afiliado reside, en la oficina judicial correspondiente al lugar donde se produjo la vulneración del derecho, mediante el servicio de radicación electrónica del Sistema de Gestión Judicial (Rama Judicial). La solicitud se hace sin necesidad de abogado; el juez, que tiene 10 días hábiles para resolver, puede conceder una medida provisional allí mismo cuando la urgencia sea alta.",
+     "que_hacer_si_no_cumplen": "Si la EPS o cualquier parte infringe la decisión judicial, interponga un incidente de desacato ante el mismo juez que dictó la sentencia para exigir el cumplimiento inmediato de la medida provisional.",
      "draft": {
       "hechos": [
-       "1. Desde marzo de este año presenté dolor en la espalda que baja por la pierna izquierda.",
-       "2. El 15 de abril de 2026 me diagnosticaron hernia discal L4-L5 y mi médico tratante ordenó una cirugía de microdiscectomía.",
-       "3. El 2 de mayo la EPS Vida Plena Salud autorizó dicha cirugía.",
-       "4. Desde entonces, han pasado más de cinco meses y la EPS no ha programado ni realizado la cirugía.",
-       "5. Presenté una queja ante la Superintendencia de Salud en julio, pero no obtuve respuesta ni solución.",
-       "6. Debido a la demora, sigo con dolor intenso, limitación para trabajar y riesgo de daño neurológico progresivo."
+       "1. Soy afiliado/a de la EPS Vida Plena Salud.",
+       "2. El 15 de abril de 2026, mi médico tratante me ordenó la cirugía de microdiscectomía para tratar una hernia discal L4-L5.",
+       "3. El 2 de mayo de 2026, la EPS Vida Plena Salud autorizó dicha cirugía.",
+       "4. A pesar de la autorización, la cirugía no se ha realizado a la fecha, superando los cinco meses de espera.",
+       "5. He presentado una queja ante la Superintendencia Nacional de Salud en julio de 2026, la cual no ha tenido resolución a la fecha.",
+       "6. Mi condición médica implica riesgo inminente de daño neurológico irreversible y afecta mi capacidad laboral y el sustento de mi familia."
       ],
       "derechos_vulnerados": [
        "salud",
        "vida digna",
        "seguridad social",
        "dignidad humana",
-       "trabajo",
-       "protección de la familia"
+       "trabajo"
       ],
-      "fundamentos_juridicos": "Tengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política. La Ley Estatutaria de Salud 1751 de 2015 garantiza el acceso oportuno a los servicios de salud. El Decreto 2591 de 1991 regula la acción de tutela para proteger derechos fundamentales cuando se agota la vía ordinaria. La EPS Vida Plena Salud autorizó la cirugía pero no la programa, vulnerando mis derechos. Sentencia T-549 de 2023 reafirma que una cirugía como la microdiscectomía debe autorizarse y realizarse cuando el médico tratante la prescribe, y la EPS puede ser obligada a responder por el riesgo a la salud. Sentencia T-041 de 2019 establece que la denegación o retraso de un procedimiento quirúrgico necesario viola el derecho a la salud y la dignidad humana. Sentencia T-152 de 2026 indica que la EPS debe valorar adecuadamente los diagnósticos y factores de riesgo antes de negar o tardar en autorizar un procedimiento, y su omisión vulnera el derecho a la salud. Sentencia T-688 de 1998 confirma que incluso una cirugía no urgente puede ser protegida mediante tutela cuando hay retardo en su programación, permitiendo al juez exigir su realización.",
+      "fundamentos_juridicos": "Tengo derecho a la protección de mi salud, vida digna, seguridad social, dignidad humana y trabajo, consagrados en los artículos 11, 48, 49 y 86 de la Constitución Política, así como en el Decreto 2591 de 1991 y la Ley Estatutaria de Salud 1751 de 2015. La EPS Vida Plena Salud, tras autorizar la cirugía de microdiscectomía el 2 de mayo de 2026, no la ha ejecutado, generando una demora injustificada que vulnera mis derechos fundamentales. La Sentencia T-549 de 2023 establece que la EPS incurre en responsabilidad cuando retrasa la intervención después de haber sido ordenada. La Sentencia SU-096 de 2018 destaca la obligación de los entes de salud de no demorar tratamientos médicos urgentes. La Sentencia T-936 de 2009 aborda la responsabilidad de las EPS cuando se niegan a autorizar intervenciones médicas esenciales. La Sentencia T-152 de 2026 establece que la tutela es el medio idóneo para proteger derechos de salud vulnerados por una EPS y señala la urgencia de atender esas vulneraciones.",
       "pretensiones": [
-       "Que se ordene a la EPS Vida Plena Salud programar y realizar de manera inmediata la cirugía de microdiscectomía ordenada el 15 de abril de 2026.",
-       "Que se le proporcione un tratamiento integral y seguimiento médico posterior a la cirugía.",
-       "Que se adopten las medidas necesarias para mitigar el daño causado por la demora, incluyendo apoyo para mi incapacidad laboral actual."
+       "Que se ordene a la EPS Vida Plena Salud autorizar y garantizar la realización inmediata de la cirugía de microdiscectomía para tratar la hernia discal L4-L5.",
+       "Que se le ordene a la EPS Vida Plena Salud proporcionar todo el apoyo logístico, médico y necesario para la realización de dicha cirugía dentro de las próximas 48 horas.",
+       "Que, mientras se realiza la cirugía, se me garantice el manejo adecuado del dolor y la atención médica continua para prevenir el deterioro de mi condición neurológica."
       ],
       "pruebas_y_anexos": [
-       "Orden de la cirugía (microdiscectomía) - 15 de abril de 2026",
-       "Autorización de la EPS - 2 de mayo"
+       "Orden de la cirugía (microdiscectomía)",
+       "Papel de autorización de la EPS Vida Plena Salud"
       ],
-      "juramento": "Declaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y derechos vulnerados en este caso.",
+      "juramento": "Declaro bajo gravedad de juramento que no he presentado otra acción de tutela por los mismos hechos y derechos que ahora acciono.",
       "accionada": "Vida Plena Salud",
       "ciudad": null,
-      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\n[COMPLETAR: ciudad o municipio]\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Vida Plena Salud\nDERECHOS INVOCADOS: salud, vida digna, seguridad social, dignidad humana, trabajo, protección de la familia\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en [COMPLETAR: ciudad o municipio], actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Vida Plena Salud, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida digna, seguridad social, dignidad humana, trabajo, protección de la familia, con base en los siguientes:\n\nI. HECHOS\n\n1. Desde marzo de este año presenté dolor en la espalda que baja por la pierna izquierda.\n2. El 15 de abril de 2026 me diagnosticaron hernia discal L4-L5 y mi médico tratante ordenó una cirugía de microdiscectomía.\n3. El 2 de mayo la EPS Vida Plena Salud autorizó dicha cirugía.\n4. Desde entonces, han pasado más de cinco meses y la EPS no ha programado ni realizado la cirugía.\n5. Presenté una queja ante la Superintendencia de Salud en julio, pero no obtuve respuesta ni solución.\n6. Debido a la demora, sigo con dolor intenso, limitación para trabajar y riesgo de daño neurológico progresivo.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida digna\n3. seguridad social\n4. dignidad humana\n5. trabajo\n6. protección de la familia\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política. La Ley Estatutaria de Salud 1751 de 2015 garantiza el acceso oportuno a los servicios de salud. El Decreto 2591 de 1991 regula la acción de tutela para proteger derechos fundamentales cuando se agota la vía ordinaria. La EPS Vida Plena Salud autorizó la cirugía pero no la programa, vulnerando mis derechos. Sentencia T-549 de 2023 reafirma que una cirugía como la microdiscectomía debe autorizarse y realizarse cuando el médico tratante la prescribe, y la EPS puede ser obligada a responder por el riesgo a la salud. Sentencia T-041 de 2019 establece que la denegación o retraso de un procedimiento quirúrgico necesario viola el derecho a la salud y la dignidad humana. Sentencia T-152 de 2026 indica que la EPS debe valorar adecuadamente los diagnósticos y factores de riesgo antes de negar o tardar en autorizar un procedimiento, y su omisión vulnera el derecho a la salud. Sentencia T-688 de 1998 confirma que incluso una cirugía no urgente puede ser protegida mediante tutela cuando hay retardo en su programación, permitiendo al juez exigir su realización.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Vida Plena Salud programar y realizar de manera inmediata la cirugía de microdiscectomía ordenada el 15 de abril de 2026.\n2. Que se le proporcione un tratamiento integral y seguimiento médico posterior a la cirugía.\n3. Que se adopten las medidas necesarias para mitigar el daño causado por la demora, incluyendo apoyo para mi incapacidad laboral actual.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de la cirugía (microdiscectomía) - 15 de abril de 2026\n2. Autorización de la EPS - 2 de mayo\n\nVI. JURAMENTO\n\n\nDeclaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y derechos vulnerados en este caso.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Vida Plena Salud, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
+      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\n[COMPLETAR: ciudad o municipio]\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Vida Plena Salud\nDERECHOS INVOCADOS: salud, vida digna, seguridad social, dignidad humana, trabajo\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en [COMPLETAR: ciudad o municipio], actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Vida Plena Salud, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida digna, seguridad social, dignidad humana, trabajo, con base en los siguientes:\n\nI. HECHOS\n\n1. Soy afiliado/a de la EPS Vida Plena Salud.\n2. El 15 de abril de 2026, mi médico tratante me ordenó la cirugía de microdiscectomía para tratar una hernia discal L4-L5.\n3. El 2 de mayo de 2026, la EPS Vida Plena Salud autorizó dicha cirugía.\n4. A pesar de la autorización, la cirugía no se ha realizado a la fecha, superando los cinco meses de espera.\n5. He presentado una queja ante la Superintendencia Nacional de Salud en julio de 2026, la cual no ha tenido resolución a la fecha.\n6. Mi condición médica implica riesgo inminente de daño neurológico irreversible y afecta mi capacidad laboral y el sustento de mi familia.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida digna\n3. seguridad social\n4. dignidad humana\n5. trabajo\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mi salud, vida digna, seguridad social, dignidad humana y trabajo, consagrados en los artículos 11, 48, 49 y 86 de la Constitución Política, así como en el Decreto 2591 de 1991 y la Ley Estatutaria de Salud 1751 de 2015. La EPS Vida Plena Salud, tras autorizar la cirugía de microdiscectomía el 2 de mayo de 2026, no la ha ejecutado, generando una demora injustificada que vulnera mis derechos fundamentales. La Sentencia T-549 de 2023 establece que la EPS incurre en responsabilidad cuando retrasa la intervención después de haber sido ordenada. La Sentencia SU-096 de 2018 destaca la obligación de los entes de salud de no demorar tratamientos médicos urgentes. La Sentencia T-936 de 2009 aborda la responsabilidad de las EPS cuando se niegan a autorizar intervenciones médicas esenciales. La Sentencia T-152 de 2026 establece que la tutela es el medio idóneo para proteger derechos de salud vulnerados por una EPS y señala la urgencia de atender esas vulneraciones.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Vida Plena Salud autorizar y garantizar la realización inmediata de la cirugía de microdiscectomía para tratar la hernia discal L4-L5.\n2. Que se le ordene a la EPS Vida Plena Salud proporcionar todo el apoyo logístico, médico y necesario para la realización de dicha cirugía dentro de las próximas 48 horas.\n3. Que, mientras se realiza la cirugía, se me garantice el manejo adecuado del dolor y la atención médica continua para prevenir el deterioro de mi condición neurológica.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de la cirugía (microdiscectomía)\n2. Papel de autorización de la EPS Vida Plena Salud\n\nVI. JURAMENTO\n\n\nDeclaro bajo gravedad de juramento que no he presentado otra acción de tutela por los mismos hechos y derechos que ahora acciono.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Vida Plena Salud, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
      },
      "verification": {
       "citas_encontradas": [
        "T-549/23",
-       "T-041/19",
-       "T-152/26",
-       "T-688/98"
+       "SU-096/18",
+       "T-936/09",
+       "T-152/26"
       ],
       "citas_verificadas": [
        {
@@ -958,21 +834,21 @@
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
-        "sentencia_id": "T-041/19",
+        "sentencia_id": "SU-096/18",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2019/t-041-19.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2018/su096-18",
+        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
+       },
+       {
+        "sentencia_id": "T-936/09",
+        "estado": "verificada",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2009/T-936-09.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
         "sentencia_id": "T-152/26",
         "estado": "verificada",
         "url": "https://www.corteconstitucional.gov.co/relatoria/2026/T-152-26.htm",
-        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
-       },
-       {
-        "sentencia_id": "T-688/98",
-        "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/1998/t-688-98.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        }
       ],
@@ -981,59 +857,58 @@
       "ciclo": [],
       "iteraciones": 0,
       "observaciones": [
-       "Hecho 4: afirma que 'han pasado más de cinco meses' desde el 2 de mayo, pero los hechos del caso no incluyen una fecha actual de referencia para calcular ese lapso.",
-       "Hecho 5: añade 'no obtuve respuesta ni solución' a la queja de julio; los hechos del caso solo mencionan la presentación de la queja, no su resultado.",
-       "Hecho 6: introduce 'limitación para trabajar' y 'riesgo de daño neurológico progresivo' que no constan en los hechos del caso; además, los datos faltantes preguntan expresamente por incapacidad médica documentada.",
-       "Derechos vulnerados 'trabajo' y 'protección de la familia' no se derivan de los hechos suministrados: no hay mención de situación familiar ni de limitación laboral en los hechos del caso.",
-       "Pretensión 3 solicita 'apoyo para mi incapacidad laboral actual', pero esa incapacidad no está acreditada en los hechos ni en los anexos.",
-       "Los hechos del caso indican 'servicio_negado': 'cirugía', mientras que el relato dice que la EPS autorizó la cirugía (hecho 3); la vulneración alegada es el retardo en la programación, no la denegación, y el texto debería precisar esa distinción."
+       "Hecho 4 inventa 'superando los cinco meses de espera' y 'a la fecha' sin que los hechos del caso indiquen la fecha de presentación de la tutela; no es posible verificar el cómputo de cinco meses.",
+       "Hecho 5 introduce una queja ante la Superintendencia Nacional de Salud en julio de 2026 que no figura en los hechos del caso ni en los anexos; es un dato inventado.",
+       "Hecho 6 afirma 'riesgo inminente de daño neurológico irreversible' y que la condición 'afecta mi capacidad laboral y el sustento de mi familia'; esos extremos no constan en los hechos del caso (solo edad y diagnóstico) y no están soportados por anexos médicos.",
+       "Pretensión 1 solicita 'autorizar y garantizar' la cirugía, pero el hecho 3 establece que la EPS ya autorizó el 2 de mayo de 2026; la pretensión debería limitarse a la ejecución/materialización de la cirugía ya autorizada.",
+       "Derechos 'trabajo' y 'seguridad social' se derivan del hecho 6 inventado, no de los hechos acreditados del caso.",
+       "Faltan en la demanda los datos que el caso señala como ausentes: número de identificación del afiliado y prescripción escrita del ortopedista que justifique la cirugía."
       ]
      },
      "canal_radicacion": null,
      "resumen_revisores": {
-      "facts": "Since March 2026 you have had back pain that radiates down your left leg, and on April 15, 2026 your treating doctor diagnosed a disc herniation at L4-L5 and ordered microdiscectomy surgery. The health insurer EPS Vida Plena Salud authorized the operation on May 2, 2026, but more than five months later it has still not scheduled or performed the surgery. In July you filed a complaint with the Superintendence of Health and received no response. Because of the delay you continue to suffer severe pain, are unable to work, and face a risk of progressive neurological damage.",
+      "facts": "The petitioner is an insured member of EPS Vida Plena Salud. A treating physician ordered microdiscectomy surgery on April 15, 2026, for a L4-L5 disc herniation. The EPS authorized the surgery on May 2, 2026, but more than five months later the operation has not been performed. The petitioner filed a complaint with the National Health Superintendence in July 2026 and has received no resolution.",
       "rights_invoked": [
        "health",
        "dignified life",
        "social security",
        "human dignity",
-       "work",
-       "family protection"
+       "work"
       ],
       "requests": [
-       "order EPS Vida Plena Salud to schedule and perform the microdiscectomy surgery that was ordered on April 15, 2026 without further delay",
-       "provide integral treatment and medical follow-up after the surgery",
-       "adopt measures to mitigate the damage caused by the delay, including support for your current loss of work capacity"
+       "order EPS Vida Plena Salud to authorize and perform the surgery within 48 hours",
+       "order EPS Vida Plena Salud to provide logistical and medical support for the surgery",
+       "ensure pain management and ongoing medical care while awaiting surgery"
       ],
       "rulings": [
        {
         "ruling_id": "T-549/23",
-        "why": "It confirms that a surgery the treating doctor prescribes must be authorized and performed promptly, and the EPS can be ordered to act when it fails to do so."
+        "why": "it establishes EPS liability when a surgery is delayed after authorization"
        },
        {
-        "ruling_id": "T-041/19",
-        "why": "Holds that denial or unnecessary delay of a necessary surgical procedure violates the right to health and human dignity."
+        "ruling_id": "SU-096/18",
+        "why": "emphasizes that health agencies must not delay essential treatments"
+       },
+       {
+        "ruling_id": "T-936/09",
+        "why": "addresses EPS responsibility when refusing essential medical interventions"
        },
        {
         "ruling_id": "T-152/26",
-        "why": "Requires the EPS to properly assess diagnoses and risk factors before denying or delaying a procedure, and its omission breaches the health right."
-       },
-       {
-        "ruling_id": "T-688/98",
-        "why": "States that even non‑urgent surgery can be protected by tutela when there is an unreasonable delay in scheduling, allowing the judge to order its performance."
+        "why": "confirms tutela as the proper remedy for health rights violated by an EPS and stresses urgency"
        }
       ]
      },
      "aviso": "Amparo es una herramienta de ayuda para la redacción y no constituye asesoría legal. Revise el documento, complete los datos entre corchetes y, si es posible, consúltelo con un abogado, un consultorio jurídico universitario o la Defensoría del Pueblo antes de radicarlo."
     },
     "totals": {
-     "input_tokens": 10433,
-     "output_tokens": 5775,
-     "cost_usd": 0.013513,
-     "latency_s": 33.4,
+     "input_tokens": 12723,
+     "output_tokens": 5363,
+     "cost_usd": 0.011954,
+     "latency_s": 42.27,
      "tavily_searches": 4,
      "escalations": 0,
-     "cost_all_reasoning_usd": 0.027758
+     "cost_all_reasoning_usd": 0.028812
     }
    }
   }
