@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 
-import { downloadDocument } from "@/lib/sse";
+import { documentUrl, downloadDocument } from "@/lib/sse";
 import {
   STEPS,
   STEP_LABELS,
+  type DocumentLinks,
   type FilingChannel,
   type FinalPackage,
   type ReviewerSummary,
@@ -39,14 +40,16 @@ export default function Results({
   pkg,
   steps,
   totals,
+  documents,
 }: {
   pkg: FinalPackage;
   steps: Record<StepName, StepState>;
   totals: Totals | null;
+  documents: DocumentLinks | null;
 }) {
   return (
     <div className="mt-8 space-y-6">
-      <DocumentCard pkg={pkg} />
+      <DocumentCard pkg={pkg} documents={documents} />
       <div className="grid gap-6 lg:grid-cols-2">
         <CitationsCard pkg={pkg} />
         <ChecklistCard items={pkg.checklist_anexos} />
@@ -58,7 +61,7 @@ export default function Results({
   );
 }
 
-function DocumentCard({ pkg }: { pkg: FinalPackage }) {
+function DocumentCard({ pkg, documents }: { pkg: FinalPackage; documents: DocumentLinks | null }) {
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState<"docx" | "pdf" | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -92,6 +95,7 @@ function DocumentCard({ pkg }: { pkg: FinalPackage }) {
           </h2>
           <p className="text-xs text-slate-600">
             Fill in the highlighted <span lang="es">[COMPLETAR]</span> fields, sign it and file it.
+            {documents?.docx.startsWith("/api/") && " Download links expire after 7 days."}
             {pkg.resumen_revisores && (
               <>
                 {" "}
@@ -104,22 +108,37 @@ function DocumentCard({ pkg }: { pkg: FinalPackage }) {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => download("docx")}
-            disabled={busy !== null}
-            className={`${button} bg-slate-900 text-white hover:bg-slate-700`}
-          >
-            {busy === "docx" ? "Preparing…" : "Download .docx"}
-          </button>
-          <button
-            type="button"
-            onClick={() => download("pdf")}
-            disabled={busy !== null}
-            className={`${button} bg-slate-900 text-white hover:bg-slate-700`}
-          >
-            {busy === "pdf" ? "Preparing…" : "Download PDF"}
-          </button>
+          {documents ? (
+            // Plain links to files the API stored when the case finished: mobile browsers download them
+            // directly (Content-Disposition: attachment), with no script between the tap and the file.
+            <>
+              <a href={documentUrl(documents.docx)} download className={`${button} bg-slate-900 text-white hover:bg-slate-700`}>
+                Download .docx
+              </a>
+              <a href={documentUrl(documents.pdf)} download className={`${button} bg-slate-900 text-white hover:bg-slate-700`}>
+                Download PDF
+              </a>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => download("docx")}
+                disabled={busy !== null}
+                className={`${button} bg-slate-900 text-white hover:bg-slate-700`}
+              >
+                {busy === "docx" ? "Preparing…" : "Download .docx"}
+              </button>
+              <button
+                type="button"
+                onClick={() => download("pdf")}
+                disabled={busy !== null}
+                className={`${button} bg-slate-900 text-white hover:bg-slate-700`}
+              >
+                {busy === "pdf" ? "Preparing…" : "Download PDF"}
+              </button>
+            </>
+          )}
           <button
             type="button"
             onClick={copy}

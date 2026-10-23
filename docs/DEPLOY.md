@@ -7,6 +7,7 @@ What is deployed, and the exact commands used (October 2026).
 | Backend (FastAPI) | Google Cloud Run, `us-central1`, project `amparo-hackathon-791d7a` | https://amparo-api-945117299883.us-central1.run.app |
 | Frontend (Next.js) | Vercel project `amparo`, root `frontend/` | https://amparo-swart.vercel.app |
 | Usage counters | Firestore (native mode, `us-central1`), collection `amparo_usage` | |
+| Finished documents | Cloud Storage bucket `amparo-hackathon-791d7a-documents` (`us-central1`), deleted after 7 days | |
 
 Commands use bash syntax (Git Bash works on Windows) and run from the repo root.
 
@@ -47,6 +48,16 @@ gcloud firestore databases create --location=us-central1 --type=firestore-native
 gcloud firestore fields ttls update expire_at --collection-group=amparo_usage --enable-ttl --async
 ```
 
+Cloud Storage for the finished .docx and PDF files: private (public access prevention), deleted after 7 days by a
+lifecycle rule. The API serves them by an unguessable ID and also refuses files older than `DOCUMENT_TTL_DAYS`:
+
+```bash
+gcloud services enable storage.googleapis.com
+gcloud storage buckets create "gs://$PROJECT_ID-documents" --location=us-central1   --uniform-bucket-level-access --public-access-prevention
+echo '{"rule":[{"action":{"type":"Delete"},"condition":{"age":7}}]}' > lifecycle.json
+gcloud storage buckets update "gs://$PROJECT_ID-documents" --lifecycle-file=lifecycle.json
+```
+
 ## 2. Secrets and service account
 
 API keys are read from the local `.env` and piped, never typed on the command line. The IP-hashing key is random:
@@ -71,6 +82,7 @@ for s in nebius-api-key tavily-api-key ip-hash-key judge-access-code; do
   gcloud secrets add-iam-policy-binding "$s" --member="serviceAccount:$SA" --role=roles/secretmanager.secretAccessor
 done
 gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:$SA" --role=roles/datastore.user --condition=None
+gcloud storage buckets add-iam-policy-binding "gs://$PROJECT_ID-documents" --member="serviceAccount:$SA" --role=roles/storage.objectAdmin
 ```
 
 A new service account can take a few seconds to become visible to IAM; retry a binding that fails with
@@ -82,7 +94,7 @@ A new service account can take a few seconds to become visible to IAM; retry a b
 gcloud run deploy amparo-api --source backend --region us-central1 --allow-unauthenticated \
   --service-account "$SA" \
   --set-secrets NEBIUS_API_KEY=nebius-api-key:latest,TAVILY_API_KEY=tavily-api-key:latest,IP_HASH_KEY=ip-hash-key:latest,JUDGE_ACCESS_CODE=judge-access-code:latest \
-  --set-env-vars "^@^MODEL_FAST=nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B@MODEL_DRAFT=nvidia/nemotron-3-super-120b-a12b@MODEL_REASONING=nvidia/Nemotron-3-Ultra-550b-a55b@USAGE_STORE=firestore@FIRESTORE_PROJECT=$PROJECT_ID@FRONTEND_ORIGIN=http://localhost:3000" \
+  --set-env-vars "^@^MODEL_FAST=nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B@MODEL_DRAFT=nvidia/nemotron-3-super-120b-a12b@MODEL_REASONING=nvidia/Nemotron-3-Ultra-550b-a55b@USAGE_STORE=firestore@FIRESTORE_PROJECT=$PROJECT_ID@DOCUMENT_STORE=gcs@DOCUMENTS_BUCKET=$PROJECT_ID-documents@FRONTEND_ORIGIN=http://localhost:3000" \
   --timeout 300 --max-instances 2 --min-instances 0 --memory 512Mi
 ```
 
@@ -154,7 +166,10 @@ left the address bar) demo case 1 completed in 55 s on a 375 px viewport and bot
 counted those runs under `judges`, leaving the public counters unchanged. The limit was then restored to 150.
 Judge instructions: [TESTING.md](TESTING.md).
 
-Document export (`POST /api/documents/tutela.docx|pdf`) uses python-docx and fpdf2 with fpdf2's built-in
+When a case finishes, the API renders the .docx and the PDF, stores them in the bucket and sends their links in
+the `case_completed` event (`documents`); `GET /api/documents/<id>/<file>` serves them with
+`Content-Disposition: attachment`, so the UI's download buttons are plain links. The recorded sample runs link to
+static copies in `frontend/public/samples/`. Document export (`POST /api/documents/tutela.docx|pdf`, the fallback) uses python-docx and fpdf2 with fpdf2's built-in
 fonts, so the image needs no system packages or font files. It takes the draft JSON and calls no model, so it
 also works for the recorded sample runs and is not counted against the limits.
 

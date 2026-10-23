@@ -12,6 +12,7 @@ import {
   STEPS,
   STEP_LABELS,
   type CaseEvent,
+  type DocumentLinks,
   type FinalPackage,
   type Refusal,
   type StepMetrics,
@@ -35,6 +36,7 @@ export default function AmparoApp() {
   const [steps, setSteps] = useState(initialSteps);
   const [pkg, setPkg] = useState<FinalPackage | null>(null);
   const [totals, setTotals] = useState<Totals | null>(null);
+  const [documents, setDocuments] = useState<DocumentLinks | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [refusal, setRefusal] = useState<Refusal | null>(null);
   const [running, setRunning] = useState(false);
@@ -129,6 +131,7 @@ export default function AmparoApp() {
       case "case_completed":
         setPkg(data.package);
         setTotals(data.totals);
+        setDocuments(data.documents ?? null);
         break;
     }
   }
@@ -140,6 +143,7 @@ export default function AmparoApp() {
     setSteps(initialSteps());
     setPkg(null);
     setTotals(null);
+    setDocuments(null);
     setError(null);
     setRefusal(null);
     setSampleTitle(sample);
@@ -343,7 +347,7 @@ export default function AmparoApp() {
         {current ? `Running step: ${STEP_LABELS[current].title}` : pkg ? "Your tutela is ready." : ""}
       </p>
 
-      {pkg && <Results pkg={pkg} steps={steps} totals={totals} />}
+      {pkg && <Results pkg={pkg} steps={steps} totals={totals} documents={documents} />}
     </div>
   );
 }

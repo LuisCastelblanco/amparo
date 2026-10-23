@@ -133,6 +133,11 @@ export async function checkJudgeCode(judgeCode: string, signal?: AbortSignal): P
   }
 }
 
+/** Absolute URL of a document link: API paths go to the API, the rest are served by this site. */
+export function documentUrl(path: string): string {
+  return path.startsWith("/api/") ? `${API_URL}${path}` : path;
+}
+
 /** Generate the tutela as .docx or PDF on the API (no LLM involved) and save it. */
 export async function downloadDocument(draft: TutelaDraft, format: "docx" | "pdf"): Promise<void> {
   const response = await fetch(`${API_URL}/api/documents/tutela.${format}`, {

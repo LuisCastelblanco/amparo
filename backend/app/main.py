@@ -1,7 +1,6 @@
 import asyncio
 import json
 import logging
-import re
 from collections.abc import AsyncIterator
 from typing import Any, Literal
 
@@ -10,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel, Field
 
-from app import document, usage
+from app import document, storage, usage
 from app.config import get_settings
 from app.pipeline import StepUsage, clarifying_questions, intake, run_case, with_answers
 from app.schemas import TutelaSections
@@ -61,10 +60,6 @@ class DocumentRequest(TutelaSections):
 
 
 MAX_DOCUMENT_JSON_CHARS = 80_000
-DOCUMENT_TYPES = {
-    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "pdf": "application/pdf",
-}
 
 
 @app.get("/health")
@@ -133,7 +128,9 @@ async def _stream(narrative: str, english_summary: bool, slot: int, judge: bool)
         async for event, data in run_case(narrative, english_summary=english_summary):
             if event in ("step_completed", "step_failed"):
                 cost += data["metrics"]["cost_usd"]
-            completed = completed or event == "case_completed"
+            if event == "case_completed":
+                completed = True
+                data["documents"] = await _save_documents(data["package"].get("draft"))
             yield _sse(event, data)
     except Exception as exc:  # noqa: BLE001 - never break the stream without telling the client
         logger.exception("pipeline crashed outside a step")
@@ -143,6 +140,17 @@ async def _stream(narrative: str, english_summary: bool, slot: int, judge: bool)
         usage.concurrency.release(slot)
         _record_result(cost, completed, judge)
         logger.info("case finished judge=%s completed=%s cost_usd=%.6f", judge, completed, cost)
+
+
+async def _save_documents(draft: dict | None) -> dict[str, str] | None:
+    """Download paths for the finished .docx and PDF; None if there is no draft or storing failed."""
+    if not draft:
+        return None
+    try:
+        return await storage.save(draft)
+    except Exception:  # noqa: BLE001 - the UI falls back to generating the files on request
+        logger.exception("could not store the documents")
+        return None
 
 
 def _refuse(refusal: usage.Refusal) -> JSONResponse:
@@ -263,9 +271,36 @@ def tutela_document(fmt: Literal["docx", "pdf"], request: DocumentRequest) -> Re
     sections = TutelaSections(**request.model_dump(include=set(TutelaSections.model_fields)))
     blocks = document.tutela_blocks(request.accionada, request.ciudad, sections)
     content = document.render_docx(blocks) if fmt == "docx" else document.render_pdf(blocks)
-    slug = re.sub(r"[^a-z0-9]+", "-", document.ascii_fold(request.accionada).lower()).strip("-") or "eps"
     return Response(
         content,
-        media_type=DOCUMENT_TYPES[fmt],
-        headers={"Content-Disposition": f'attachment; filename="tutela-{slug}.{fmt}"'},
+        media_type=document.CONTENT_TYPES[fmt],
+        headers={"Content-Disposition": f'attachment; filename="{document.filename(request.accionada, fmt)}"'},
+    )
+
+
+@app.get("/api/documents/{doc_id}/{name}", response_model=None)
+async def stored_document(doc_id: str, name: str) -> Response:
+    """A finished case's .docx or PDF, by the unguessable ID sent in case_completed. Expires after DOCUMENT_TTL_DAYS."""
+    expired = JSONResponse(
+        {"error": "not_found", "message": "This download link has expired or does not exist. Run the case again."},
+        status_code=404,
+    )
+    if not storage.DOC_ID_RE.match(doc_id) or not storage.FILENAME_RE.match(name):
+        return expired
+    try:
+        found = await storage.get_document_store().get(doc_id, name)
+    except Exception:  # noqa: BLE001
+        logger.exception("document store unavailable")
+        return JSONResponse({"error": "unavailable", "message": "Please try again in a minute."}, status_code=503)
+    if found is None:
+        return expired
+    content, content_type = found
+    return Response(
+        content,
+        media_type=content_type,
+        headers={
+            "Content-Disposition": f'attachment; filename="{name}"',
+            "Cache-Control": "private, max-age=3600",
+            "X-Content-Type-Options": "nosniff",
+        },
     )

@@ -81,6 +81,11 @@ class Settings(BaseSettings):
     usage_store: str = "memory"
     firestore_project: str = ""  # empty: the project of the default credentials
     firestore_collection: str = "amparo_usage"
+    # Finished documents (.docx and PDF), downloadable by an unguessable link for DOCUMENT_TTL_DAYS.
+    # "gcs" stores them in DOCUMENTS_BUCKET (whose lifecycle rule deletes them); "memory" is for local development.
+    document_store: str = "memory"
+    documents_bucket: str = ""
+    document_ttl_days: int = 7
     # Secret key for hashing client IPs (HMAC-SHA256); IPs are never stored in clear.
     ip_hash_key: str = ""
     # Number of proxies in front of the app that append to X-Forwarded-For (Cloud Run: 1).

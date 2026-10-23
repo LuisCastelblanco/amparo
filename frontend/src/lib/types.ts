@@ -150,7 +150,13 @@ export type CaseEvent =
   | { event: "verify_iteration"; data: VerifyIteration }
   | { event: "step_failed"; data: { step: StepName; index: number; error: string; metrics: StepMetrics } }
   | { event: "case_failed"; data: { failed_step: StepName | null; totals?: Totals; error?: string } }
-  | { event: "case_completed"; data: { package: FinalPackage; totals: Totals } };
+  | { event: "case_completed"; data: { package: FinalPackage; totals: Totals; documents?: DocumentLinks | null } };
+
+/** Download paths of the finished files: on the API (/api/...) for live runs, static (/samples/...) for samples. */
+export interface DocumentLinks {
+  docx: string;
+  pdf: string;
+}
 
 /** Error body returned by the API when a run is refused (limits, kill switch, busy). */
 export interface Refusal {

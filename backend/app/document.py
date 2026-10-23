@@ -272,3 +272,15 @@ def render_pdf(blocks: list[Block]) -> bytes:
 
 def ascii_fold(text: str) -> str:
     return unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+
+
+CONTENT_TYPES = {
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "pdf": "application/pdf",
+}
+
+
+def filename(accionada: str, fmt: str) -> str:
+    """'EPS Salud Andina' -> 'tutela-eps-salud-andina.docx'."""
+    slug = re.sub(r"[^a-z0-9]+", "-", ascii_fold(accionada).lower()).strip("-")[:60].strip("-") or "eps"
+    return f"tutela-{slug}.{fmt}"

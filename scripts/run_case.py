@@ -5,6 +5,10 @@ Usage (from the repo root):
     uv run --project backend python scripts/run_case.py path/to/case.md
     uv run --project backend python scripts/run_case.py --all --quiet
     uv run --project backend python scripts/run_case.py --all --quiet --record frontend/src/data/samples
+    uv run --project backend python scripts/run_case.py --sample-documents frontend/src/data/samples
+
+Recording also writes each sample's .docx and PDF to frontend/public/samples/<case>/ and links them from the
+recorded case_completed event, so sample runs download static files; --sample-documents only redoes that.
 """
 
 import argparse
@@ -19,18 +23,50 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "backend"))
 sys.stdout.reconfigure(encoding="utf-8")
 
+from app import storage  # noqa: E402
 from app.pipeline import run_case  # noqa: E402
 
 DEMO_DIR = REPO_ROOT / "docs" / "demo_cases"
+SAMPLE_FILES_DIR = REPO_ROOT / "frontend" / "public" / "samples"
 
 
-def load_case(arg: str) -> tuple[str, str]:
+def save_recording(path: Path, payload: dict) -> None:
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+
+
+def write_sample_documents(recording: Path) -> None:
+    """Render a recorded run's .docx and PDF into the frontend's public folder and link them from the recording."""
+    payload = json.loads(recording.read_text(encoding="utf-8"))
+    final = next((e for e in payload["events"] if e["event"] == "case_completed"), None)
+    if final is None or not final["data"]["package"].get("draft"):
+        return
+    folder = SAMPLE_FILES_DIR / recording.stem
+    if folder.exists():
+        for old in folder.iterdir():
+            old.unlink()
+    folder.mkdir(parents=True, exist_ok=True)
+    links = {}
+    for name, (content, _) in storage.render(final["data"]["package"]["draft"]).items():
+        (folder / name).write_bytes(content)
+        links[name.rsplit(".", 1)[1]] = f"/samples/{recording.stem}/{name}"
+    final["data"]["documents"] = links
+    save_recording(recording, payload)
+    print(f"sample documents -> {folder}")
+
+
+def resolve_case(arg: str) -> Path:
+    """A case file: the path itself, or the demo case whose file name starts with `arg`."""
     path = Path(arg)
     if not path.exists():
         matches = sorted(DEMO_DIR.glob(f"{arg}*.md"))
         if not matches:
             raise SystemExit(f"No demo case matches {arg!r} in {DEMO_DIR}")
         path = matches[0]
+    return path
+
+
+def load_case(arg: str) -> tuple[str, str]:
+    path = resolve_case(arg)
     lines = path.read_text(encoding="utf-8").strip().splitlines()
     title = lines[0].lstrip("# ").strip()
     return title, "\n".join(lines[1:]).strip()
@@ -152,7 +188,12 @@ async def main() -> None:
     parser.add_argument("--verbose", action="store_true", help="show LLM call logs")
     parser.add_argument("--record", metavar="DIR", help="save every SSE event of each case as DIR/<case>.json")
     parser.add_argument("--english-summary", action="store_true", help="add the English reviewer summary")
+    parser.add_argument("--sample-documents", metavar="DIR", help="only (re)write the documents of DIR/*.json")
     args = parser.parse_args()
+    if args.sample_documents:
+        for recording in sorted(Path(args.sample_documents).glob("*.json")):
+            write_sample_documents(recording)
+        return
     logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING)
     logging.getLogger("httpx").setLevel(logging.WARNING)
 
@@ -164,11 +205,11 @@ async def main() -> None:
         summary, recorded = await run(title, narrative, args.quiet, args.english_summary or bool(args.record))
         summaries.append(summary)
         if args.record:
-            out = Path(args.record) / f"{Path(path).stem}.json"
+            out = Path(args.record) / f"{resolve_case(path).stem}.json"
             out.parent.mkdir(parents=True, exist_ok=True)
-            payload = {"title": title, "narrative": narrative, "events": recorded}
-            out.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+            save_recording(out, {"title": title, "narrative": narrative, "events": recorded})
             print(f"recorded {len(recorded)} events -> {out}")
+            write_sample_documents(out)
     if len(summaries) > 1:
         print_summary(summaries)
 
