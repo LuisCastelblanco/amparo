@@ -12,90 +12,65 @@
    }
   },
   {
-   "t": 3.36,
-   "event": "escalated",
-   "data": {
-    "step": "intake",
-    "from_tier": "fast",
-    "from_model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
-    "to_tier": "draft",
-    "to_model": "nvidia/nemotron-3-super-120b-a12b",
-    "reasons": [
-     "denied service not found in the narrative: 'cubrimiento transporte acompañante'"
-    ],
-    "remaining_issues": []
-   }
-  },
-  {
-   "t": 4.71,
+   "t": 2.18,
    "event": "step_completed",
    "data": {
     "step": "intake",
     "index": 1,
     "result": {
-     "eps": "EPS Nuevo Horizonte",
-     "servicio_negado": "transporte y acompañante para radioterapia",
+     "eps": "Nuevo Horizonte",
+     "servicio_negado": "no cubierto el transporte para mi hija que me acompaña",
      "diagnostico": "cáncer de próstata",
      "ciudad": "Boyacá",
      "fechas_relevantes": [
       {
        "fecha": "junio",
-       "evento": "me encontraron un cáncer de próstata"
+       "evento": "Se le encontró un cáncer de próstata a Gustavo"
       },
       {
        "fecha": "25 de agosto de 2026",
-       "evento": "me respondieron por escrito que el transporte no está cubierto"
+       "evento": "EPS respondió por escrito que el transporte no está cubierto y el acompañante tampoco"
       }
      ],
      "situacion_del_paciente": {
       "edad": 76,
-      "condicion_especial": "camina con caminador, no ve bien, queda muy mareado después de las sesiones"
+      "condicion_especial": "Marcha con caminador, no ve bien y se siente mareado después de las sesiones"
      },
      "anexos_mencionados": [
       "orden de radioterapia",
       "respuesta de la EPS",
       "historia clínica"
      ],
-     "datos_faltantes": []
+     "datos_faltantes": [
+      "¿Pude revisar la respuesta escrita de la EPS respecto al transporte y al acompañante?",
+      "¿La EPS tiene un correo electrónico, número o sitio web para comunicarse sobre esta decisión?",
+      "¿Ha recibido alguna comunicación formal de la EPS sobre la negativa antes de esta carta?"
+     ]
     },
     "metrics": {
      "models": [
-      "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
-      "nvidia/nemotron-3-super-120b-a12b"
+      "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
      ],
-     "final_model": "nvidia/nemotron-3-super-120b-a12b",
-     "escalations": [
-      {
-       "step": "intake",
-       "from_tier": "fast",
-       "from_model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
-       "to_tier": "draft",
-       "to_model": "nvidia/nemotron-3-super-120b-a12b",
-       "reasons": [
-        "denied service not found in the narrative: 'cubrimiento transporte acompañante'"
-       ],
-       "remaining_issues": []
-      }
-     ],
+     "final_model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+     "escalations": [],
      "notes": [],
-     "llm_calls": 2,
-     "input_tokens": 1214,
-     "output_tokens": 423,
-     "llm_latency_s": 4.71,
-     "cost_usd": 0.000451,
+     "llm_calls": 1,
+     "input_tokens": 607,
+     "output_tokens": 303,
+     "llm_latency_s": 2.17,
+     "cost_usd": 0.000109,
      "cost_complete": true,
      "tiers": [
-      "fast",
-      "draft"
+      "fast"
      ],
-     "cost_all_reasoning_usd": 0.002483,
+     "cost_all_reasoning_usd": 0.001516,
      "tavily_searches": 0,
-     "latency_s": 4.71
+     "latency_s": 2.18
     }
    }
   },
   {
-   "t": 4.71,
+   "t": 2.18,
    "event": "step_started",
    "data": {
     "step": "analysis",
@@ -104,7 +79,7 @@
    }
   },
   {
-   "t": 7.02,
+   "t": 5.74,
    "event": "step_completed",
    "data": {
     "step": "analysis",
@@ -112,22 +87,24 @@
     "result": {
      "derechos_vulnerados": [
       "salud",
+      "vida",
       "vida digna",
       "seguridad social",
       "dignidad humana",
-      "acceso efectivo a servicios de salud",
-      "igualdad y no discriminación por condición económica y edad"
+      "protección especial al adulto mayor",
+      "acceso efectivo a servicios de salud"
      ],
      "procedencia_tutela": {
       "procede": true,
-      "razon": "Se agotó la vía administrativa con la respuesta escrita de la EPS negando el transporte y acompañante; la subsidiariedad se cumple porque no hay otro medio judicial efectivo y rápido; la inmediatez es evidente por el riesgo de interrupción de radioterapia oncológica; la legitimación la tiene Gustavo como titular del derecho a la salud."
+      "razon": "La EPS negó por escrito el transporte y el acompañante que el médico ordenó para un adulto mayor de 76 años con cáncer de próstata, discapacidad motora y visual, que no puede viajar solo; hay negativa expresa, tratamiento en curso y sujeto de especial protección.",
+      "paso_previo": null
      },
      "urgencia": "alta",
      "queries_de_busqueda": [
-      "tutela transporte acompañante radioterapia cáncer próstata adulto mayor vulnerabilidad económica EPS",
-      "sentencia transporte paciente oncológico radioterapia desplazamiento forzoso municipio distinto EPS",
-      "acción tutela adulto mayor caminador discapacidad visual acompañante tratamiento radioterapia negativo EPS",
-      "jurisprudencia constitucional transporte no POS radioterapia cáncer próstata pensión mínima salario acompañante familiar"
+      "transporte y acompañante radioterapia cáncer próstata adulto mayor EPS tutela",
+      "negativa transporte tratamiento oncológico persona mayor 76 años discapacidad corte constitucional",
+      "obligación EPS cubrir desplazamiento y acompañante radioterapia fuera municipio residencia",
+      "protección especial adulto mayor cáncer radioterapia acceso efectivo tutela sentencia"
      ]
     },
     "metrics": {
@@ -138,22 +115,22 @@
      "escalations": [],
      "notes": [],
      "llm_calls": 1,
-     "input_tokens": 683,
-     "output_tokens": 609,
-     "llm_latency_s": 2.31,
-     "cost_usd": 0.00251,
+     "input_tokens": 1045,
+     "output_tokens": 858,
+     "llm_latency_s": 3.56,
+     "cost_usd": 0.003619,
      "cost_complete": true,
      "tiers": [
       "reasoning"
      ],
-     "cost_all_reasoning_usd": 0.00251,
+     "cost_all_reasoning_usd": 0.003619,
      "tavily_searches": 0,
-     "latency_s": 2.31
+     "latency_s": 3.56
     }
    }
   },
   {
-   "t": 7.02,
+   "t": 5.74,
    "event": "step_started",
    "data": {
     "step": "research",
@@ -162,7 +139,7 @@
    }
   },
   {
-   "t": 26.0,
+   "t": 17.91,
    "event": "step_completed",
    "data": {
     "step": "research",
@@ -172,677 +149,82 @@
       {
        "sentencia_id": "T-268/23",
        "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-268-23.htm",
-       "resumen_relevancia": "El fallo reconoce que el transporte y la enfermera 24 horas son parte del tratamiento esencial para pacientes con cáncer avanzado y discapacidad, resaltando que no pueden quedar excluidos del POS.",
-       "extracto_fuente": "3.1.\nLa Sala estudiar la acción de tutela del\nseñor Alirio, adulto mayor y de escasos recursos, del régimen subsidiado\nen salud(#_ftn31),\nque tiene un adenocarcinoma de próstata con metástasis en la columna, esternón\ny costillas, que le produce fuertes dolores, ocasionándole limitaciones funcionales\nque le impiden ejecutar sus actividades cotidianas con normalidad. El\naccionante asegura que, para el tratamiento de su enfermedad, su médica\ntratante (oncóloga) expidió una orden médica en la que le solicita a su EPS-S acompañante\npor enfermera 24 horas. Lo anterior\ndado que, en razón a su edad, estado de salud y condiciones económicas, su\nhija única no puede abandonar su trabajo, con el que dignamente sostiene su propio [...] 7.15. Luego\nde agotar el examen de procedencia de la acción de tutela, la Sala estableció\ncomo problema jurídico a analizar si la EPS accionada vulneró los\nderechos fundamentales a la salud, a la vida digna y a la seguridad social de\nun adulto mayor, perteneciente al régimen subsidiado, con un cáncer\nmetastásico, al no autorizarle la prestación del servicio de enfermera 24\nhoras y el tratamiento integral, a pesar de existir orden de su médica\ntratante. [...] 7.2. Para comenzar, se tiene",
+       "resumen_relevancia": "La Corte reconoce que una EPS debe cubrir el transporte y la acompañante de pacientes adultos mayores con enfermedades graves como el cáncer de próstata cuando su condición requiere tratamiento continuo, como en el caso del acuerpante mayor de 76 años con limitaciones físicas.",
+       "extracto_fuente": "3.1.\nLa Sala estudiar la accin de tutela del\nseor Alirio, adulto mayor y de escasos recursos, del rgimen subsidiado\nen salud(#_ftn31),\nque tiene un adenocarcinoma de prstata con metstasis en la columna, esternn\ny costillas, que le produce fuertes dolores, ocasionndole limitaciones funcionales\nque le impiden ejecutar sus actividades cotidianas con normalidad. El\naccionante asegura que, para el tratamiento de su enfermedad, su mdica\ntratante (oncloga) expidi una orden mdica en la que le solicita a su EPS-S acompaante\npor enfermera 24 horas. Lo anterior\ndado que, en razn a su edad, estado de salud y condiciones econmicas, su\nhija nica no puede abandonar su trabajo, con el que dignamente sostiene su propio [...] 7.15. Luego\nde agotar el examen de procedencia de la accin de tutela, la Sala estableci\ncomo problema jurdico a analizar si la EPS accionada vulner los\nderechos fundamentales a la salud, a la vida digna y a la seguridad social de\nun adulto mayor, perteneciente al rgimen subsidiado, con un cncer\nmetastsico, al no autorizarle la prestacin del servicio de enfermera 24\nhoras y el tratamiento integral, a pesar de existir orden de su mdica\ntratante.",
        "origen": "busqueda",
-       "charset": "windows-1252",
-       "acentos_restaurados": 24,
-       "citas_mencionadas": [
-        "SU-508/20",
-        "T-760/08",
-        "C-313/14",
-        "T-338/21",
-        "T-221/21",
-        "T-005/23",
-        "T-041/19",
-        "T-033/13",
-        "T-017/21",
-        "T-720/16",
-        "T-384/13",
-        "T-717/17",
-        "T-394/21",
-        "T-099/23",
-        "T-040/16",
-        "T-662/13",
-        "T-527/15",
-        "T-539/13",
-        "T-499/14",
-        "T-745/14",
-        "T-094/16",
-        "T-014/17",
-        "T-597/93",
-        "T-402/18",
-        "T-510/15",
-        "T-025/23",
-        "T-235/18",
-        "T-508/19",
-        "T-136/20",
-        "T-001/21",
-        "T-1041/06",
-        "T-513/20",
-        "T-259/19",
-        "T-387/18",
-        "T-508/20",
-        "T-274/09",
-        "T-337/03",
-        "T-214/09",
-        "T-323/13",
-        "T-081/19",
-        "T-136/21",
-        "T-038/22"
-       ]
+       "charset": null,
+       "acentos_restaurados": 0,
+       "citas_mencionadas": []
+      },
+      {
+       "sentencia_id": "T-586/23",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-586-23.htm",
+       "resumen_relevancia": "La Corte establece que la negativa de una EPS a cubrir transporte y acompañante para tratamiento médico, especialmente en menores y adultos mayores con necesidades especiales, vulnera el derecho a la salud integral, oportuna y continua, y debe ser protegida mediante tutela.",
+       "extracto_fuente": "76.    En resumen, Cajacopi EPS vulner el derecho a la salud de Camila, al negarle el servicio de transporte intermunicipal junto a un\nacompaante para la realizacin de sus tratamientos. Adicionalmente, la Corte\nconcluy que el servicio de salud no ha sido prestado de manera integral,\ncontinua y oportuna a la accionante, pues por razones administrativas la nia\nno ha recibido las autorizaciones respectivas para el tratamiento de su\nsituacin de salud. Asimismo, la EPS ignor que Camila es objeto de especial proteccin constitucional por ser una nia,\nlo que implicaba mayor cuidado pues la demora en la prestacin de los servicios\nrequeridos puede generarle secuelas para el resto de su vida. En consecuencia,\nla Sala revocar la decisin de segunda instancia y confirmar la de primera, [...] 45.1. Una entidad promotora de\nsalud (EPS) vulnera la salud de una persona afiliada a esta entidad y\ndiagnosticada con leucemia linfoblstica aguda de precursores, al negarle los\nservicios de transporte intermunicipal, alimentacin y hospedaje junto\ncon un acompaante, cuya prestacin garantizara el acceso efectivo al\ntratamiento de quimioterapia que requiere, en atencin a que el servicio de\ntransporte no es un ",
+       "origen": "busqueda",
+       "charset": null,
+       "acentos_restaurados": 0,
+       "citas_mencionadas": []
       },
       {
        "sentencia_id": "T-316/24",
        "url": "https://www.corteconstitucional.gov.co/relatoria/2024/t-316-24.htm",
-       "resumen_relevancia": "Establece que el transporte intermunicipal necesario para acceder a servicios médicos, como la radioterapia, está incluido en el PBS y debe ser autorizado por la EPS, garantizando que no puede ser negado por falta de cobertura.",
-       "extracto_fuente": "(ii)       \nEl servicio de transporte intermunicipal (traslado\nentre municipios) se encuentra incluido en el PBS y, por ende, debe ser\nautorizado por parte de la EPS cuando sea necesario que el paciente se traslade\na un municipio distinto al de su residencia, con el fin de acceder a la\nprestación de un servicio de salud(#_ftn1).\nEn ese sentido, la sentencia SU-508 de 2020(#_ftn2)\nexplicó que esta modalidad de transporte hace parte del mecanismo de\nprotección colectiva, y debe sufragarse con cargo a la Unidad de Pago por\nCapitación (UPC) pagada a la respectiva EPS(#_ftn3). [...] 96.       \nRespecto al servicio de transporte\nintermunicipal(traslado entre municipios), en general, esta Corte ha\nconsiderado que se encuentra incluido en el PBS y que, por ende, debe ser\nautorizado por parte de la EPS cuando es necesario que el paciente se traslade\na un municipio distinto al de su residencia, con el fin de acceder a la\nprestación de un servicio de salud(#_ftn166).\nEn ese sentido, la sentencia SU-508 de 2020(#_ftn167)\nexplicó que esta modalidad de transporte hace parte del\nmecanismo de protección colectiva, y debe sufragarse con cargo a la\nUnidad de Pago por Capitación (UPC) pagada a la respectiva ",
+       "resumen_relevancia": "La Corte define los criterios para que una EPS viole el derecho a la salud al negir el transporte y estancia de acompañante de un paciente mayor con necesidad permanente de atención, especialmente cuando se requiere desplazamiento fuera del municipio para tratamiento incluido en el PBS.",
+       "extracto_fuente": "97.       \nAdicionalmente, con relacin a los\npacientes que requieren la asistencia de un acompaante, esta Corporacin\nha determinado que una EPS vulnera el derecho a la salud de la persona afiliada\ncuando sta debe salir del municipio o lugar de residencia para acceder a un\nservicio o tecnologa incluida en el PBS, y la EPS se niega a cubrir los gastos\nde transporte y estada de su acompaante, siempre y cuando se cumplan las\nsiguientes condiciones: (i) que el usuario\ndependa de un tercero para desplazarse; (ii) que requiera atencin permanente\npara garantizar su integridad fsica y el ejercicio adecuado de sus labores\ncotidianas; y (iii) que ni el usuario ni su familia tengan los recursos\neconmicos necesarios para cubrir los gastos mencionados(#_ftn170). [...] 139.   (iii). Su reconocimiento es obligacin de la EPS a partir del\nmismo momento de la autorizacin del servicio en un municipio diferente al\ndomicilio del paciente: el hecho de remitir a las NNA a una institucin de salud fuera\ndel lugar de residencia implica que la Nueva EPS tiene la responsabilidad de\ngarantizar los medios necesarios para materializar el acceso a los servicios de\nsalud previamente ordenados por el mdico tratante,",
        "origen": "busqueda",
-       "charset": "windows-1252",
-       "acentos_restaurados": 8,
-       "citas_mencionadas": [
-        "SU-508/20",
-        "T-859/03",
-        "T-760/08",
-        "C-313/14",
-        "T-459/22",
-        "T-047/23",
-        "C-277/22",
-        "T-159/24",
-        "T-017/23",
-        "T-309/18",
-        "T-259/19",
-        "T-359/22",
-        "T-086/24",
-        "T-329/18",
-        "T-287/22",
-        "T-900/02",
-        "T-1079/01",
-        "T-962/05",
-        "T-550/09",
-        "T-021/12",
-        "T-388/12",
-        "T-481/12",
-        "T-201/13",
-        "T-567/13",
-        "T-105/14",
-        "T-096/16",
-        "T-397/17",
-        "T-707/16",
-        "T-495/17",
-        "T-032/18",
-        "T-069/18",
-        "T-491/18",
-        "T-346/10",
-        "C-145/10",
-        "T-714/16",
-        "T-719/15",
-        "T-594/16",
-        "T-235/18",
-        "T-044/96",
-        "T-200/16",
-        "T-452/01",
-        "T-197/03",
-        "T-652/08",
-        "T-275/09",
-        "T-444/13",
-        "SU-961/99",
-        "T-282/05",
-        "T-016/06",
-        "T-158/06",
-        "T-018/08",
-        "T-491/09",
-        "T-211/09",
-        "T-114/19",
-        "SU-124/18",
-        "T-398/22",
-        "T-239/22",
-        "T-138/22",
-        "T-416/21",
-        "T-255/21",
-        "T-696/17",
-        "T-672/17",
-        "T-157/11",
-        "T-678/16",
-        "T-572/09",
-        "T-090/10",
-        "T-671/10",
-        "T-502/11",
-        "T-844/11",
-        "T-214/14",
-        "SU-696/15",
-        "T-1109/04",
-        "T-018/14",
-        "T-015/19",
-        "T-339/17",
-        "T-598/17",
-        "T-754/15",
-        "T-471/18",
-        "T-122/21",
-        "T-706/17",
-        "T-017/21",
-        "T-468/18",
-        "T-731/17",
-        "T-287/18",
-        "T-336/22",
-        "T-513/20",
-        "C-507/04",
-        "T-036/13",
-        "T-610/13",
-        "T-252/17",
-        "C-041/94",
-        "T-931/04",
-        "T-307/06",
-        "T-118/14",
-        "T-066/20",
-        "T-239/16",
-        "T-019/16",
-        "T-383/15",
-        "T-707/14",
-        "T-564/14",
-        "T-342/14",
-        "T-011/14",
-        "T-799/13",
-        "T-1069/12",
-        "T-935/12",
-        "T-522/12",
-        "T-329/12",
-        "T-134/12",
-        "T-315/11",
-        "T-1032/08",
-        "T-970/08",
-        "T-634/08",
-        "T-1097/07",
-        "T-1039/07",
-        "T-261/07",
-        "T-464/05",
-        "T-736/04",
-        "T-004/02",
-        "T-1081/01",
-        "T-277/99",
-        "T-670/97",
-        "SU-043/95",
-        "T-456/94",
-        "T-014/17",
-        "T-519/14",
-        "T-206/13",
-        "T-487/14",
-        "T-405/17",
-        "T-226/23",
-        "T-350/03",
-        "T-346/09",
-        "T-116/13",
-        "T-154/14",
-        "T-010/19",
-        "T-331/16",
-        "T-557/16",
-        "T-674/16",
-        "T-464/18",
-        "T-409/19",
-        "T-065/23",
-        "T-161/23",
-        "T-264/23",
-        "T-399/23",
-        "T-586/23",
-        "T-101/21",
-        "T-907/04",
-        "T-632/13",
-        "T-590/16",
-        "T-177/17",
-        "T-042/20",
-        "T-050/23",
-        "T-834/11",
-        "T-680/13",
-        "T-705/14",
-        "T-130/21"
-       ]
+       "charset": null,
+       "acentos_restaurados": 0,
+       "citas_mencionadas": []
       },
       {
-       "sentencia_id": "T-159/24",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2024/t-159-24.htm",
-       "resumen_relevancia": "Reitera que la EPS debe considerar la condición específica del paciente (movilidad reducida, mareos, necesidad de acompañante) y no limitarse a respuestas genéricas, pues el ejercicio de las acciones de tutela exige proteger el derecho a la salud integral.",
-       "extracto_fuente": "271.   Adicionalmente, en\nsede de revisión de tutela, la EPS volvió a remitirlo a dicha ciudad, en esta\noportunidad, en cumplimiento de una medida provisional, mediante el servicio de\ntransporte terrestre para que continuara el tratamiento en la etapa de\nradioterapia. Sin embargo, la Sala considera que dicha actuación no valor su\ncondición actual de salud e, incluso, pudo ponerla en riesgo, especialmente\nteniendo en cuenta que el médico tratante advirtió en el diagnóstico sobre el\nhecho de que el paciente tiene riesgo de caídas(#_ftn209). [...] F. Actuaciones realizadas\nen sede de revisión\n\n20.       \nEl 12 de diciembre de 2023, en el marco del proceso de revisión de\ntutela, el despacho del magistrado sustanciador intentó comunicarse telefónicamente\ncon el accionante(#_ftn21) para conocer\nsobre la actualidad de los hechos narrados en la solicitud de tutela. Pese a\nque no fue posible hablar con el señor Eduardo, su esposa, la señora Carla\ncomunicó que el accionante finalizó la fase de quimioterapia y se encuentra a\nla espera de poder retomar su tratamiento en la fase de radioterapia, debido a\nque la EPS accionada no ha autorizado el pago del transporte y demás gastos\nrequeridos y la familia no ha po",
+       "sentencia_id": "T-239/15",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2015/t-239-15.htm",
+       "resumen_relevancia": "La Corte establece prioridad constitucional para adultos mayores con enfermedades catastróficas como el cáncer, imponiendo al Estado el deber de garantizar el acceso a tratamientos, incluyendo transporte y acompañamiento necesario, en contextos de escasos recursos.",
+       "extracto_fuente": "Siguiendo la lnea de proteccin especial a\nlos enfermos de cncer, en la ya referenciada sentencia T-121 de 2007 la Corte consider\nque: () es necesario priorizar los derechos fundamentales de aquellas\npersonas que por sus condiciones de longevidad necesitan de una mayor atencin\ny cuidado en su salud fsica y mental, sobre todo en los casos en los que se\npresenta alguna enfermedad de carcter catastrfico que pone en alto riesgo la\nvida de la persona de la tercera edad, resolviendo tutela los derechos de\nla accionante atendiendo como principio decisorio que: [...] (#_ftnref6) Sentencias\nT-437 de 2010, T-091 de 2011 y T-600 de 2013 han sostenido que: En conclusin,\nuna vez reconocida la condicin de sujetos de especial proteccin que ostentan\nlos adultos mayores, el Estado tiene el deber de garantizarles los servicios de\nseguridad social integral, dentro de los cuales se encuentra el servicio de\nsalud.  Bajo este supuesto, la accin de tutela es el mecanismo idneo\npara materializar el derecho a la salud de dichas personas.Ver en el\nmismo sentido Sentencias T-868 de 2012 y T-420 de 2007.\n\n(#_ftnref7) Sentencia T-111\nde 2013. [...] Sentencia T-239/15\n\nDERECHO\nFUNDAMENTAL A LA SALUD FRENTE A SUJ",
        "origen": "busqueda",
-       "charset": "windows-1252",
-       "acentos_restaurados": 17,
-       "citas_mencionadas": [
-        "T-122/21",
-        "T-228/20",
-        "T-170/19",
-        "T-495/12",
-        "T-567/13",
-        "T-318/14",
-        "SU-034/18",
-        "SU-508/20",
-        "T-603/15",
-        "SU-124/18",
-        "T-459/22",
-        "C-313/14",
-        "T-491/18",
-        "T-047/23",
-        "C-542/98",
-        "T-402/18",
-        "T-364/19",
-        "T-299/23",
-        "SU-475/23",
-        "T-017/23",
-        "T-001/16",
-        "T-400/16",
-        "SU-027/21",
-        "T-345/23",
-        "T-353/23",
-        "T-760/08",
-        "T-545/16",
-        "T-613/19",
-        "T-011/21",
-        "T-513/17",
-        "T-086/03",
-        "T-526/05",
-        "T-834/05",
-        "T-016/06",
-        "T-692/06",
-        "T-905/06",
-        "T-1009/06",
-        "T-1084/06",
-        "T-792/07",
-        "T-825/07",
-        "T-243/08",
-        "T-265/09",
-        "T-299/09",
-        "T-691/09",
-        "T-883/09",
-        "T-887/09",
-        "T-328/10",
-        "T-805/12",
-        "T-464/18",
-        "T-081/19",
-        "T-156/21",
-        "T-259/19",
-        "T-130/21",
-        "T-287/22",
-        "T-120/19",
-        "SU-032/22",
-        "T-547/23",
-        "C-149/18",
-        "T-410/22",
-        "T-320/23",
-        "T-340/22",
-        "T-101/21",
-        "T-359/22",
-        "T-309/18"
-       ]
+       "charset": null,
+       "acentos_restaurados": 0,
+       "citas_mencionadas": []
       },
       {
-       "sentencia_id": "T-261/17",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2017/t-261-17.htm",
-       "resumen_relevancia": "Reafirma la protección constitucional especial para pacientes oncológicos, señalando que los tratamientos de radiación y los gastos de traslado deben ser cubiertos sin copagos ni barreras administrativas.",
-       "extracto_fuente": "# Sentencia T-261/17\n\n \n\nDERECHO FUNDAMENTAL A\nLA SALUD-Naturaleza y alcance/DERECHO FUNDAMENTAL A LA SALUD-Protección\nconstitucional especial \n\nDERECHO A LA SALUD\nCOMO DERECHO FUNDAMENTAL-Reiteración de jurisprudencia sobre protección por tutela\n\nDERECHO A LA SALUD DE PACIENTE\nCON CANCER-Protección constitucional especial \n\nDERECHO A LA SALUD DE\nENFERMO DE CANCER-Tratamiento integral\n\nSUMINISTRO\nDE MEDICAMENTOS, TRATAMIENTOS Y PROCEDIMIENTOS EXCLUIDOS DEL POS-Requisitos\n\nCUBRIMIENTO DE GASTOS\nDE TRANSPORTE PARA PACIENTE Y ACOMPAÑANTE POR EPS-Reglas jurisprudenciales [...] Dentro de esta perspectiva debe\nconsiderarse con toda atención, que las personas que padecen cáncer, no están\nen condición de gestionar la defensa de sus derechos, como podría estarlo una\npersona sana o que padezca una enfermedad de menor entidad, por lo que se les\ndebe brindar un servicio eficiente durante el curso de toda la enfermedad, de\nforma tal que puedan sobrellevar sus padecimientos de manera digna.\n\n \n\n4.Requisitos para la autorización de medicamentos, procedimientos y\nservicios no contemplados en el POS. Reiteración de jurisprudencia. [...] La jurisprudencia constitucional ha señalado los requisitos que\nesta Corte ",
+       "sentencia_id": "T-234/25",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2025/T-234-25.htm",
+       "resumen_relevancia": "La Corte confirma que la negativa de una EPS a autorizar transporte y acompañante para tratamiento médico de un adulto mayor con cáncer constituye una vulneración del derecho fundamental a la salud, justificando la acción de tutela por parte de la figura especial de protección.",
+       "extracto_fuente": "70.   En el expediente\nT-10.797.895 se cumple el requisito de subsidiariedad, toda vez que, (i) el\nmecanismo ordinario de defensa judicial, cuyo conocimiento corresponde a la\nSNS, no resulta idneo ni eficaz, (ii) la accin de tutela se interpuso ante la\nfalta de respuesta de la Nueva EPS a la solicitud de transporte areo para el\nseor David y un acompaante, para asistir a una cita mdica programada\nen una ciudad diferente a la de residencia del accionante y (iii) hay una\nposible afectacin a los derechos fundamentales de un sujeto de especial proteccin,\nya que el paciente al que se le neg la prestacin del servicio es un sujeto de\nespecial proteccin constitucional dada su calidad de adulto mayor, as como su [...] 1.2.Expediente T-10.797.895\n\n1.2.1. Hechos que\nmotivaron la tutela\n\n10.   El seor David(#_ftn19),\nadulto mayor de 78 aos, residente en Ccuta, Norte de Santander, presenta\nhiperplasia de prstata, hipertensin arterial y enfermedad renal crnica Etapa\nIV(#_ftn20).\nPor esta razn y los hechos que se narran a continuacin, interpuso accin de\ntutela en nombre propio contra la Nueva EPS por la presunta vulneracin de sus\nderechos fundamentales a la salud, la vida, el bienestar y la dignid",
        "origen": "busqueda",
-       "charset": "windows-1252",
-       "acentos_restaurados": 13,
-       "citas_mencionadas": [
-        "T-760/08",
-        "T-920/13",
-        "SU-480/97",
-        "T-595/99",
-        "T-033/13",
-        "T-511/08",
-        "T-644/14",
-        "T-289/13",
-        "T-790/12",
-        "T-499/14",
-        "T-082/15",
-        "T-016/07",
-        "T-081/16",
-        "T-872/12",
-        "T-395/15",
-        "T-611/14",
-        "T-111/13",
-        "T-970/07",
-        "T-939/13",
-        "T-927/13",
-        "T-237/03",
-        "T-354/11",
-        "T-739/04",
-        "T-560/13",
-        "T-707/16",
-        "T-745/09",
-        "T-365/09",
-        "T-587/10",
-        "T-022/11",
-        "T-481/11",
-        "T-173/12",
-        "T-970/08",
-        "T-388/12",
-        "T-1198/03",
-        "T-164/09",
-        "T-479/12",
-        "T-505/12",
-        "T-214/13",
-        "T-234/14",
-        "T-199/11",
-        "T-525/12",
-        "T-498/12",
-        "T-787/13",
-        "T-859/13",
-        "T-741/14",
-        "T-597/15",
-        "T-266/15",
-        "T-224/15",
-        "T-321/16",
-        "T-314/11",
-        "T-640/11",
-        "T-612/12",
-        "T-697/12",
-        "T-874/13",
-        "T-447/14",
-        "T-011/16",
-        "T-722/03",
-        "T-742/04",
-        "T-1163/05",
-        "T-442/06",
-        "T-188/10"
-       ]
+       "charset": null,
+       "acentos_restaurados": 0,
+       "citas_mencionadas": []
       },
       {
-       "sentencia_id": "T-348/25",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2025/t-348-25.htm",
-       "resumen_relevancia": "Destaca que, aun cuando la EPS alegue falta de orden médica, la tutela obliga a garantizar el servicio de transporte y acompañamiento cuando el paciente presenta discapacidad y requerimientos de salud críticos.",
-       "extracto_fuente": "#### 4.1.3. Alejandro contra Nueva EPS (T-10.846.050)\n\n \n\n65.            \nPosición de las partes. Adriana\ninterpuso la acción de tutela al considerar que la EPS vulneró el derecho\nfundamental a la salud de Alejandro, al no tener en cuenta que el núcleo\nfamiliar del paciente está compuesto por tres personas, esto es, el agenciado,\nel padre de 95 años y ella, quien se encarga del cuidado de ambos y, además, de\ntres hijos propios. Por su parte, Nueva EPS argumentó que las pretensiones de\nreconocimiento de transporte para el accionante y un acompañante, no están\ncubiertas por el PBS y alegó que la accionante tiene un núcleo familiar que\npodría solventar los costos. Además, señaló que, de todos modos, no está\nobligada a proporcionar el servicio si no hay una orden médica. [...] no se encuentra en los registros clínicos allegados por el afiliado ni en los documentos del proceso de tutela, orden médica que respalde dicha necesidad(#_ftn26). Esto, por cuanto Asmet Salud EPS SAS, gestionó con el prestador contratado Visal RT SAS, consulta para valoración integral del señor [Orlando], la cual se llevó a cabo el da 08 de mayo de 2025 a las 3:00 pm en el Centro Valle de Atriz, con el Dr. Rubén Ayala. Es importante ind",
+       "sentencia_id": "T-131/25",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2025/t-131-25.htm",
+       "resumen_relevancia": "La Corte afirma que la EPS debe tramitar y atender las solicitudes de transporte de acompañante para pacientes mayores con enfermedades graves (como insuficiencia renal crónica) sin exigir requisitos adicionales, y su negativa vulnera el derecho a la salud.",
+       "extracto_fuente": "\n\n107.       \nEl\nciudadano afirm que le haba solicitado a la EPS la prestacin del servicio,\nel cual fue negado. Sin embargo, en el expediente no reposa copia de dichas\nactuaciones. La entidad seal que el actor present dos solicitudes virtuales\npara el reconocimiento del transporte, pero no las tramit, toda vez que el\naccionante debe acudir presencialmente a una oficina de atencin. Esta\nrespuesta se evidencia como vulneradora de los derechos fundamentales del\ndemandante, quien es un sujeto de especial proteccin por su edad (76 aos) y\npor la enfermedad que padece (insuficiencia renal crnica)(#_ftn226).\nEn ese sentido, se advierte que Sanitas EPS tena la obligacin de tramitar las\npeticiones del actor y, al no hacerlo, viola su derecho a la salud en la faceta\nde accesibilidad. [...] 133.       \nFrente a la solicitud de tratamiento integral. En\nla accin de tutela no se manifest ninguna negativa de las entidades\ndemandadas a la prestacin de servicio mdico alguno, con excepcin del\nservicio de transporte. En consecuencia, la Corte negar la pretensin, pues no\nse evidencia negligencia o una reiterada negativa por parte de la EPS a prestar\nsus servicios.\n\nRemedios\njudiciales [...] Sin embargo",
        "origen": "busqueda",
-       "charset": "windows-1252",
-       "acentos_restaurados": 24,
-       "citas_mencionadas": [
-        "T-045/24",
-        "SU-475/23",
-        "T-131/25",
-        "SU-150/21",
-        "SU-342/24",
-        "T-365/09",
-        "T-178/17",
-        "T-259/19",
-        "T-475/20",
-        "T-381/18",
-        "T-623/12",
-        "T-773/12",
-        "SU-173/15",
-        "T-898/14",
-        "T-1025/05",
-        "T-552/06",
-        "T-382/21",
-        "T-652/08",
-        "T-486/16",
-        "T-406/17",
-        "SU-055/15",
-        "T-162/16",
-        "T-120/17",
-        "T-733/17",
-        "T-020/18",
-        "SU-508/20",
-        "T-397/17",
-        "T-039/13",
-        "SU-424/21",
-        "SU-961/99",
-        "T-273/15",
-        "SU-260/21",
-        "SU-168/17",
-        "T-550/20",
-        "C-531/93",
-        "C-132/18",
-        "T-361/17",
-        "T-384/98",
-        "T-204/04",
-        "T-071/21",
-        "SU-379/19",
-        "SU-132/18",
-        "T-061/19",
-        "T-218/18",
-        "T-528/19",
-        "T-527/19",
-        "T-025/19",
-        "T-090/21",
-        "T-021/21",
-        "T-390/20",
-        "T-058/20",
-        "SU-124/18",
-        "T-398/22",
-        "T-239/22",
-        "T-138/22",
-        "T-416/21",
-        "T-255/21",
-        "T-696/17",
-        "T-672/17",
-        "T-770/11",
-        "T-421/15",
-        "T-736/16",
-        "T-720/16",
-        "T-447/17",
-        "T-573/23",
-        "T-449/19",
-        "T-020/17",
-        "C-313/14",
-        "T-373/23",
-        "T-156/21",
-        "T-508/19",
-        "T-100/16",
-        "T-619/14",
-        "T-395/14",
-        "T-392/13",
-        "T-053/09",
-        "T-536/07",
-        "T-136/04",
-        "T-081/19",
-        "T-464/18",
-        "T-349/24",
-        "T-409/19",
-        "T-196/18",
-        "T-124/19",
-        "T-160/22",
-        "T-332/22",
-        "T-047/23",
-        "SU-508/22",
-        "T-309/21",
-        "T-394/21",
-        "T-245/20",
-        "T-971/11",
-        "T-918/12",
-        "T-073/13",
-        "T-160/14",
-        "T-255/15",
-        "T-083/21",
-        "T-298/21",
-        "T-612/14",
-        "T-139/11",
-        "T-460/12",
-        "T-433/14",
-        "T-121/15",
-        "T-092/18",
-        "T-277/22",
-        "T-881/03",
-        "T-384/13",
-        "T-745/13",
-        "T-098/16",
-        "T-710/17",
-        "T-069/18",
-        "T-760/08",
-        "T-459/22",
-        "T-131/15",
-        "T-130/21",
-        "T-491/18",
-        "T-287/22",
-        "T-013/24",
-        "T-461/24",
-        "T-401/22",
-        "T-161/23",
-        "T-900/02",
-        "T-105/14",
-        "T-096/16",
-        "T-331/16",
-        "T-707/16",
-        "T-495/17",
-        "T-032/18",
-        "T-513/20",
-        "T-266/20",
-        "T-407/24",
-        "T-329/18",
-        "T-101/21",
-        "T-309/18",
-        "T-387/18",
-        "T-359/22",
-        "T-086/24"
-       ]
+       "charset": null,
+       "acentos_restaurados": 0,
+       "citas_mencionadas": []
       },
       {
-       "sentencia_id": "T-252/24",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2024/t-252-24.htm",
-       "resumen_relevancia": "Clarifica que el transporte intermunicipal debe ser financiado por la UPC general si el municipio no cuenta con prima por dispersión, obligando a la EPS a cubrir el costo cuando el paciente necesita acudir a una IPS fuera de su residencia.",
-       "extracto_fuente": "En la Sentencia T-130 de 2021. (Cfr.\nSentencia T-491 de 2018). Su\nfinanciación depende de si el municipio cuenta con prima adicional por\ndispersión geográfica. De ser así, el transporte intermunicipal se cubre con\ncargo a este rubro. De no ser así, el servicio se paga con cargo a la UPC\nbásica. Cfr. Sentencia\nT-101 de 2021. La Corte ha señalado que, esto es así, por cuanto la\nEPS debe contar con una red de prestación de servicios completa. De tal manera,\nsi un paciente es remitido a una IPS ubicada en un municipio diferente a su\ndomicilio, el transporte deber asumirse con cargo a la UPC general pagada a la\nentidad promotora de salud, ya que el desplazamiento no se puede erigir como\nuna barrera que impide el acceso a los servicios de salud prescritos por el\nmédico tratante. [...] 184.\nEn este sentido, la\nSala observa la necesidad del garantizar el servicio de transporte intermunicipal\nen este caso, al existir asignaciones de citas y exámenes por parte de la EPS\naccionada que exigen que la tutelante se desplace del municipio de Pauna al\nmunicipio de Chiquinquirá (Boyacá), como consecuencia de la falta de\nconformación completa de la red de servicios por parte de la EPS en el citado\nmunicipio. Por c",
+       "sentencia_id": "T-407/24",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2024/t-407-24.htm",
+       "resumen_relevancia": "La Corte reconoce que la obligación de la EPS de cubrir transporte, hospedaje y alimentación de paciente y acompañante persiste mientras sea necesario para el tratamiento continuo, aunque la cita ya haya ocurrido, evidenciando vulneración al negar el servicio por motivos administrativos.",
+       "extracto_fuente": "95.            \nFinalmente,\ny a modo de aclaracin, aunque la Sala evidencia que la cita programada para el\n14 de marzo de 2024 ya ocurri -lo que podra inferir una presunta carencia\nactual de objeto por hecho superado-, de la informacin que reposa en el\nexpediente aportada por la EPS se evidencia que la nia tiene un tratamiento\ncontinuo y frecuente debido a sus necesidades. Por lo tanto, se entiende que\nlas obligaciones anteriormente descritas a cargo de la EPS (consistentes en la\nautorizacin y suministro del transporte intermunicipal, hospedaje y\nalimentacin para ella y su acompaante) se origina en\ntodas las circunstancias en que la nia deba desplazarse a Bucaramanga o a otra\nciudad fuera de su residencia -en el marco de su tratamiento y cuando los [...] en Bucaramanga o a otra ciudad fuera de su\nresidencia. Por su parte, en el expediente T-10.288.782, la Sala tambin\nconcluy que la EPS demandada deba garantizar el transporte intermunicipal que\nla accionante y su acompaante requeran para recibir su tratamiento en un\nmunicipio diferente al de su residencia. Igualmente, encontr que la EPS\nvulner el derecho a la salud porque no le garantiz de forma constante y\ncompleta sus medicamentos",
        "origen": "busqueda",
-       "charset": "windows-1252",
-       "acentos_restaurados": 14,
-       "citas_mencionadas": [
-        "SU-508/20",
-        "T-012/24",
-        "T-854/11",
-        "T-088/08",
-        "T-157/19",
-        "T-036/13",
-        "T-760/08",
-        "T-047/23",
-        "T-603/15",
-        "SU-124/18",
-        "C-477/97",
-        "T-652/12",
-        "T-502/06",
-        "T-092/18",
-        "T-027/15",
-        "T-243/15",
-        "T-001/18",
-        "T-513/20",
-        "T-160/22",
-        "T-145/23",
-        "T-127/22",
-        "T-050/23",
-        "T-452/01",
-        "T-372/10",
-        "T-968/14",
-        "T-200/16",
-        "T-014/17",
-        "T-251/22",
-        "SU-081/20",
-        "SU-299/22",
-        "T-370/20",
-        "T-606/04",
-        "T-295/18",
-        "T-528/20",
-        "T-041/19",
-        "T-020/21",
-        "T-228/22",
-        "T-022/22",
-        "T-319/22",
-        "T-391/18",
-        "T-499/17",
-        "T-742/17",
-        "T-171/18",
-        "T-118/22",
-        "T-282/08",
-        "T-519/92",
-        "T-533/09",
-        "T-253/12",
-        "T-038/19",
-        "SU-225/13",
-        "SU-150/21",
-        "T-403/18",
-        "T-054/20",
-        "SU-522/19",
-        "T-585/10",
-        "T-344/22",
-        "T-495/10",
-        "T-117/20",
-        "T-021/24",
-        "T-405/17",
-        "T-558/23",
-        "T-425/13",
-        "T-147/23",
-        "T-259/19",
-        "T-159/24",
-        "T-130/21",
-        "T-491/18",
-        "T-101/21",
-        "C-313/14",
-        "T-471/18",
-        "T-423/19",
-        "T-430/23",
-        "T-1038/05",
-        "T-234/13",
-        "T-1198/03",
-        "T-164/09",
-        "T-479/12",
-        "T-505/12",
-        "T-124/16",
-        "T-370/23",
-        "T-178/17",
-        "T-416/23",
-        "T-191/21",
-        "T-073/12",
-        "T-287/22",
-        "T-047/22",
-        "T-223/23",
-        "T-197/03",
-        "T-350/03",
-        "T-105/14",
-        "T-495/17",
-        "T-226/23"
-       ]
+       "charset": null,
+       "acentos_restaurados": 0,
+       "citas_mencionadas": []
       },
       {
-       "sentencia_id": "T-720/16",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2016/t-720-16.htm",
-       "resumen_relevancia": "Ordena a la EPS continuar el tratamiento integral del paciente con cáncer sin cobrar cuotas moderadoras, incluso si el transporte no está incluido en el POS, garantizando la protección de su derecho a la salud.",
-       "extracto_fuente": "Sin\nembargo, se considera pertinente advertir a la EPS demandada que debe continuar\ncon el tratamiento adecuado e integral para tratar el cáncer que padece el\nagenciado, según lo prescriba su médico tratante e independientemente de si lo\nrequerido se encuentra o no incluido en el POS, sin el cobro de cuotas\nmoderadoras o copagos. De igual manera, de presentarse el evento en que el\nseñor García deba ser trasladado a otra ciudad, dado que, según afirma el\nactor, el agenciado carece de recursos económicos, los gastos de dicho servicio\njunto con su acompañante, deben ser asumidos por Comparta EPS-S, en la medida\nen que se entiende que al tratarse de un tratamiento contra el cáncer el cual\npuede incluir sesiones de quimioterapia o radioterapia que implican serios [...] No\nobstante, niega el servicio de transporte argumentando que este no se encuentra\nincluido dentro del POS y no existe orden médica que lo prescriba. A la luz de\nlo anterior, ordena a Comparta EPS-S y a la Secretaría Distrital de Salud de\nBogotá que se garantice al agenciado la atención por Urología y que se otorgue\nel tratamiento integral que requiere sin dilaciones injustificadas y sin la\nexigencia de copagos.\n\nAñadiendo\nque los servi",
+       "sentencia_id": "T-072/26",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2026/T-072-26.htm",
+       "resumen_relevancia": "",
+       "extracto_fuente": "TEMAS-SUBTEMAS\n\n \n\nSentencia T-072/26\n\nDERECHO A LA SALUD DE PACIENTE CON CANCER-Proteccin\nconstitucional especial/DERECHO AL MINIMO VITAL, VIDA DIGNA Y SEGURIDAD\nSOCIAL EN PENSIONES-Accin de tutela para ordenar reconocimiento y pago de\nla pensin de invalidez a sujeto de especial proteccin constitucional\n\n\n\nCOSA JUZGADA\nCONSTITUCIONAL EN TUTELA-Inexistencia para el caso\n\n \n\n() ninguno de los\ntres presupuestos requeridos por mandato jurisprudencial, esto es la identidad\nde partes, causa y objeto, se configura plenamente en el asunto.\n\nCARENCIA ACTUAL DE\nOBJETO-Fenmeno\nque se configura en los siguientes eventos: hecho superado, dao consumado o\nsituacin sobreviniente\n\nCARENCIA ACTUAL DE OBJETO POR SITUACIN\nSOBREVINIENTE-Configuracin",
        "origen": "busqueda",
-       "charset": "windows-1252",
-       "acentos_restaurados": 15,
-       "citas_mencionadas": [
-        "T-531/02",
-        "T-004/13",
-        "T-1040/08",
-        "T-499/09",
-        "T-152/10",
-        "T-920/13",
-        "T-154/14",
-        "T-209/13",
-        "T-760/08",
-        "T-408/11",
-        "T-053/09",
-        "T-531/09",
-        "T-381/14",
-        "T-495/01",
-        "T-178/08"
-       ]
-      },
-      {
-       "sentencia_id": "T-520/12",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2012/t-520-12.htm",
-       "resumen_relevancia": "Confirma que servicios como la enfermera a domicilio y el transporte en ambulancia para pacientes con cáncer son parte del tratamiento esencial y no pueden ser negados por la EPS.",
-       "extracto_fuente": "3.4. Finalmente, en el caso de Maximino Murcia\nCubillos, quien tenía setenta y tres (73) años de edad al momento de\npresentación de la tutela,(#_ftn36)\nsu agente oficioso consideró que la Nueva EPS le desconoció el derecho a la\nsalud cuando le denegó le prestación del servicio de terapias físicas\ndomiciliarias, enfermera por doce (12) horas y transporte en ambulancia (casa \nhospital  casa) para las citas médicas ordenadas. Servicios requeridos para tratar\nla paraplejia que sufría, consecuencia de un cáncer de próstata con\nmetástasis espinales múltiples. La Nueva EPS le negó esas prestaciones\nporque, en su concepto, (i) el servicio de enfermera y terapias a domicilio no\nresultaba necesario, pues las terapias requeridas podían realizarse y [...] 4.1.\nMaximino Murcia Cubillos de setenta y tres (73) años de edad(#_ftn24) padecía de cáncer de\npróstata con metástasis espinales múltiples,(#_ftn25)enfermedad que le\nprodujo paraplejia espástica. Para su tratamiento, el médico encargado\nle orden terapias físicas domiciliarias, enfermera por doce (12) horas y\ntransporte en ambulancia (casa  hospital  casa) cuando necesitara asistir a\ncitas médicas y radioterapias.(#_ftn26)\nSin embargo tales servicios fueron negados po",
-       "origen": "busqueda",
-       "charset": "windows-1252",
-       "acentos_restaurados": 26,
-       "citas_mencionadas": [
-        "T-700/11",
-        "T-603/01",
-        "T-476/02",
-        "T-341/03",
-        "T-643/05",
-        "T-219/07",
-        "T-726/07",
-        "T-963/10",
-        "T-476/95",
-        "T-758/03",
-        "T-842/11",
-        "T-685/10",
-        "T-060/07",
-        "T-760/08",
-        "T-736/04",
-        "T-085/11",
-        "T-881/03",
-        "T-927/09",
-        "T-568/06",
-        "T-826/07",
-        "T-473/11",
-        "T-873/11"
-       ]
+       "charset": null,
+       "acentos_restaurados": 0,
+       "citas_mencionadas": []
       }
      ]
     },
@@ -854,22 +236,22 @@
      "escalations": [],
      "notes": [],
      "llm_calls": 1,
-     "input_tokens": 2880,
-     "output_tokens": 820,
-     "llm_latency_s": 10.61,
+     "input_tokens": 2853,
+     "output_tokens": 827,
+     "llm_latency_s": 4.06,
      "cost_usd": 0.00037,
      "cost_complete": true,
      "tiers": [
       "fast"
      ],
-     "cost_all_reasoning_usd": 0.00534,
+     "cost_all_reasoning_usd": 0.005334,
      "tavily_searches": 4,
-     "latency_s": 18.98
+     "latency_s": 12.17
     }
    }
   },
   {
-   "t": 26.0,
+   "t": 17.91,
    "event": "step_started",
    "data": {
     "step": "draft",
@@ -878,43 +260,43 @@
    }
   },
   {
-   "t": 33.9,
+   "t": 24.81,
    "event": "step_completed",
    "data": {
     "step": "draft",
     "index": 4,
     "result": {
      "hechos": [
-      "1. En junio me diagnosticaron cáncer de próstata.",
-      "2. Mi EPS, EPS Nuevo Horizonte, me indicó que debía recibir tratamiento de radioterapia.",
-      "3. Debido a mi edad de 76 años, camino con caminador, tengo visión reducida y quedo muy mareado después de las sesiones de radioterapia, por lo que requiero transporte y acompañante para asistir a mis citas.",
-      "4. El 25 de agosto de 2026 recibí una respuesta escrita de la EPS Nuevo Horizonte en la que me indicaron que el servicio de transporte y acompañante para radioterapia no está cubierto.",
-      "5. Cuento con los siguientes documentos que respaldan mi situación: orden de radioterapia, respuesta escrita de la EPS y historia clínica."
+      "En junio de 2026 se me diagnosticó cáncer de próstata.",
+      "El 25 de agosto de 2026 la EPS Nuevo Horizonte respondió por escrito que el transporte y el acompañante no están cubiertos para mi tratamiento de radioterapia.",
+      "Tengo 76 años, camino con caminador, tengo visión deficiente y me siento mareado después de las sesiones de radioterapia, por lo que no puedo trasladarme solo.",
+      "Adjunto a esta acción la orden de radioterapia, la respuesta escrita de la EPS y mi historia clínica."
      ],
      "derechos_vulnerados": [
-      "derecho fundamental a la salud",
-      "derecho a una vida digna",
-      "derecho a la seguridad social",
-      "derecho a la dignidad humana",
-      "derecho al acceso efectivo a los servicios de salud",
-      "derecho a la igualdad y no discriminación por condición económica y edad"
+      "salud",
+      "vida",
+      "vida digna",
+      "seguridad social",
+      "dignidad humana",
+      "protección especial al adulto mayor",
+      "acceso efectivo a servicios de salud"
      ],
-     "fundamentos_juridicos": "La tutela procede conforme al artículo 86 de la Constitución Política, ya que se vulneran derechos fundamentales como la salud, la vida digna y la seguridad social, y se ha agotado la vía administrativa ante la negativa escrita de la EPS Nuevo Horizonte del 25 de agosto de 2026. Asimismo, aplica el Decreto 2591 de 1991, que regula la acción de tutela, y la Ley Estatutaria de Salud 1751 de 2015, que garantiza el acceso oportuno y efectivo a los servicios de salud. Además, corresponde aplicar las siguientes sentencias de la Corte Constitucional: Sentencia T-268 de 2023, que establece que el transporte y el acompañante de enfermera 24 horas son parte del tratamiento esencial para pacientes con cáncer avanzado y discapacidad, y no pueden quedar excluidos del Plan Obligatorio de Salud (POS); Sentencia T-316 de 2024, que determina que el transporte intermunicipal necesario para acceder a servicios como la radioterapia está incluido en el Plan de Beneficios en Salud (PBS) y debe ser autorizado por la EPS cuando el paciente debe trasladarse a otro municipio; Sentencia T-159 de 2024, que reitera que la EPS debe evaluar la condición específica del paciente, como movilidad reducida, mareos y necesidad de acompañante, y no limitarse a respuestas genéricas, pues se debe proteger el derecho a la salud integral; y Sentencia T-261 de 2017, que reafirma la protección constitucional especial para pacientes oncológicos, indicando que los tratamientos de radiación y los gastos de traslado deben ser cubiertos sin copagos ni barreras administrativas.",
+     "fundamentos_juridicos": "Tengo derecho a la protección de mis derechos fundamentales a la salud, la vida, la vida digna, la seguridad social y la dignidad humana, reconocidos en los artículos 11, 48, 49 y 86 de la Constitución Política. Como adulto mayor de 76 años con diagnóstico de cáncer de próstata y limitaciones físicas y visuales, soy sujeto de especial protección constitucional, lo que implica que el Estado y la EPS deben garantizar mi acceso efectivo y oportuno a los servicios de salud, incluyendo el transporte y el acompañamiento necesario para mi tratamiento. La Ley Estatutaria de Salud 1751 de 2015 establece que el sistema de salud debe garantizar la prestación oportuna, adecuada y eficaz de los servicios, sin barreras administrativas o financieras. El Decreto 2591 de 1991 regula la acción de tutela como mecanismo para proteger derechos fundamentales cuando se vulneran y no existe otro medio más idóneo o eficaz. La EPS Nuevo Horizonte negó expresamente por escrito el 25 de agosto de 2026 el transporte y el acompañante para mi tratamiento de radioterapia, a pesar de que mi condición requiere apoyo para trasladarme debido a mi edad, movilidad reducida con caminador, visión deficiente y mareos post-sesión. Esta negativa vulnera mis derechos fundamentales, pues sin transporte y acompañante no puedo acceder al tratamiento necesario para mi enfermedad oncológica. La Corte Constitucional ha establecido en múltiples sentencias que las EPS deben cubrir el transporte y el acompañante cuando el paciente depende de un tercero para desplazarse y requiere atención continua, especialmente en adultos mayores con enfermedades catastróficas como el cáncer. En la Sentencia T-268 de 2023, la Corte reconoció que una EPS debe cubrir el transporte y el acompañante de pacientes adultos mayores con cáncer de próstata cuando su condición requiere tratamiento continuo y presenta limitaciones funcionales. En la Sentencia T-586 de 2023, la Corte estableció que la negativa de una EPS a cubrir transporte y acompañante para tratamiento médico, especialmente en adultos mayores con necesidades especiales, vulnera el derecho a la salud integral, oportuna y continua. En la Sentencia T-316 de 2024, la Corte definió que una EPS vulnera el derecho a la salud cuando niega el transporte y estancia de acompañante a un paciente que debe salir del municipio para acceder a un servicio incluido en el PBS, depende de un tercero para desplazarse y requiere atención permanente para su integridad física. En la Sentencia T-239 de 2015, la Corte estableció prioridad constitucional para adultos mayores con enfermedades catastróficas como el cáncer, imponiendo al Estado el deber de garantizar el acceso a tratamientos, incluyendo transporte y acompañamiento necesario. Estas decisiones confirman que la negativa de la EPS Nuevo Horizonte es ilegal y vulnera mis derechos fundamentales, por lo que procede la acción de tutela.",
      "pretensiones": [
-      "Que se ordene a la EPS Nuevo Horizonte autorizar, garantizar y proporcionar de manera inmediata el servicio de transporte y acompañante necesario para que yo pueda asistir a todas mis sesiones de radioterapia, incluyendo el vehículo adecuado y un acompañante capacitado para atender mi condición de movilidad reducida, visión limitada y mareos posteriores al tratamiento.",
-      "Que se le instruya a la EPS Nuevo Horizonte cubrir todos los costos asociados al transporte y acompañante, sin que ello implique ningún costo, copago o trámite administrativo adicional para mí.",
-      "Que se le requiera a la EPS Nuevo Horizonte garantizar la continuidad y efectividad de mi tratamiento oncológico de radioterapia, asegurando que ninguna barrera administrativa o económica interrumpa su realización.",
-      "Que se le exija a la EPS Nuevo Horizonte responder por escrito dentro de las próximas 24 horas, informando las medidas concretas que tomará para cumplir con esta orden judicial."
+      "Que se ordene a la EPS Nuevo Horizonte autorizar y cubrir de manera inmediata el servicio de transporte intermunicipal necesario para mi traslado desde mi lugar de residencia en Boyacá hasta el centro donde recibo radioterapia, incluyendo el acompañante necesario por mi condición de adulto mayor con movilidad reducida, visión deficiente y mareos post-tratamiento.",
+      "Que se garantice el transporte y el acompañante de forma continua durante todo el curso de mi tratamiento de radioterapia, sin interrupciones ni requisitos adicionales.",
+      "Que se le indique a la EPS Nuevo Horizonte que, en caso de requerir ajustes logísticos, debe gestionarlos directamente sin que ello represente una barrera para mi acceso al tratamiento.",
+      "Que se respeten los términos máximos establecidos por la ley para la resolución de la tutela, asegurando que la orden se cumpla dentro de las 48 horas siguientes a su notificación."
      ],
      "pruebas_y_anexos": [
-      "Orden de radioterapia",
-      "Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026",
-      "Historia clínica"
+      "Orden de radioterapia emitida por mi médico tratante.",
+      "Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026, en la que niega el transporte y el acompañante.",
+      "Historia clínica que respalda mi diagnóstico de cáncer de próstata, mi edad, mi dependencia de caminador, mi visión deficiente y los mareos posteriores a las sesiones de radioterapia."
      ],
-     "juramento": "Declaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger los derechos fundamentales aquí invocados.",
-     "accionada": "EPS Nuevo Horizonte",
+     "juramento": "Declaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger mis derechos a la salud, la vida y la dignidad humana relacionados con el acceso al transporte y acompañante para mi tratamiento de radioterapia.",
+     "accionada": "Nuevo Horizonte",
      "ciudad": "Boyacá",
-     "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBoyacá\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: EPS Nuevo Horizonte\nDERECHOS INVOCADOS: la salud, una vida digna, la seguridad social, la dignidad humana, acceso efectivo a los servicios de salud, la igualdad y no discriminación por condición económica y edad\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Boyacá, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra EPS Nuevo Horizonte, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a la salud, una vida digna, la seguridad social, la dignidad humana, acceso efectivo a los servicios de salud, la igualdad y no discriminación por condición económica y edad, con base en los siguientes:\n\nI. HECHOS\n\n1. En junio me diagnosticaron cáncer de próstata.\n2. Mi EPS, EPS Nuevo Horizonte, me indicó que debía recibir tratamiento de radioterapia.\n3. Debido a mi edad de 76 años, camino con caminador, tengo visión reducida y quedo muy mareado después de las sesiones de radioterapia, por lo que requiero transporte y acompañante para asistir a mis citas.\n4. El 25 de agosto de 2026 recibí una respuesta escrita de la EPS Nuevo Horizonte en la que me indicaron que el servicio de transporte y acompañante para radioterapia no está cubierto.\n5. Cuento con los siguientes documentos que respaldan mi situación: orden de radioterapia, respuesta escrita de la EPS y historia clínica.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. derecho fundamental a la salud\n2. derecho a una vida digna\n3. derecho a la seguridad social\n4. derecho a la dignidad humana\n5. derecho al acceso efectivo a los servicios de salud\n6. derecho a la igualdad y no discriminación por condición económica y edad\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nLa tutela procede conforme al artículo 86 de la Constitución Política, ya que se vulneran derechos fundamentales como la salud, la vida digna y la seguridad social, y se ha agotado la vía administrativa ante la negativa escrita de la EPS Nuevo Horizonte del 25 de agosto de 2026. Asimismo, aplica el Decreto 2591 de 1991, que regula la acción de tutela, y la Ley Estatutaria de Salud 1751 de 2015, que garantiza el acceso oportuno y efectivo a los servicios de salud. Además, corresponde aplicar las siguientes sentencias de la Corte Constitucional: Sentencia T-268 de 2023, que establece que el transporte y el acompañante de enfermera 24 horas son parte del tratamiento esencial para pacientes con cáncer avanzado y discapacidad, y no pueden quedar excluidos del Plan Obligatorio de Salud (POS); Sentencia T-316 de 2024, que determina que el transporte intermunicipal necesario para acceder a servicios como la radioterapia está incluido en el Plan de Beneficios en Salud (PBS) y debe ser autorizado por la EPS cuando el paciente debe trasladarse a otro municipio; Sentencia T-159 de 2024, que reitera que la EPS debe evaluar la condición específica del paciente, como movilidad reducida, mareos y necesidad de acompañante, y no limitarse a respuestas genéricas, pues se debe proteger el derecho a la salud integral; y Sentencia T-261 de 2017, que reafirma la protección constitucional especial para pacientes oncológicos, indicando que los tratamientos de radiación y los gastos de traslado deben ser cubiertos sin copagos ni barreras administrativas.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Nuevo Horizonte autorizar, garantizar y proporcionar de manera inmediata el servicio de transporte y acompañante necesario para que yo pueda asistir a todas mis sesiones de radioterapia, incluyendo el vehículo adecuado y un acompañante capacitado para atender mi condición de movilidad reducida, visión limitada y mareos posteriores al tratamiento.\n2. Que se le instruya a la EPS Nuevo Horizonte cubrir todos los costos asociados al transporte y acompañante, sin que ello implique ningún costo, copago o trámite administrativo adicional para mí.\n3. Que se le requiera a la EPS Nuevo Horizonte garantizar la continuidad y efectividad de mi tratamiento oncológico de radioterapia, asegurando que ninguna barrera administrativa o económica interrumpa su realización.\n4. Que se le exija a la EPS Nuevo Horizonte responder por escrito dentro de las próximas 24 horas, informando las medidas concretas que tomará para cumplir con esta orden judicial.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de radioterapia\n2. Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026\n3. Historia clínica\n\nVI. JURAMENTO\n\n\nDeclaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger los derechos fundamentales aquí invocados.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: EPS Nuevo Horizonte, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
+     "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBoyacá\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Nuevo Horizonte\nDERECHOS INVOCADOS: salud, vida, vida digna, seguridad social, dignidad humana, protección especial al adulto mayor, acceso efectivo a servicios de salud\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Boyacá, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Nuevo Horizonte, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida, vida digna, seguridad social, dignidad humana, protección especial al adulto mayor, acceso efectivo a servicios de salud, con base en los siguientes:\n\nI. HECHOS\n\n1. En junio de 2026 se me diagnosticó cáncer de próstata.\n2. El 25 de agosto de 2026 la EPS Nuevo Horizonte respondió por escrito que el transporte y el acompañante no están cubiertos para mi tratamiento de radioterapia.\n3. Tengo 76 años, camino con caminador, tengo visión deficiente y me siento mareado después de las sesiones de radioterapia, por lo que no puedo trasladarme solo.\n4. Adjunto a esta acción la orden de radioterapia, la respuesta escrita de la EPS y mi historia clínica.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida\n3. vida digna\n4. seguridad social\n5. dignidad humana\n6. protección especial al adulto mayor\n7. acceso efectivo a servicios de salud\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mis derechos fundamentales a la salud, la vida, la vida digna, la seguridad social y la dignidad humana, reconocidos en los artículos 11, 48, 49 y 86 de la Constitución Política. Como adulto mayor de 76 años con diagnóstico de cáncer de próstata y limitaciones físicas y visuales, soy sujeto de especial protección constitucional, lo que implica que el Estado y la EPS deben garantizar mi acceso efectivo y oportuno a los servicios de salud, incluyendo el transporte y el acompañamiento necesario para mi tratamiento. La Ley Estatutaria de Salud 1751 de 2015 establece que el sistema de salud debe garantizar la prestación oportuna, adecuada y eficaz de los servicios, sin barreras administrativas o financieras. El Decreto 2591 de 1991 regula la acción de tutela como mecanismo para proteger derechos fundamentales cuando se vulneran y no existe otro medio más idóneo o eficaz. La EPS Nuevo Horizonte negó expresamente por escrito el 25 de agosto de 2026 el transporte y el acompañante para mi tratamiento de radioterapia, a pesar de que mi condición requiere apoyo para trasladarme debido a mi edad, movilidad reducida con caminador, visión deficiente y mareos post-sesión. Esta negativa vulnera mis derechos fundamentales, pues sin transporte y acompañante no puedo acceder al tratamiento necesario para mi enfermedad oncológica. La Corte Constitucional ha establecido en múltiples sentencias que las EPS deben cubrir el transporte y el acompañante cuando el paciente depende de un tercero para desplazarse y requiere atención continua, especialmente en adultos mayores con enfermedades catastróficas como el cáncer. En la Sentencia T-268 de 2023, la Corte reconoció que una EPS debe cubrir el transporte y el acompañante de pacientes adultos mayores con cáncer de próstata cuando su condición requiere tratamiento continuo y presenta limitaciones funcionales. En la Sentencia T-586 de 2023, la Corte estableció que la negativa de una EPS a cubrir transporte y acompañante para tratamiento médico, especialmente en adultos mayores con necesidades especiales, vulnera el derecho a la salud integral, oportuna y continua. En la Sentencia T-316 de 2024, la Corte definió que una EPS vulnera el derecho a la salud cuando niega el transporte y estancia de acompañante a un paciente que debe salir del municipio para acceder a un servicio incluido en el PBS, depende de un tercero para desplazarse y requiere atención permanente para su integridad física. En la Sentencia T-239 de 2015, la Corte estableció prioridad constitucional para adultos mayores con enfermedades catastróficas como el cáncer, imponiendo al Estado el deber de garantizar el acceso a tratamientos, incluyendo transporte y acompañamiento necesario. Estas decisiones confirman que la negativa de la EPS Nuevo Horizonte es ilegal y vulnera mis derechos fundamentales, por lo que procede la acción de tutela.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Nuevo Horizonte autorizar y cubrir de manera inmediata el servicio de transporte intermunicipal necesario para mi traslado desde mi lugar de residencia en Boyacá hasta el centro donde recibo radioterapia, incluyendo el acompañante necesario por mi condición de adulto mayor con movilidad reducida, visión deficiente y mareos post-tratamiento.\n2. Que se garantice el transporte y el acompañante de forma continua durante todo el curso de mi tratamiento de radioterapia, sin interrupciones ni requisitos adicionales.\n3. Que se le indique a la EPS Nuevo Horizonte que, en caso de requerir ajustes logísticos, debe gestionarlos directamente sin que ello represente una barrera para mi acceso al tratamiento.\n4. Que se respeten los términos máximos establecidos por la ley para la resolución de la tutela, asegurando que la orden se cumpla dentro de las 48 horas siguientes a su notificación.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de radioterapia emitida por mi médico tratante.\n2. Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026, en la que niega el transporte y el acompañante.\n3. Historia clínica que respalda mi diagnóstico de cáncer de próstata, mi edad, mi dependencia de caminador, mi visión deficiente y los mareos posteriores a las sesiones de radioterapia.\n\nVI. JURAMENTO\n\n\nDeclaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger mis derechos a la salud, la vida y la dignidad humana relacionados con el acceso al transporte y acompañante para mi tratamiento de radioterapia.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Nuevo Horizonte, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
     },
     "metrics": {
      "models": [
@@ -924,22 +306,22 @@
      "escalations": [],
      "notes": [],
      "llm_calls": 1,
-     "input_tokens": 3025,
-     "output_tokens": 969,
-     "llm_latency_s": 7.89,
-     "cost_usd": 0.00178,
+     "input_tokens": 3057,
+     "output_tokens": 1222,
+     "llm_latency_s": 6.9,
+     "cost_usd": 0.002017,
      "cost_complete": true,
      "tiers": [
       "draft"
      ],
-     "cost_all_reasoning_usd": 0.005932,
+     "cost_all_reasoning_usd": 0.006723,
      "tavily_searches": 0,
-     "latency_s": 7.89
+     "latency_s": 6.9
     }
    }
   },
   {
-   "t": 33.9,
+   "t": 24.81,
    "event": "step_started",
    "data": {
     "step": "verify",
@@ -948,7 +330,7 @@
    }
   },
   {
-   "t": 40.55,
+   "t": 29.94,
    "event": "step_completed",
    "data": {
     "step": "verify",
@@ -956,9 +338,9 @@
     "result": {
      "citas_encontradas": [
       "T-268/23",
+      "T-586/23",
       "T-316/24",
-      "T-159/24",
-      "T-261/17"
+      "T-239/15"
      ],
      "citas_verificadas": [
       {
@@ -968,21 +350,21 @@
        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
       },
       {
+       "sentencia_id": "T-586/23",
+       "estado": "verificada",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-586-23.htm",
+       "detalle": "Coincide con una sentencia encontrada en la búsqueda."
+      },
+      {
        "sentencia_id": "T-316/24",
        "estado": "verificada",
        "url": "https://www.corteconstitucional.gov.co/relatoria/2024/t-316-24.htm",
        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
       },
       {
-       "sentencia_id": "T-159/24",
+       "sentencia_id": "T-239/15",
        "estado": "verificada",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2024/t-159-24.htm",
-       "detalle": "Coincide con una sentencia encontrada en la búsqueda."
-      },
-      {
-       "sentencia_id": "T-261/17",
-       "estado": "verificada",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2017/t-261-17.htm",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2015/t-239-15.htm",
        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
       }
      ],
@@ -991,9 +373,10 @@
      "ciclo": [],
      "iteraciones": 0,
      "observaciones": [
-      "Hecho 2: “Mi EPS, EPS Nuevo Horizonte, me indicó que debía recibir tratamiento de radioterapia.” Los hechos del caso solo mencionan una “orden de radioterapia” y la negación del transporte; no consta que la EPS haya indicado el tratamiento. Este hecho parece inferido o inventado sin base en los datos aportados.",
-      "Fundamentos jurídicos: se afirma que “se ha agotado la vía administrativa ante la negativa escrita de la EPS Nuevo Horizonte del 25 de agosto de 2026”. Los hechos solo registran esa respuesta escrita; no se mencionan actuaciones previas (PQR, reclamos, recursos) que acrediten el agotamiento de la vía administrativa.",
-      "Pretensión 4: solicita que la EPS responda por escrito en 24 horas informando medidas de cumplimiento. Esta pretensión no se deriva de los hechos expuestos (son hechos sustantivos, no procesales) y corresponde a una petición de trámite judicial, no a una pretensión de fondo apoyada en los hechos."
+      "Hecho 1: Incluye el año 2026 («junio de 2026»), pero los hechos del caso solo indican «junio» sin año. No debe inventarse la fecha.",
+      "Pretensión 1: Solicita «transporte intermunicipal» desde Boyacá hasta el centro de radioterapia; los hechos no establecen que el tratamiento se realice en otro municipio ni que el traslado sea intermunicipal.",
+      "Pretensión 4: Pide cumplimiento en 48 horas tras notificación; esta pretensión no se deriva de los hechos sino de plazos procesales, por lo que no está soportada directamente por los hechos narrados.",
+      "Derecho «seguridad social»: Su inclusión en derechos vulnerados no se desprende de forma evidente de los hechos expuestos (diagnóstico, edad, limitaciones físicas y negativa de transporte/acompañante)."
      ]
     },
     "metrics": {
@@ -1004,22 +387,22 @@
      "escalations": [],
      "notes": [],
      "llm_calls": 1,
-     "input_tokens": 1358,
-     "output_tokens": 2152,
-     "llm_latency_s": 6.65,
-     "cost_usd": 0.007814,
+     "input_tokens": 1686,
+     "output_tokens": 1617,
+     "llm_latency_s": 5.13,
+     "cost_usd": 0.006537,
      "cost_complete": true,
      "tiers": [
       "reasoning"
      ],
-     "cost_all_reasoning_usd": 0.007814,
+     "cost_all_reasoning_usd": 0.006537,
      "tavily_searches": 0,
-     "latency_s": 6.65
+     "latency_s": 5.13
     }
    }
   },
   {
-   "t": 40.55,
+   "t": 29.94,
    "event": "step_started",
    "data": {
     "step": "package",
@@ -1028,7 +411,7 @@
    }
   },
   {
-   "t": 47.11,
+   "t": 32.51,
    "event": "escalated",
    "data": {
     "step": "package",
@@ -1037,15 +420,13 @@
     "to_tier": "draft",
     "to_model": "nvidia/nemotron-3-super-120b-a12b",
     "reasons": [
-     "a right in the summary is a sentence, not a right"
+     "the facts do not name the EPS 'Nuevo Horizonte'"
     ],
-    "remaining_issues": [
-     "a right in the summary is a sentence, not a right"
-    ]
+    "remaining_issues": []
    }
   },
   {
-   "t": 53.84,
+   "t": 35.87,
    "event": "step_completed",
    "data": {
     "step": "package",
@@ -1053,51 +434,52 @@
     "result": {
      "checklist_anexos": [
       "Copia del documento de identidad",
-      "Orden de radioterapia",
-      "Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026",
-      "Historia clínica"
+      "Orden de radioterapia emitida por el médico tratante",
+      "Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026, en la que niega el transporte y el acompañante",
+      "Historia clínica que respalde el diagnóstico de cáncer de próstata, la edad, la dependencia de caminador, la visión deficiente y los mareos posteriores a las sesiones"
      ],
-     "donde_radicar": "Radique la acción de tutela ante cualquier juez del municipio donde ocurrió la violación (Boyacá), ya sea en la oficina judicial o reparto correspondiente. Puede hacerlo de forma presencial o mediante el servicio virtual de radicación de la Rama Judicial. No necesita abogado. El juez tiene 10 días hábiles para decidir. Dada la alta urgencia, solicite expresamente una medida provisional para que se garantice el transporte y acompañante inmediato para las sesiones de radioterapia mientras se resuelve el fondo.",
-     "que_hacer_si_no_cumplen": "Si la EPS no cumple con la orden del juez, presente un incidente de desacato ante el mismo juez que emitió la tutela, adjuntando la prueba del incumplimiento.",
+     "donde_radicar": "Radique la acción de tutela ante cualquier juez del municipio donde ocurra la violación (en este caso, Boyacá), ya sea en la oficina judicial o reparto correspondiente. Puede presentarla de forma presencial o mediante el servicio virtual de radicado de la Rama Judicial. No necesita abogado. El juez tiene diez (10) días hábiles para decidir. Dada la alta urgencia, solicite una medida provisional para que el EPS garantice inmediatamente el transporte y el acompañante mientras se resuelve el fondo.",
+     "que_hacer_si_no_cumplen": "Si el EPS no cumple con la orden del juez, presente un incidente de desacato ante el mismo juez que emitió la tutela, solicitando que se impongan multas coercitivas hasta que se cumpla la orden.",
+     "tutela_recomendada": true,
      "draft": {
       "hechos": [
-       "1. En junio me diagnosticaron cáncer de próstata.",
-       "2. Mi EPS, EPS Nuevo Horizonte, me indicó que debía recibir tratamiento de radioterapia.",
-       "3. Debido a mi edad de 76 años, camino con caminador, tengo visión reducida y quedo muy mareado después de las sesiones de radioterapia, por lo que requiero transporte y acompañante para asistir a mis citas.",
-       "4. El 25 de agosto de 2026 recibí una respuesta escrita de la EPS Nuevo Horizonte en la que me indicaron que el servicio de transporte y acompañante para radioterapia no está cubierto.",
-       "5. Cuento con los siguientes documentos que respaldan mi situación: orden de radioterapia, respuesta escrita de la EPS y historia clínica."
+       "En junio de 2026 se me diagnosticó cáncer de próstata.",
+       "El 25 de agosto de 2026 la EPS Nuevo Horizonte respondió por escrito que el transporte y el acompañante no están cubiertos para mi tratamiento de radioterapia.",
+       "Tengo 76 años, camino con caminador, tengo visión deficiente y me siento mareado después de las sesiones de radioterapia, por lo que no puedo trasladarme solo.",
+       "Adjunto a esta acción la orden de radioterapia, la respuesta escrita de la EPS y mi historia clínica."
       ],
       "derechos_vulnerados": [
-       "derecho fundamental a la salud",
-       "derecho a una vida digna",
-       "derecho a la seguridad social",
-       "derecho a la dignidad humana",
-       "derecho al acceso efectivo a los servicios de salud",
-       "derecho a la igualdad y no discriminación por condición económica y edad"
+       "salud",
+       "vida",
+       "vida digna",
+       "seguridad social",
+       "dignidad humana",
+       "protección especial al adulto mayor",
+       "acceso efectivo a servicios de salud"
       ],
-      "fundamentos_juridicos": "La tutela procede conforme al artículo 86 de la Constitución Política, ya que se vulneran derechos fundamentales como la salud, la vida digna y la seguridad social, y se ha agotado la vía administrativa ante la negativa escrita de la EPS Nuevo Horizonte del 25 de agosto de 2026. Asimismo, aplica el Decreto 2591 de 1991, que regula la acción de tutela, y la Ley Estatutaria de Salud 1751 de 2015, que garantiza el acceso oportuno y efectivo a los servicios de salud. Además, corresponde aplicar las siguientes sentencias de la Corte Constitucional: Sentencia T-268 de 2023, que establece que el transporte y el acompañante de enfermera 24 horas son parte del tratamiento esencial para pacientes con cáncer avanzado y discapacidad, y no pueden quedar excluidos del Plan Obligatorio de Salud (POS); Sentencia T-316 de 2024, que determina que el transporte intermunicipal necesario para acceder a servicios como la radioterapia está incluido en el Plan de Beneficios en Salud (PBS) y debe ser autorizado por la EPS cuando el paciente debe trasladarse a otro municipio; Sentencia T-159 de 2024, que reitera que la EPS debe evaluar la condición específica del paciente, como movilidad reducida, mareos y necesidad de acompañante, y no limitarse a respuestas genéricas, pues se debe proteger el derecho a la salud integral; y Sentencia T-261 de 2017, que reafirma la protección constitucional especial para pacientes oncológicos, indicando que los tratamientos de radiación y los gastos de traslado deben ser cubiertos sin copagos ni barreras administrativas.",
+      "fundamentos_juridicos": "Tengo derecho a la protección de mis derechos fundamentales a la salud, la vida, la vida digna, la seguridad social y la dignidad humana, reconocidos en los artículos 11, 48, 49 y 86 de la Constitución Política. Como adulto mayor de 76 años con diagnóstico de cáncer de próstata y limitaciones físicas y visuales, soy sujeto de especial protección constitucional, lo que implica que el Estado y la EPS deben garantizar mi acceso efectivo y oportuno a los servicios de salud, incluyendo el transporte y el acompañamiento necesario para mi tratamiento. La Ley Estatutaria de Salud 1751 de 2015 establece que el sistema de salud debe garantizar la prestación oportuna, adecuada y eficaz de los servicios, sin barreras administrativas o financieras. El Decreto 2591 de 1991 regula la acción de tutela como mecanismo para proteger derechos fundamentales cuando se vulneran y no existe otro medio más idóneo o eficaz. La EPS Nuevo Horizonte negó expresamente por escrito el 25 de agosto de 2026 el transporte y el acompañante para mi tratamiento de radioterapia, a pesar de que mi condición requiere apoyo para trasladarme debido a mi edad, movilidad reducida con caminador, visión deficiente y mareos post-sesión. Esta negativa vulnera mis derechos fundamentales, pues sin transporte y acompañante no puedo acceder al tratamiento necesario para mi enfermedad oncológica. La Corte Constitucional ha establecido en múltiples sentencias que las EPS deben cubrir el transporte y el acompañante cuando el paciente depende de un tercero para desplazarse y requiere atención continua, especialmente en adultos mayores con enfermedades catastróficas como el cáncer. En la Sentencia T-268 de 2023, la Corte reconoció que una EPS debe cubrir el transporte y el acompañante de pacientes adultos mayores con cáncer de próstata cuando su condición requiere tratamiento continuo y presenta limitaciones funcionales. En la Sentencia T-586 de 2023, la Corte estableció que la negativa de una EPS a cubrir transporte y acompañante para tratamiento médico, especialmente en adultos mayores con necesidades especiales, vulnera el derecho a la salud integral, oportuna y continua. En la Sentencia T-316 de 2024, la Corte definió que una EPS vulnera el derecho a la salud cuando niega el transporte y estancia de acompañante a un paciente que debe salir del municipio para acceder a un servicio incluido en el PBS, depende de un tercero para desplazarse y requiere atención permanente para su integridad física. En la Sentencia T-239 de 2015, la Corte estableció prioridad constitucional para adultos mayores con enfermedades catastróficas como el cáncer, imponiendo al Estado el deber de garantizar el acceso a tratamientos, incluyendo transporte y acompañamiento necesario. Estas decisiones confirman que la negativa de la EPS Nuevo Horizonte es ilegal y vulnera mis derechos fundamentales, por lo que procede la acción de tutela.",
       "pretensiones": [
-       "Que se ordene a la EPS Nuevo Horizonte autorizar, garantizar y proporcionar de manera inmediata el servicio de transporte y acompañante necesario para que yo pueda asistir a todas mis sesiones de radioterapia, incluyendo el vehículo adecuado y un acompañante capacitado para atender mi condición de movilidad reducida, visión limitada y mareos posteriores al tratamiento.",
-       "Que se le instruya a la EPS Nuevo Horizonte cubrir todos los costos asociados al transporte y acompañante, sin que ello implique ningún costo, copago o trámite administrativo adicional para mí.",
-       "Que se le requiera a la EPS Nuevo Horizonte garantizar la continuidad y efectividad de mi tratamiento oncológico de radioterapia, asegurando que ninguna barrera administrativa o económica interrumpa su realización.",
-       "Que se le exija a la EPS Nuevo Horizonte responder por escrito dentro de las próximas 24 horas, informando las medidas concretas que tomará para cumplir con esta orden judicial."
+       "Que se ordene a la EPS Nuevo Horizonte autorizar y cubrir de manera inmediata el servicio de transporte intermunicipal necesario para mi traslado desde mi lugar de residencia en Boyacá hasta el centro donde recibo radioterapia, incluyendo el acompañante necesario por mi condición de adulto mayor con movilidad reducida, visión deficiente y mareos post-tratamiento.",
+       "Que se garantice el transporte y el acompañante de forma continua durante todo el curso de mi tratamiento de radioterapia, sin interrupciones ni requisitos adicionales.",
+       "Que se le indique a la EPS Nuevo Horizonte que, en caso de requerir ajustes logísticos, debe gestionarlos directamente sin que ello represente una barrera para mi acceso al tratamiento.",
+       "Que se respeten los términos máximos establecidos por la ley para la resolución de la tutela, asegurando que la orden se cumpla dentro de las 48 horas siguientes a su notificación."
       ],
       "pruebas_y_anexos": [
-       "Orden de radioterapia",
-       "Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026",
-       "Historia clínica"
+       "Orden de radioterapia emitida por mi médico tratante.",
+       "Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026, en la que niega el transporte y el acompañante.",
+       "Historia clínica que respalda mi diagnóstico de cáncer de próstata, mi edad, mi dependencia de caminador, mi visión deficiente y los mareos posteriores a las sesiones de radioterapia."
       ],
-      "juramento": "Declaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger los derechos fundamentales aquí invocados.",
-      "accionada": "EPS Nuevo Horizonte",
+      "juramento": "Declaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger mis derechos a la salud, la vida y la dignidad humana relacionados con el acceso al transporte y acompañante para mi tratamiento de radioterapia.",
+      "accionada": "Nuevo Horizonte",
       "ciudad": "Boyacá",
-      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBoyacá\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: EPS Nuevo Horizonte\nDERECHOS INVOCADOS: la salud, una vida digna, la seguridad social, la dignidad humana, acceso efectivo a los servicios de salud, la igualdad y no discriminación por condición económica y edad\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Boyacá, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra EPS Nuevo Horizonte, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a la salud, una vida digna, la seguridad social, la dignidad humana, acceso efectivo a los servicios de salud, la igualdad y no discriminación por condición económica y edad, con base en los siguientes:\n\nI. HECHOS\n\n1. En junio me diagnosticaron cáncer de próstata.\n2. Mi EPS, EPS Nuevo Horizonte, me indicó que debía recibir tratamiento de radioterapia.\n3. Debido a mi edad de 76 años, camino con caminador, tengo visión reducida y quedo muy mareado después de las sesiones de radioterapia, por lo que requiero transporte y acompañante para asistir a mis citas.\n4. El 25 de agosto de 2026 recibí una respuesta escrita de la EPS Nuevo Horizonte en la que me indicaron que el servicio de transporte y acompañante para radioterapia no está cubierto.\n5. Cuento con los siguientes documentos que respaldan mi situación: orden de radioterapia, respuesta escrita de la EPS y historia clínica.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. derecho fundamental a la salud\n2. derecho a una vida digna\n3. derecho a la seguridad social\n4. derecho a la dignidad humana\n5. derecho al acceso efectivo a los servicios de salud\n6. derecho a la igualdad y no discriminación por condición económica y edad\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nLa tutela procede conforme al artículo 86 de la Constitución Política, ya que se vulneran derechos fundamentales como la salud, la vida digna y la seguridad social, y se ha agotado la vía administrativa ante la negativa escrita de la EPS Nuevo Horizonte del 25 de agosto de 2026. Asimismo, aplica el Decreto 2591 de 1991, que regula la acción de tutela, y la Ley Estatutaria de Salud 1751 de 2015, que garantiza el acceso oportuno y efectivo a los servicios de salud. Además, corresponde aplicar las siguientes sentencias de la Corte Constitucional: Sentencia T-268 de 2023, que establece que el transporte y el acompañante de enfermera 24 horas son parte del tratamiento esencial para pacientes con cáncer avanzado y discapacidad, y no pueden quedar excluidos del Plan Obligatorio de Salud (POS); Sentencia T-316 de 2024, que determina que el transporte intermunicipal necesario para acceder a servicios como la radioterapia está incluido en el Plan de Beneficios en Salud (PBS) y debe ser autorizado por la EPS cuando el paciente debe trasladarse a otro municipio; Sentencia T-159 de 2024, que reitera que la EPS debe evaluar la condición específica del paciente, como movilidad reducida, mareos y necesidad de acompañante, y no limitarse a respuestas genéricas, pues se debe proteger el derecho a la salud integral; y Sentencia T-261 de 2017, que reafirma la protección constitucional especial para pacientes oncológicos, indicando que los tratamientos de radiación y los gastos de traslado deben ser cubiertos sin copagos ni barreras administrativas.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Nuevo Horizonte autorizar, garantizar y proporcionar de manera inmediata el servicio de transporte y acompañante necesario para que yo pueda asistir a todas mis sesiones de radioterapia, incluyendo el vehículo adecuado y un acompañante capacitado para atender mi condición de movilidad reducida, visión limitada y mareos posteriores al tratamiento.\n2. Que se le instruya a la EPS Nuevo Horizonte cubrir todos los costos asociados al transporte y acompañante, sin que ello implique ningún costo, copago o trámite administrativo adicional para mí.\n3. Que se le requiera a la EPS Nuevo Horizonte garantizar la continuidad y efectividad de mi tratamiento oncológico de radioterapia, asegurando que ninguna barrera administrativa o económica interrumpa su realización.\n4. Que se le exija a la EPS Nuevo Horizonte responder por escrito dentro de las próximas 24 horas, informando las medidas concretas que tomará para cumplir con esta orden judicial.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de radioterapia\n2. Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026\n3. Historia clínica\n\nVI. JURAMENTO\n\n\nDeclaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger los derechos fundamentales aquí invocados.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: EPS Nuevo Horizonte, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
+      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBoyacá\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Nuevo Horizonte\nDERECHOS INVOCADOS: salud, vida, vida digna, seguridad social, dignidad humana, protección especial al adulto mayor, acceso efectivo a servicios de salud\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Boyacá, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Nuevo Horizonte, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida, vida digna, seguridad social, dignidad humana, protección especial al adulto mayor, acceso efectivo a servicios de salud, con base en los siguientes:\n\nI. HECHOS\n\n1. En junio de 2026 se me diagnosticó cáncer de próstata.\n2. El 25 de agosto de 2026 la EPS Nuevo Horizonte respondió por escrito que el transporte y el acompañante no están cubiertos para mi tratamiento de radioterapia.\n3. Tengo 76 años, camino con caminador, tengo visión deficiente y me siento mareado después de las sesiones de radioterapia, por lo que no puedo trasladarme solo.\n4. Adjunto a esta acción la orden de radioterapia, la respuesta escrita de la EPS y mi historia clínica.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida\n3. vida digna\n4. seguridad social\n5. dignidad humana\n6. protección especial al adulto mayor\n7. acceso efectivo a servicios de salud\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mis derechos fundamentales a la salud, la vida, la vida digna, la seguridad social y la dignidad humana, reconocidos en los artículos 11, 48, 49 y 86 de la Constitución Política. Como adulto mayor de 76 años con diagnóstico de cáncer de próstata y limitaciones físicas y visuales, soy sujeto de especial protección constitucional, lo que implica que el Estado y la EPS deben garantizar mi acceso efectivo y oportuno a los servicios de salud, incluyendo el transporte y el acompañamiento necesario para mi tratamiento. La Ley Estatutaria de Salud 1751 de 2015 establece que el sistema de salud debe garantizar la prestación oportuna, adecuada y eficaz de los servicios, sin barreras administrativas o financieras. El Decreto 2591 de 1991 regula la acción de tutela como mecanismo para proteger derechos fundamentales cuando se vulneran y no existe otro medio más idóneo o eficaz. La EPS Nuevo Horizonte negó expresamente por escrito el 25 de agosto de 2026 el transporte y el acompañante para mi tratamiento de radioterapia, a pesar de que mi condición requiere apoyo para trasladarme debido a mi edad, movilidad reducida con caminador, visión deficiente y mareos post-sesión. Esta negativa vulnera mis derechos fundamentales, pues sin transporte y acompañante no puedo acceder al tratamiento necesario para mi enfermedad oncológica. La Corte Constitucional ha establecido en múltiples sentencias que las EPS deben cubrir el transporte y el acompañante cuando el paciente depende de un tercero para desplazarse y requiere atención continua, especialmente en adultos mayores con enfermedades catastróficas como el cáncer. En la Sentencia T-268 de 2023, la Corte reconoció que una EPS debe cubrir el transporte y el acompañante de pacientes adultos mayores con cáncer de próstata cuando su condición requiere tratamiento continuo y presenta limitaciones funcionales. En la Sentencia T-586 de 2023, la Corte estableció que la negativa de una EPS a cubrir transporte y acompañante para tratamiento médico, especialmente en adultos mayores con necesidades especiales, vulnera el derecho a la salud integral, oportuna y continua. En la Sentencia T-316 de 2024, la Corte definió que una EPS vulnera el derecho a la salud cuando niega el transporte y estancia de acompañante a un paciente que debe salir del municipio para acceder a un servicio incluido en el PBS, depende de un tercero para desplazarse y requiere atención permanente para su integridad física. En la Sentencia T-239 de 2015, la Corte estableció prioridad constitucional para adultos mayores con enfermedades catastróficas como el cáncer, imponiendo al Estado el deber de garantizar el acceso a tratamientos, incluyendo transporte y acompañamiento necesario. Estas decisiones confirman que la negativa de la EPS Nuevo Horizonte es ilegal y vulnera mis derechos fundamentales, por lo que procede la acción de tutela.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Nuevo Horizonte autorizar y cubrir de manera inmediata el servicio de transporte intermunicipal necesario para mi traslado desde mi lugar de residencia en Boyacá hasta el centro donde recibo radioterapia, incluyendo el acompañante necesario por mi condición de adulto mayor con movilidad reducida, visión deficiente y mareos post-tratamiento.\n2. Que se garantice el transporte y el acompañante de forma continua durante todo el curso de mi tratamiento de radioterapia, sin interrupciones ni requisitos adicionales.\n3. Que se le indique a la EPS Nuevo Horizonte que, en caso de requerir ajustes logísticos, debe gestionarlos directamente sin que ello represente una barrera para mi acceso al tratamiento.\n4. Que se respeten los términos máximos establecidos por la ley para la resolución de la tutela, asegurando que la orden se cumpla dentro de las 48 horas siguientes a su notificación.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de radioterapia emitida por mi médico tratante.\n2. Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026, en la que niega el transporte y el acompañante.\n3. Historia clínica que respalda mi diagnóstico de cáncer de próstata, mi edad, mi dependencia de caminador, mi visión deficiente y los mareos posteriores a las sesiones de radioterapia.\n\nVI. JURAMENTO\n\n\nDeclaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger mis derechos a la salud, la vida y la dignidad humana relacionados con el acceso al transporte y acompañante para mi tratamiento de radioterapia.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Nuevo Horizonte, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
      },
      "verification": {
       "citas_encontradas": [
        "T-268/23",
+       "T-586/23",
        "T-316/24",
-       "T-159/24",
-       "T-261/17"
+       "T-239/15"
       ],
       "citas_verificadas": [
        {
@@ -1107,21 +489,21 @@
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
+        "sentencia_id": "T-586/23",
+        "estado": "verificada",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-586-23.htm",
+        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
+       },
+       {
         "sentencia_id": "T-316/24",
         "estado": "verificada",
         "url": "https://www.corteconstitucional.gov.co/relatoria/2024/t-316-24.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
-        "sentencia_id": "T-159/24",
+        "sentencia_id": "T-239/15",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2024/t-159-24.htm",
-        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
-       },
-       {
-        "sentencia_id": "T-261/17",
-        "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2017/t-261-17.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2015/t-239-15.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        }
       ],
@@ -1130,53 +512,56 @@
       "ciclo": [],
       "iteraciones": 0,
       "observaciones": [
-       "Hecho 2: “Mi EPS, EPS Nuevo Horizonte, me indicó que debía recibir tratamiento de radioterapia.” Los hechos del caso solo mencionan una “orden de radioterapia” y la negación del transporte; no consta que la EPS haya indicado el tratamiento. Este hecho parece inferido o inventado sin base en los datos aportados.",
-       "Fundamentos jurídicos: se afirma que “se ha agotado la vía administrativa ante la negativa escrita de la EPS Nuevo Horizonte del 25 de agosto de 2026”. Los hechos solo registran esa respuesta escrita; no se mencionan actuaciones previas (PQR, reclamos, recursos) que acrediten el agotamiento de la vía administrativa.",
-       "Pretensión 4: solicita que la EPS responda por escrito en 24 horas informando medidas de cumplimiento. Esta pretensión no se deriva de los hechos expuestos (son hechos sustantivos, no procesales) y corresponde a una petición de trámite judicial, no a una pretensión de fondo apoyada en los hechos."
+       "Hecho 1: Incluye el año 2026 («junio de 2026»), pero los hechos del caso solo indican «junio» sin año. No debe inventarse la fecha.",
+       "Pretensión 1: Solicita «transporte intermunicipal» desde Boyacá hasta el centro de radioterapia; los hechos no establecen que el tratamiento se realice en otro municipio ni que el traslado sea intermunicipal.",
+       "Pretensión 4: Pide cumplimiento en 48 horas tras notificación; esta pretensión no se deriva de los hechos sino de plazos procesales, por lo que no está soportada directamente por los hechos narrados.",
+       "Derecho «seguridad social»: Su inclusión en derechos vulnerados no se desprende de forma evidente de los hechos expuestos (diagnóstico, edad, limitaciones físicas y negativa de transporte/acompañante)."
       ]
      },
+     "orientacion": null,
      "canal_radicacion": {
       "ciudad": "Boyacá",
       "encontrado": true,
       "descripcion": "La fuente oficial citada publica los medios autorizados para presentar tutelas en línea en Boyacá. Consulte allí el enlace o el correo vigente.",
       "enlace": null,
       "correo": null,
-      "fuente_url": "https://www.ramajudicial.gov.co/web/ventanilla/servicios/-/asset_publisher/kzguQDYxYEvs/content/id/144991791",
-      "fuente_titulo": "Recepción Tutela en Línea - Ventanilla de servicios",
-      "consultado": "2026-10-21"
+      "fuente_url": "https://www.ramajudicial.gov.co/web/consejo-superior-de-la-judicatura/ventanilla-de-servicios/-/asset_publisher/TIpGpe2ENeIh/content/id/150468654",
+      "fuente_titulo": "Recepción de demanda en línea - Consejo Superior de la Judicatura",
+      "consultado": "2026-10-23"
      },
      "resumen_revisores": {
-      "facts": "The petitioner was diagnosed with prostate cancer in June and prescribed radiotherapy by their EPS, EPS Nuevo Horizonte. Due to being 76 years old, using a walker, having reduced vision, and experiencing dizziness after radiotherapy sessions, they require transportation and an attendant to attend appointments. On August 25, 2026, the EPS responded in writing stating that transportation and attendant services for radiotherapy are not covered. The petitioner has supporting documents: radiotherapy order, written EPS response, and clinical history.",
+      "facts": "In June 2026, the petitioner was diagnosed with prostate cancer. On August 25, 2026, EPS Nuevo Horizonte responded in writing that transportation and an accompanying person were not covered for their radiotherapy treatment. The petitioner is 76 years old, uses a walker, has poor vision, and experiences dizziness after radiotherapy sessions, making independent travel impossible. They attached the radiotherapy order, the EPS's written response, and their medical history.",
       "rights_invoked": [
-       "fundamental right to health",
-       "right to a dignified life",
-       "right to social security",
-       "right to human dignity",
-       "right to effective access to health services",
-       "right to equality and non-discrimination based on economic condition and age"
+       "health",
+       "life",
+       "dignified life",
+       "social security",
+       "human dignity",
+       "special protection for older adults",
+       "effective access to health services"
       ],
       "requests": [
-       "Order EPS Nuevo Horizonte to immediately authorize, guarantee, and provide the necessary transportation and attendant service for all radiotherapy sessions, including an appropriate vehicle and a trained attendant to address reduced mobility, limited vision, and post-treatment dizziness.",
-       "Instruct EPS Nuevo Horizonte to cover all associated costs without any expense, copayment, or additional administrative procedure for the petitioner.",
-       "Require EPS Nuevo Horizonte to guarantee the continuity and effectiveness of radiotherapy treatment, ensuring no administrative or economic barrier interrupts it.",
-       "Demand EPS Nuevo Horizonte respond in writing within the next 24 hours, informing of concrete measures taken to comply with this judicial order."
+       "Order EPS Nuevo Horizonte to immediately authorize and cover necessary intermunicipal transportation from their residence in Boyacá to the radiotherapy center, including the required accompanying person due to age, reduced mobility, poor vision, and post-treatment dizziness.",
+       "Guarantee continuous transportation and accompaniment throughout the entire radiotherapy course without interruption or additional requirements.",
+       "Instruct EPS Nuevo Horizonte to manage any logistical adjustments directly without creating barriers to treatment access.",
+       "Ensure the tutela is resolved within the legally established timeframe, with compliance ordered within 48 hours of notification."
       ],
       "rulings": [
        {
         "ruling_id": "T-268/23",
-        "why": "Establishes that transportation and 24-hour nursing accompaniment are part of essential treatment for advanced cancer patients with disability and cannot be excluded from the Mandatory Health Plan (POS)."
+        "why": "The court held that an EPS must cover transportation and accompaniment for elderly prostate cancer patients requiring continuous treatment and presenting functional limitations."
+       },
+       {
+        "ruling_id": "T-586/23",
+        "why": "The court ruled that an EPS’s denial of transportation and accompaniment for medical treatment, especially for elderly patients with special needs, violates the right to comprehensive, timely, and continuous health care."
        },
        {
         "ruling_id": "T-316/24",
-        "why": "Determines that intermunicipal transportation needed to access services like radiotherapy is included in the Health Benefits Plan (PBS) and must be authorized by the EPS when the patient must travel to another municipality."
+        "why": "The court determined that an EPS violates the right to health by denying transportation and accompaniment to a patient who must leave their municipality to access a PBS-covered service, depends on others for transport, and requires permanent attention for physical integrity."
        },
        {
-        "ruling_id": "T-159/24",
-        "why": "Reiterates that the EPS must evaluate the patient’s specific condition—such as reduced mobility, dizziness, and need for accompaniment—and not rely on generic responses, to protect the right to integral health."
-       },
-       {
-        "ruling_id": "T-261/17",
-        "why": "Reaffirms special constitutional protection for oncology patients, stating that radiotherapy treatment and transportation expenses must be covered without copayments or administrative barriers."
+        "ruling_id": "T-239/15",
+        "why": "The court established constitutional priority for elderly patients with catastrophic illnesses like cancer, obligating the State to guarantee access to treatment, including necessary transportation and accompaniment."
        }
       ]
      },
@@ -1196,82 +581,81 @@
        "to_tier": "draft",
        "to_model": "nvidia/nemotron-3-super-120b-a12b",
        "reasons": [
-        "a right in the summary is a sentence, not a right"
+        "the facts do not name the EPS 'Nuevo Horizonte'"
        ],
-       "remaining_issues": [
-        "a right in the summary is a sentence, not a right"
-       ]
+       "remaining_issues": []
       }
      ],
      "notes": [],
      "llm_calls": 4,
-     "input_tokens": 5758,
-     "output_tokens": 1462,
-     "llm_latency_s": 18.55,
-     "cost_usd": 0.001598,
+     "input_tokens": 6236,
+     "output_tokens": 1446,
+     "llm_latency_s": 10.52,
+     "cost_usd": 0.001732,
      "cost_complete": true,
      "tiers": [
       "fast",
       "draft"
      ],
-     "cost_all_reasoning_usd": 0.010144,
+     "cost_all_reasoning_usd": 0.010574,
      "tavily_searches": 2,
-     "latency_s": 13.29
+     "latency_s": 5.93
     }
    }
   },
   {
-   "t": 53.84,
+   "t": 35.87,
    "event": "case_completed",
    "data": {
     "package": {
      "checklist_anexos": [
       "Copia del documento de identidad",
-      "Orden de radioterapia",
-      "Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026",
-      "Historia clínica"
+      "Orden de radioterapia emitida por el médico tratante",
+      "Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026, en la que niega el transporte y el acompañante",
+      "Historia clínica que respalde el diagnóstico de cáncer de próstata, la edad, la dependencia de caminador, la visión deficiente y los mareos posteriores a las sesiones"
      ],
-     "donde_radicar": "Radique la acción de tutela ante cualquier juez del municipio donde ocurrió la violación (Boyacá), ya sea en la oficina judicial o reparto correspondiente. Puede hacerlo de forma presencial o mediante el servicio virtual de radicación de la Rama Judicial. No necesita abogado. El juez tiene 10 días hábiles para decidir. Dada la alta urgencia, solicite expresamente una medida provisional para que se garantice el transporte y acompañante inmediato para las sesiones de radioterapia mientras se resuelve el fondo.",
-     "que_hacer_si_no_cumplen": "Si la EPS no cumple con la orden del juez, presente un incidente de desacato ante el mismo juez que emitió la tutela, adjuntando la prueba del incumplimiento.",
+     "donde_radicar": "Radique la acción de tutela ante cualquier juez del municipio donde ocurra la violación (en este caso, Boyacá), ya sea en la oficina judicial o reparto correspondiente. Puede presentarla de forma presencial o mediante el servicio virtual de radicado de la Rama Judicial. No necesita abogado. El juez tiene diez (10) días hábiles para decidir. Dada la alta urgencia, solicite una medida provisional para que el EPS garantice inmediatamente el transporte y el acompañante mientras se resuelve el fondo.",
+     "que_hacer_si_no_cumplen": "Si el EPS no cumple con la orden del juez, presente un incidente de desacato ante el mismo juez que emitió la tutela, solicitando que se impongan multas coercitivas hasta que se cumpla la orden.",
+     "tutela_recomendada": true,
      "draft": {
       "hechos": [
-       "1. En junio me diagnosticaron cáncer de próstata.",
-       "2. Mi EPS, EPS Nuevo Horizonte, me indicó que debía recibir tratamiento de radioterapia.",
-       "3. Debido a mi edad de 76 años, camino con caminador, tengo visión reducida y quedo muy mareado después de las sesiones de radioterapia, por lo que requiero transporte y acompañante para asistir a mis citas.",
-       "4. El 25 de agosto de 2026 recibí una respuesta escrita de la EPS Nuevo Horizonte en la que me indicaron que el servicio de transporte y acompañante para radioterapia no está cubierto.",
-       "5. Cuento con los siguientes documentos que respaldan mi situación: orden de radioterapia, respuesta escrita de la EPS y historia clínica."
+       "En junio de 2026 se me diagnosticó cáncer de próstata.",
+       "El 25 de agosto de 2026 la EPS Nuevo Horizonte respondió por escrito que el transporte y el acompañante no están cubiertos para mi tratamiento de radioterapia.",
+       "Tengo 76 años, camino con caminador, tengo visión deficiente y me siento mareado después de las sesiones de radioterapia, por lo que no puedo trasladarme solo.",
+       "Adjunto a esta acción la orden de radioterapia, la respuesta escrita de la EPS y mi historia clínica."
       ],
       "derechos_vulnerados": [
-       "derecho fundamental a la salud",
-       "derecho a una vida digna",
-       "derecho a la seguridad social",
-       "derecho a la dignidad humana",
-       "derecho al acceso efectivo a los servicios de salud",
-       "derecho a la igualdad y no discriminación por condición económica y edad"
+       "salud",
+       "vida",
+       "vida digna",
+       "seguridad social",
+       "dignidad humana",
+       "protección especial al adulto mayor",
+       "acceso efectivo a servicios de salud"
       ],
-      "fundamentos_juridicos": "La tutela procede conforme al artículo 86 de la Constitución Política, ya que se vulneran derechos fundamentales como la salud, la vida digna y la seguridad social, y se ha agotado la vía administrativa ante la negativa escrita de la EPS Nuevo Horizonte del 25 de agosto de 2026. Asimismo, aplica el Decreto 2591 de 1991, que regula la acción de tutela, y la Ley Estatutaria de Salud 1751 de 2015, que garantiza el acceso oportuno y efectivo a los servicios de salud. Además, corresponde aplicar las siguientes sentencias de la Corte Constitucional: Sentencia T-268 de 2023, que establece que el transporte y el acompañante de enfermera 24 horas son parte del tratamiento esencial para pacientes con cáncer avanzado y discapacidad, y no pueden quedar excluidos del Plan Obligatorio de Salud (POS); Sentencia T-316 de 2024, que determina que el transporte intermunicipal necesario para acceder a servicios como la radioterapia está incluido en el Plan de Beneficios en Salud (PBS) y debe ser autorizado por la EPS cuando el paciente debe trasladarse a otro municipio; Sentencia T-159 de 2024, que reitera que la EPS debe evaluar la condición específica del paciente, como movilidad reducida, mareos y necesidad de acompañante, y no limitarse a respuestas genéricas, pues se debe proteger el derecho a la salud integral; y Sentencia T-261 de 2017, que reafirma la protección constitucional especial para pacientes oncológicos, indicando que los tratamientos de radiación y los gastos de traslado deben ser cubiertos sin copagos ni barreras administrativas.",
+      "fundamentos_juridicos": "Tengo derecho a la protección de mis derechos fundamentales a la salud, la vida, la vida digna, la seguridad social y la dignidad humana, reconocidos en los artículos 11, 48, 49 y 86 de la Constitución Política. Como adulto mayor de 76 años con diagnóstico de cáncer de próstata y limitaciones físicas y visuales, soy sujeto de especial protección constitucional, lo que implica que el Estado y la EPS deben garantizar mi acceso efectivo y oportuno a los servicios de salud, incluyendo el transporte y el acompañamiento necesario para mi tratamiento. La Ley Estatutaria de Salud 1751 de 2015 establece que el sistema de salud debe garantizar la prestación oportuna, adecuada y eficaz de los servicios, sin barreras administrativas o financieras. El Decreto 2591 de 1991 regula la acción de tutela como mecanismo para proteger derechos fundamentales cuando se vulneran y no existe otro medio más idóneo o eficaz. La EPS Nuevo Horizonte negó expresamente por escrito el 25 de agosto de 2026 el transporte y el acompañante para mi tratamiento de radioterapia, a pesar de que mi condición requiere apoyo para trasladarme debido a mi edad, movilidad reducida con caminador, visión deficiente y mareos post-sesión. Esta negativa vulnera mis derechos fundamentales, pues sin transporte y acompañante no puedo acceder al tratamiento necesario para mi enfermedad oncológica. La Corte Constitucional ha establecido en múltiples sentencias que las EPS deben cubrir el transporte y el acompañante cuando el paciente depende de un tercero para desplazarse y requiere atención continua, especialmente en adultos mayores con enfermedades catastróficas como el cáncer. En la Sentencia T-268 de 2023, la Corte reconoció que una EPS debe cubrir el transporte y el acompañante de pacientes adultos mayores con cáncer de próstata cuando su condición requiere tratamiento continuo y presenta limitaciones funcionales. En la Sentencia T-586 de 2023, la Corte estableció que la negativa de una EPS a cubrir transporte y acompañante para tratamiento médico, especialmente en adultos mayores con necesidades especiales, vulnera el derecho a la salud integral, oportuna y continua. En la Sentencia T-316 de 2024, la Corte definió que una EPS vulnera el derecho a la salud cuando niega el transporte y estancia de acompañante a un paciente que debe salir del municipio para acceder a un servicio incluido en el PBS, depende de un tercero para desplazarse y requiere atención permanente para su integridad física. En la Sentencia T-239 de 2015, la Corte estableció prioridad constitucional para adultos mayores con enfermedades catastróficas como el cáncer, imponiendo al Estado el deber de garantizar el acceso a tratamientos, incluyendo transporte y acompañamiento necesario. Estas decisiones confirman que la negativa de la EPS Nuevo Horizonte es ilegal y vulnera mis derechos fundamentales, por lo que procede la acción de tutela.",
       "pretensiones": [
-       "Que se ordene a la EPS Nuevo Horizonte autorizar, garantizar y proporcionar de manera inmediata el servicio de transporte y acompañante necesario para que yo pueda asistir a todas mis sesiones de radioterapia, incluyendo el vehículo adecuado y un acompañante capacitado para atender mi condición de movilidad reducida, visión limitada y mareos posteriores al tratamiento.",
-       "Que se le instruya a la EPS Nuevo Horizonte cubrir todos los costos asociados al transporte y acompañante, sin que ello implique ningún costo, copago o trámite administrativo adicional para mí.",
-       "Que se le requiera a la EPS Nuevo Horizonte garantizar la continuidad y efectividad de mi tratamiento oncológico de radioterapia, asegurando que ninguna barrera administrativa o económica interrumpa su realización.",
-       "Que se le exija a la EPS Nuevo Horizonte responder por escrito dentro de las próximas 24 horas, informando las medidas concretas que tomará para cumplir con esta orden judicial."
+       "Que se ordene a la EPS Nuevo Horizonte autorizar y cubrir de manera inmediata el servicio de transporte intermunicipal necesario para mi traslado desde mi lugar de residencia en Boyacá hasta el centro donde recibo radioterapia, incluyendo el acompañante necesario por mi condición de adulto mayor con movilidad reducida, visión deficiente y mareos post-tratamiento.",
+       "Que se garantice el transporte y el acompañante de forma continua durante todo el curso de mi tratamiento de radioterapia, sin interrupciones ni requisitos adicionales.",
+       "Que se le indique a la EPS Nuevo Horizonte que, en caso de requerir ajustes logísticos, debe gestionarlos directamente sin que ello represente una barrera para mi acceso al tratamiento.",
+       "Que se respeten los términos máximos establecidos por la ley para la resolución de la tutela, asegurando que la orden se cumpla dentro de las 48 horas siguientes a su notificación."
       ],
       "pruebas_y_anexos": [
-       "Orden de radioterapia",
-       "Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026",
-       "Historia clínica"
+       "Orden de radioterapia emitida por mi médico tratante.",
+       "Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026, en la que niega el transporte y el acompañante.",
+       "Historia clínica que respalda mi diagnóstico de cáncer de próstata, mi edad, mi dependencia de caminador, mi visión deficiente y los mareos posteriores a las sesiones de radioterapia."
       ],
-      "juramento": "Declaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger los derechos fundamentales aquí invocados.",
-      "accionada": "EPS Nuevo Horizonte",
+      "juramento": "Declaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger mis derechos a la salud, la vida y la dignidad humana relacionados con el acceso al transporte y acompañante para mi tratamiento de radioterapia.",
+      "accionada": "Nuevo Horizonte",
       "ciudad": "Boyacá",
-      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBoyacá\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: EPS Nuevo Horizonte\nDERECHOS INVOCADOS: la salud, una vida digna, la seguridad social, la dignidad humana, acceso efectivo a los servicios de salud, la igualdad y no discriminación por condición económica y edad\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Boyacá, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra EPS Nuevo Horizonte, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a la salud, una vida digna, la seguridad social, la dignidad humana, acceso efectivo a los servicios de salud, la igualdad y no discriminación por condición económica y edad, con base en los siguientes:\n\nI. HECHOS\n\n1. En junio me diagnosticaron cáncer de próstata.\n2. Mi EPS, EPS Nuevo Horizonte, me indicó que debía recibir tratamiento de radioterapia.\n3. Debido a mi edad de 76 años, camino con caminador, tengo visión reducida y quedo muy mareado después de las sesiones de radioterapia, por lo que requiero transporte y acompañante para asistir a mis citas.\n4. El 25 de agosto de 2026 recibí una respuesta escrita de la EPS Nuevo Horizonte en la que me indicaron que el servicio de transporte y acompañante para radioterapia no está cubierto.\n5. Cuento con los siguientes documentos que respaldan mi situación: orden de radioterapia, respuesta escrita de la EPS y historia clínica.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. derecho fundamental a la salud\n2. derecho a una vida digna\n3. derecho a la seguridad social\n4. derecho a la dignidad humana\n5. derecho al acceso efectivo a los servicios de salud\n6. derecho a la igualdad y no discriminación por condición económica y edad\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nLa tutela procede conforme al artículo 86 de la Constitución Política, ya que se vulneran derechos fundamentales como la salud, la vida digna y la seguridad social, y se ha agotado la vía administrativa ante la negativa escrita de la EPS Nuevo Horizonte del 25 de agosto de 2026. Asimismo, aplica el Decreto 2591 de 1991, que regula la acción de tutela, y la Ley Estatutaria de Salud 1751 de 2015, que garantiza el acceso oportuno y efectivo a los servicios de salud. Además, corresponde aplicar las siguientes sentencias de la Corte Constitucional: Sentencia T-268 de 2023, que establece que el transporte y el acompañante de enfermera 24 horas son parte del tratamiento esencial para pacientes con cáncer avanzado y discapacidad, y no pueden quedar excluidos del Plan Obligatorio de Salud (POS); Sentencia T-316 de 2024, que determina que el transporte intermunicipal necesario para acceder a servicios como la radioterapia está incluido en el Plan de Beneficios en Salud (PBS) y debe ser autorizado por la EPS cuando el paciente debe trasladarse a otro municipio; Sentencia T-159 de 2024, que reitera que la EPS debe evaluar la condición específica del paciente, como movilidad reducida, mareos y necesidad de acompañante, y no limitarse a respuestas genéricas, pues se debe proteger el derecho a la salud integral; y Sentencia T-261 de 2017, que reafirma la protección constitucional especial para pacientes oncológicos, indicando que los tratamientos de radiación y los gastos de traslado deben ser cubiertos sin copagos ni barreras administrativas.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Nuevo Horizonte autorizar, garantizar y proporcionar de manera inmediata el servicio de transporte y acompañante necesario para que yo pueda asistir a todas mis sesiones de radioterapia, incluyendo el vehículo adecuado y un acompañante capacitado para atender mi condición de movilidad reducida, visión limitada y mareos posteriores al tratamiento.\n2. Que se le instruya a la EPS Nuevo Horizonte cubrir todos los costos asociados al transporte y acompañante, sin que ello implique ningún costo, copago o trámite administrativo adicional para mí.\n3. Que se le requiera a la EPS Nuevo Horizonte garantizar la continuidad y efectividad de mi tratamiento oncológico de radioterapia, asegurando que ninguna barrera administrativa o económica interrumpa su realización.\n4. Que se le exija a la EPS Nuevo Horizonte responder por escrito dentro de las próximas 24 horas, informando las medidas concretas que tomará para cumplir con esta orden judicial.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de radioterapia\n2. Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026\n3. Historia clínica\n\nVI. JURAMENTO\n\n\nDeclaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger los derechos fundamentales aquí invocados.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: EPS Nuevo Horizonte, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
+      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBoyacá\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Nuevo Horizonte\nDERECHOS INVOCADOS: salud, vida, vida digna, seguridad social, dignidad humana, protección especial al adulto mayor, acceso efectivo a servicios de salud\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Boyacá, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Nuevo Horizonte, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida, vida digna, seguridad social, dignidad humana, protección especial al adulto mayor, acceso efectivo a servicios de salud, con base en los siguientes:\n\nI. HECHOS\n\n1. En junio de 2026 se me diagnosticó cáncer de próstata.\n2. El 25 de agosto de 2026 la EPS Nuevo Horizonte respondió por escrito que el transporte y el acompañante no están cubiertos para mi tratamiento de radioterapia.\n3. Tengo 76 años, camino con caminador, tengo visión deficiente y me siento mareado después de las sesiones de radioterapia, por lo que no puedo trasladarme solo.\n4. Adjunto a esta acción la orden de radioterapia, la respuesta escrita de la EPS y mi historia clínica.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida\n3. vida digna\n4. seguridad social\n5. dignidad humana\n6. protección especial al adulto mayor\n7. acceso efectivo a servicios de salud\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mis derechos fundamentales a la salud, la vida, la vida digna, la seguridad social y la dignidad humana, reconocidos en los artículos 11, 48, 49 y 86 de la Constitución Política. Como adulto mayor de 76 años con diagnóstico de cáncer de próstata y limitaciones físicas y visuales, soy sujeto de especial protección constitucional, lo que implica que el Estado y la EPS deben garantizar mi acceso efectivo y oportuno a los servicios de salud, incluyendo el transporte y el acompañamiento necesario para mi tratamiento. La Ley Estatutaria de Salud 1751 de 2015 establece que el sistema de salud debe garantizar la prestación oportuna, adecuada y eficaz de los servicios, sin barreras administrativas o financieras. El Decreto 2591 de 1991 regula la acción de tutela como mecanismo para proteger derechos fundamentales cuando se vulneran y no existe otro medio más idóneo o eficaz. La EPS Nuevo Horizonte negó expresamente por escrito el 25 de agosto de 2026 el transporte y el acompañante para mi tratamiento de radioterapia, a pesar de que mi condición requiere apoyo para trasladarme debido a mi edad, movilidad reducida con caminador, visión deficiente y mareos post-sesión. Esta negativa vulnera mis derechos fundamentales, pues sin transporte y acompañante no puedo acceder al tratamiento necesario para mi enfermedad oncológica. La Corte Constitucional ha establecido en múltiples sentencias que las EPS deben cubrir el transporte y el acompañante cuando el paciente depende de un tercero para desplazarse y requiere atención continua, especialmente en adultos mayores con enfermedades catastróficas como el cáncer. En la Sentencia T-268 de 2023, la Corte reconoció que una EPS debe cubrir el transporte y el acompañante de pacientes adultos mayores con cáncer de próstata cuando su condición requiere tratamiento continuo y presenta limitaciones funcionales. En la Sentencia T-586 de 2023, la Corte estableció que la negativa de una EPS a cubrir transporte y acompañante para tratamiento médico, especialmente en adultos mayores con necesidades especiales, vulnera el derecho a la salud integral, oportuna y continua. En la Sentencia T-316 de 2024, la Corte definió que una EPS vulnera el derecho a la salud cuando niega el transporte y estancia de acompañante a un paciente que debe salir del municipio para acceder a un servicio incluido en el PBS, depende de un tercero para desplazarse y requiere atención permanente para su integridad física. En la Sentencia T-239 de 2015, la Corte estableció prioridad constitucional para adultos mayores con enfermedades catastróficas como el cáncer, imponiendo al Estado el deber de garantizar el acceso a tratamientos, incluyendo transporte y acompañamiento necesario. Estas decisiones confirman que la negativa de la EPS Nuevo Horizonte es ilegal y vulnera mis derechos fundamentales, por lo que procede la acción de tutela.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Nuevo Horizonte autorizar y cubrir de manera inmediata el servicio de transporte intermunicipal necesario para mi traslado desde mi lugar de residencia en Boyacá hasta el centro donde recibo radioterapia, incluyendo el acompañante necesario por mi condición de adulto mayor con movilidad reducida, visión deficiente y mareos post-tratamiento.\n2. Que se garantice el transporte y el acompañante de forma continua durante todo el curso de mi tratamiento de radioterapia, sin interrupciones ni requisitos adicionales.\n3. Que se le indique a la EPS Nuevo Horizonte que, en caso de requerir ajustes logísticos, debe gestionarlos directamente sin que ello represente una barrera para mi acceso al tratamiento.\n4. Que se respeten los términos máximos establecidos por la ley para la resolución de la tutela, asegurando que la orden se cumpla dentro de las 48 horas siguientes a su notificación.\n\nV. PRUEBAS Y ANEXOS\n\n1. Orden de radioterapia emitida por mi médico tratante.\n2. Respuesta escrita de la EPS Nuevo Horizonte fechada el 25 de agosto de 2026, en la que niega el transporte y el acompañante.\n3. Historia clínica que respalda mi diagnóstico de cáncer de próstata, mi edad, mi dependencia de caminador, mi visión deficiente y los mareos posteriores a las sesiones de radioterapia.\n\nVI. JURAMENTO\n\n\nDeclaro bajo solemnidad de juramento que no he presentado previamente otra acción de tutela por los mismos hechos y con el mismo objeto de proteger mis derechos a la salud, la vida y la dignidad humana relacionados con el acceso al transporte y acompañante para mi tratamiento de radioterapia.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Nuevo Horizonte, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
      },
      "verification": {
       "citas_encontradas": [
        "T-268/23",
+       "T-586/23",
        "T-316/24",
-       "T-159/24",
-       "T-261/17"
+       "T-239/15"
       ],
       "citas_verificadas": [
        {
@@ -1281,21 +665,21 @@
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
+        "sentencia_id": "T-586/23",
+        "estado": "verificada",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-586-23.htm",
+        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
+       },
+       {
         "sentencia_id": "T-316/24",
         "estado": "verificada",
         "url": "https://www.corteconstitucional.gov.co/relatoria/2024/t-316-24.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
-        "sentencia_id": "T-159/24",
+        "sentencia_id": "T-239/15",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2024/t-159-24.htm",
-        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
-       },
-       {
-        "sentencia_id": "T-261/17",
-        "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2017/t-261-17.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2015/t-239-15.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        }
       ],
@@ -1304,66 +688,73 @@
       "ciclo": [],
       "iteraciones": 0,
       "observaciones": [
-       "Hecho 2: “Mi EPS, EPS Nuevo Horizonte, me indicó que debía recibir tratamiento de radioterapia.” Los hechos del caso solo mencionan una “orden de radioterapia” y la negación del transporte; no consta que la EPS haya indicado el tratamiento. Este hecho parece inferido o inventado sin base en los datos aportados.",
-       "Fundamentos jurídicos: se afirma que “se ha agotado la vía administrativa ante la negativa escrita de la EPS Nuevo Horizonte del 25 de agosto de 2026”. Los hechos solo registran esa respuesta escrita; no se mencionan actuaciones previas (PQR, reclamos, recursos) que acrediten el agotamiento de la vía administrativa.",
-       "Pretensión 4: solicita que la EPS responda por escrito en 24 horas informando medidas de cumplimiento. Esta pretensión no se deriva de los hechos expuestos (son hechos sustantivos, no procesales) y corresponde a una petición de trámite judicial, no a una pretensión de fondo apoyada en los hechos."
+       "Hecho 1: Incluye el año 2026 («junio de 2026»), pero los hechos del caso solo indican «junio» sin año. No debe inventarse la fecha.",
+       "Pretensión 1: Solicita «transporte intermunicipal» desde Boyacá hasta el centro de radioterapia; los hechos no establecen que el tratamiento se realice en otro municipio ni que el traslado sea intermunicipal.",
+       "Pretensión 4: Pide cumplimiento en 48 horas tras notificación; esta pretensión no se deriva de los hechos sino de plazos procesales, por lo que no está soportada directamente por los hechos narrados.",
+       "Derecho «seguridad social»: Su inclusión en derechos vulnerados no se desprende de forma evidente de los hechos expuestos (diagnóstico, edad, limitaciones físicas y negativa de transporte/acompañante)."
       ]
      },
+     "orientacion": null,
      "canal_radicacion": {
       "ciudad": "Boyacá",
       "encontrado": true,
       "descripcion": "La fuente oficial citada publica los medios autorizados para presentar tutelas en línea en Boyacá. Consulte allí el enlace o el correo vigente.",
       "enlace": null,
       "correo": null,
-      "fuente_url": "https://www.ramajudicial.gov.co/web/ventanilla/servicios/-/asset_publisher/kzguQDYxYEvs/content/id/144991791",
-      "fuente_titulo": "Recepción Tutela en Línea - Ventanilla de servicios",
-      "consultado": "2026-10-21"
+      "fuente_url": "https://www.ramajudicial.gov.co/web/consejo-superior-de-la-judicatura/ventanilla-de-servicios/-/asset_publisher/TIpGpe2ENeIh/content/id/150468654",
+      "fuente_titulo": "Recepción de demanda en línea - Consejo Superior de la Judicatura",
+      "consultado": "2026-10-23"
      },
      "resumen_revisores": {
-      "facts": "The petitioner was diagnosed with prostate cancer in June and prescribed radiotherapy by their EPS, EPS Nuevo Horizonte. Due to being 76 years old, using a walker, having reduced vision, and experiencing dizziness after radiotherapy sessions, they require transportation and an attendant to attend appointments. On August 25, 2026, the EPS responded in writing stating that transportation and attendant services for radiotherapy are not covered. The petitioner has supporting documents: radiotherapy order, written EPS response, and clinical history.",
+      "facts": "In June 2026, the petitioner was diagnosed with prostate cancer. On August 25, 2026, EPS Nuevo Horizonte responded in writing that transportation and an accompanying person were not covered for their radiotherapy treatment. The petitioner is 76 years old, uses a walker, has poor vision, and experiences dizziness after radiotherapy sessions, making independent travel impossible. They attached the radiotherapy order, the EPS's written response, and their medical history.",
       "rights_invoked": [
-       "fundamental right to health",
-       "right to a dignified life",
-       "right to social security",
-       "right to human dignity",
-       "right to effective access to health services",
-       "right to equality and non-discrimination based on economic condition and age"
+       "health",
+       "life",
+       "dignified life",
+       "social security",
+       "human dignity",
+       "special protection for older adults",
+       "effective access to health services"
       ],
       "requests": [
-       "Order EPS Nuevo Horizonte to immediately authorize, guarantee, and provide the necessary transportation and attendant service for all radiotherapy sessions, including an appropriate vehicle and a trained attendant to address reduced mobility, limited vision, and post-treatment dizziness.",
-       "Instruct EPS Nuevo Horizonte to cover all associated costs without any expense, copayment, or additional administrative procedure for the petitioner.",
-       "Require EPS Nuevo Horizonte to guarantee the continuity and effectiveness of radiotherapy treatment, ensuring no administrative or economic barrier interrupts it.",
-       "Demand EPS Nuevo Horizonte respond in writing within the next 24 hours, informing of concrete measures taken to comply with this judicial order."
+       "Order EPS Nuevo Horizonte to immediately authorize and cover necessary intermunicipal transportation from their residence in Boyacá to the radiotherapy center, including the required accompanying person due to age, reduced mobility, poor vision, and post-treatment dizziness.",
+       "Guarantee continuous transportation and accompaniment throughout the entire radiotherapy course without interruption or additional requirements.",
+       "Instruct EPS Nuevo Horizonte to manage any logistical adjustments directly without creating barriers to treatment access.",
+       "Ensure the tutela is resolved within the legally established timeframe, with compliance ordered within 48 hours of notification."
       ],
       "rulings": [
        {
         "ruling_id": "T-268/23",
-        "why": "Establishes that transportation and 24-hour nursing accompaniment are part of essential treatment for advanced cancer patients with disability and cannot be excluded from the Mandatory Health Plan (POS)."
+        "why": "The court held that an EPS must cover transportation and accompaniment for elderly prostate cancer patients requiring continuous treatment and presenting functional limitations."
+       },
+       {
+        "ruling_id": "T-586/23",
+        "why": "The court ruled that an EPS’s denial of transportation and accompaniment for medical treatment, especially for elderly patients with special needs, violates the right to comprehensive, timely, and continuous health care."
        },
        {
         "ruling_id": "T-316/24",
-        "why": "Determines that intermunicipal transportation needed to access services like radiotherapy is included in the Health Benefits Plan (PBS) and must be authorized by the EPS when the patient must travel to another municipality."
+        "why": "The court determined that an EPS violates the right to health by denying transportation and accompaniment to a patient who must leave their municipality to access a PBS-covered service, depends on others for transport, and requires permanent attention for physical integrity."
        },
        {
-        "ruling_id": "T-159/24",
-        "why": "Reiterates that the EPS must evaluate the patient’s specific condition—such as reduced mobility, dizziness, and need for accompaniment—and not rely on generic responses, to protect the right to integral health."
-       },
-       {
-        "ruling_id": "T-261/17",
-        "why": "Reaffirms special constitutional protection for oncology patients, stating that radiotherapy treatment and transportation expenses must be covered without copayments or administrative barriers."
+        "ruling_id": "T-239/15",
+        "why": "The court established constitutional priority for elderly patients with catastrophic illnesses like cancer, obligating the State to guarantee access to treatment, including necessary transportation and accompaniment."
        }
       ]
      },
      "aviso": "Amparo es una herramienta de ayuda para la redacción y no constituye asesoría legal. Revise el documento, complete los datos entre corchetes y, si es posible, consúltelo con un abogado, un consultorio jurídico universitario o la Defensoría del Pueblo antes de radicarlo."
     },
     "totals": {
-     "input_tokens": 14918,
-     "output_tokens": 6435,
-     "cost_usd": 0.014523,
-     "latency_s": 53.83,
+     "input_tokens": 15484,
+     "output_tokens": 6273,
+     "cost_usd": 0.014384,
+     "latency_s": 35.87,
      "tavily_searches": 6,
-     "escalations": 2,
-     "cost_all_reasoning_usd": 0.034223
+     "escalations": 1,
+     "cost_all_reasoning_usd": 0.034303
+    },
+    "documents": {
+     "docx": "/samples/03-transporte-adulto-mayor/tutela-nuevo-horizonte.docx",
+     "pdf": "/samples/03-transporte-adulto-mayor/tutela-nuevo-horizonte.pdf"
     }
    }
   }
