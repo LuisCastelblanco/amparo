@@ -43,12 +43,18 @@ What to expect in about 60 seconds:
     model (about 2× cheaper);
   - the **English summary**, if you ticked it.
 
-Cases 2 and 3 work the same way. Case 2 has no city, so no filing channel is searched.
+Cases 2 and 3 work the same way. Case 2 has no city, so no filing channel is searched. The download buttons are
+plain links to files stored when the run finished (kept for 7 days), so they also work on phones.
+
+To see a case where a tutela is **not** the right tool yet, paste the story of
+[`docs/eval_cases/11-mal-trato-sin-negacion.md`](eval_cases/11-mal-trato-sin-negacion.md) (rude treatment, no
+service denied): in about 10 seconds the analysis says so, research and drafting are skipped, and Amparo explains
+what to do first. All 13 test cases and their results are in [EVALUATION.md](EVALUATION.md).
 
 ## 3. Try your own story
 
-Write a story in Spanish (up to 4,000 characters), for example: *"Mi EPS Sanitas me negó una resonancia
-magnética que me ordenó el neurólogo..."*. If something critical is missing, Amparo asks up to 3 short questions
+Write a story in Spanish (up to 4,000 characters), for example: *"Mi EPS Salud Andina me negó una
+resonancia magnética que me ordenó el neurólogo..."* (an invented EPS name). If something critical is missing, Amparo asks up to 3 short questions
 first; you can answer or skip each one. Please use invented data only, never real patient data.
 
 ## If something does not run
