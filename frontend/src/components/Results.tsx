@@ -9,10 +9,13 @@ import {
   type DocumentLinks,
   type FilingChannel,
   type FinalPackage,
+  type NextSteps,
   type ReviewerSummary,
   type StepName,
   type StepState,
   type Totals,
+  type TutelaDraft,
+  type VerificationReport,
 } from "@/lib/types";
 
 /** "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B" -> "Nemotron 3 Nano" (display only). */
@@ -33,6 +36,9 @@ const host = (url: string) => {
   }
 };
 
+/** A package with a draft (the tutela is admissible). */
+type DraftedPackage = FinalPackage & { draft: TutelaDraft; verification: VerificationReport };
+
 const card = "rounded-lg border border-slate-200 bg-white p-4";
 const cardTitle = "mb-2 text-sm font-semibold uppercase tracking-wide text-slate-600";
 
@@ -47,11 +53,22 @@ export default function Results({
   totals: Totals | null;
   documents: DocumentLinks | null;
 }) {
+  if (!pkg.draft || !pkg.verification) {
+    return (
+      <div className="mt-8 space-y-6">
+        {pkg.orientacion && <NotYetCard steps={pkg.orientacion} aviso={pkg.aviso} />}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <RoutingPanel steps={steps} totals={totals} />
+        </div>
+      </div>
+    );
+  }
+  const drafted = pkg as DraftedPackage;
   return (
     <div className="mt-8 space-y-6">
-      <DocumentCard pkg={pkg} documents={documents} />
+      <DocumentCard pkg={drafted} documents={documents} />
       <div className="grid gap-6 lg:grid-cols-2">
-        <CitationsCard pkg={pkg} />
+        <CitationsCard pkg={drafted} />
         <ChecklistCard items={pkg.checklist_anexos} />
         <FilingCard pkg={pkg} />
         <RoutingPanel steps={steps} totals={totals} />
@@ -61,7 +78,38 @@ export default function Results({
   );
 }
 
-function DocumentCard({ pkg, documents }: { pkg: FinalPackage; documents: DocumentLinks | null }) {
+function NotYetCard({ steps, aviso }: { steps: NextSteps; aviso: string }) {
+  return (
+    <section aria-labelledby="notyet-heading" className={`${card} border-amber-300`}>
+      <h2 id="notyet-heading" className="text-lg font-semibold">
+        A tutela is not the right tool yet
+      </h2>
+      <p className="text-xs text-slate-600">
+        No document was drafted: a judge would most likely reject it now. This is what to do first (in Spanish).
+      </p>
+      <div lang="es" className="mt-3 space-y-3 text-sm leading-relaxed">
+        <p>{steps.por_que_no_ahora}</p>
+        <div>
+          <h3 className="text-xs font-semibold text-slate-800">Qué hacer primero</h3>
+          <ol className="mt-1 list-decimal space-y-1 pl-5">
+            {steps.pasos.map((p, i) => (
+              <li key={i}>{p.replace(/^\d+[.)]\s*/, "")}</li>
+            ))}
+          </ol>
+        </div>
+        <div>
+          <h3 className="text-xs font-semibold text-slate-800">Cuándo sí procede la tutela</h3>
+          <p>{steps.cuando_procede}</p>
+        </div>
+      </div>
+      <p className="mt-4 rounded-md bg-amber-50 p-3 text-xs text-amber-900" lang="es">
+        {aviso}
+      </p>
+    </section>
+  );
+}
+
+function DocumentCard({ pkg, documents }: { pkg: DraftedPackage; documents: DocumentLinks | null }) {
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState<"docx" | "pdf" | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -182,7 +230,7 @@ function Highlighted({ text }: { text: string }) {
   );
 }
 
-function CitationsCard({ pkg }: { pkg: FinalPackage }) {
+function CitationsCard({ pkg }: { pkg: DraftedPackage }) {
   const v = pkg.verification;
   return (
     <section aria-labelledby="citations-heading" className={card}>

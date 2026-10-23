@@ -111,6 +111,9 @@ export default function AmparoApp() {
       case "step_started":
         updateStep(data.step, () => ({ status: "running" }));
         break;
+      case "step_skipped":
+        updateStep(data.step, () => ({ status: "skipped" }));
+        break;
       case "escalated":
         updateStep(data.step, (s) => ({ escalations: [...(s.escalations ?? []), data] }));
         break;
@@ -344,7 +347,13 @@ export default function AmparoApp() {
         <Timeline steps={steps} totals={totals} />
       </div>
       <p className="sr-only" aria-live="polite">
-        {current ? `Running step: ${STEP_LABELS[current].title}` : pkg ? "Your tutela is ready." : ""}
+        {current
+          ? `Running step: ${STEP_LABELS[current].title}`
+          : pkg
+            ? pkg.tutela_recomendada === false
+              ? "Analysis finished: a tutela is not the right tool yet."
+              : "Your tutela is ready."
+            : ""}
       </p>
 
       {pkg && <Results pkg={pkg} steps={steps} totals={totals} documents={documents} />}
@@ -493,6 +502,9 @@ function Timeline({ steps, totals }: { steps: Record<StepName, StepState>; total
                 )}
                 {s.status === "done" && <StepSummary step={name} result={s.result} />}
                 {s.status === "failed" && <p className="mt-1 break-words text-xs text-red-700">{s.error}</p>}
+                {s.status === "skipped" && (
+                  <p className="mt-1 text-xs text-slate-600">Skipped: a tutela is not the right tool yet.</p>
+                )}
                 {s.result && (
                   <details className="mt-1">
                     <summary className="cursor-pointer text-xs text-slate-600">Raw output</summary>
@@ -526,15 +538,16 @@ function StatusDot({ status, index }: { status: StepState["status"]; index: numb
     running: "border-blue-600 text-blue-700 animate-pulse",
     done: "border-emerald-600 bg-emerald-600 text-white",
     failed: "border-red-600 bg-red-600 text-white",
+    skipped: "border-slate-300 bg-slate-100 text-slate-500",
   }[status];
-  const label = { pending: "pending", running: "running", done: "done", failed: "failed" }[status];
+  const label = { pending: "pending", running: "running", done: "done", failed: "failed", skipped: "skipped" }[status];
   return (
     <span
       role="img"
       aria-label={`Step ${index}: ${label}`}
       className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs font-semibold ${styles}`}
     >
-      {status === "done" ? "✓" : status === "failed" ? "!" : index}
+      {status === "done" ? "✓" : status === "failed" ? "!" : status === "skipped" ? "–" : index}
     </span>
   );
 }
@@ -566,7 +579,7 @@ function StepSummary({ step, result }: { step: StepName; result: any }) {
       if (result.datos_faltantes?.length) text += ` · ${result.datos_faltantes.length} open question(s)`;
       break;
     case "analysis":
-      text = `Urgency: ${result.urgencia} · ${result.procedencia_tutela.procede ? "admissible" : "may not be admissible"}`;
+      text = `Urgency: ${result.urgencia} · ${result.procedencia_tutela.procede ? "admissible" : "not admissible yet"}`;
       break;
     case "research":
       text = `${result.precedentes.length} relevant ruling(s)`;

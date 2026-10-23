@@ -25,7 +25,15 @@ _STOPWORDS = {
     "se", "su", "sus", "un", "una", "y", "o", "e", "le", "les", "me", "eps", "sin", "no",
 }
 # A value made only of these says nothing ("nada", "eso") even if the narrative contains it.
-_VAGUE = {"nada", "algo", "eso", "esto", "todo", "ninguno", "ninguna", "nulo", "null", "none"}
+_VAGUE = {
+    "nada", "algo", "eso", "esto", "todo", "ninguno", "ninguna", "nulo", "null", "none",
+    "necesito", "necesita", "necesitaba", "necesitamos", "necesario", "cosa", "cosas", "dar", "quiere",
+}
+# An EPS value made only of these names no EPS ("no", "la EPS", "no especificada").
+_GENERIC_EPS = {
+    "especificada", "especificado", "desconocida", "desconocido", "nombre", "entidad", "aseguradora", "salud",
+    "ninguna", "nulo", "null", "none", "dice", "indica",
+}
 # Words that frame a descriptive field ("cobertura de transporte", "autorizacion de la cirugia")
 # instead of naming what was denied; they need not appear in the narrative.
 FRAMING = frozenset({
@@ -205,3 +213,17 @@ def check(facts: CaseFacts, narrative: str) -> list[str]:
         if not date_grounded(item.fecha, narrative):
             issues.append(f"date not found in the narrative: {item.fecha!r}")
     return issues
+
+
+def missing_core(facts: CaseFacts) -> list[str]:
+    """Core facts that name nothing concrete (in Spanish, for the person): the EPS and what it denied.
+
+    Without them there is no concrete order to ask a judge for, whatever the analysis says.
+    """
+    missing = []
+    if not [w for w in _words(facts.eps) if w not in _STOPWORDS and w not in _GENERIC_EPS]:
+        missing.append("cuál es la EPS")
+    service = [w for w in _words(facts.servicio_negado) if w not in _STOPWORDS and w not in _VAGUE and w not in FRAMING]
+    if not service:
+        missing.append("qué servicio, medicamento o procedimiento le negaron o le demoraron")
+    return missing

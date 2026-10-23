@@ -1,0 +1,71 @@
+{
+  "01-medicamento-no-pbs": {
+    "group": "demo",
+    "procede": true,
+    "kind": "High-cost drug not in the health plan"
+  },
+  "02-cirugia-sin-fecha": {
+    "group": "demo",
+    "procede": true,
+    "kind": "Surgery authorized, never scheduled"
+  },
+  "03-transporte-adulto-mayor": {
+    "group": "demo",
+    "procede": true,
+    "kind": "Transport and companion for an older adult"
+  },
+  "04-examen-diagnostico": {
+    "group": "admissible",
+    "procede": true,
+    "kind": "Diagnostic test (MRI) delayed"
+  },
+  "05-menor-terapias": {
+    "group": "admissible",
+    "procede": true,
+    "kind": "Minor: therapies suspended"
+  },
+  "06-discapacidad-silla": {
+    "group": "admissible",
+    "procede": true,
+    "kind": "Person with a disability: wheelchair denied"
+  },
+  "07-cambio-eps-tratamiento": {
+    "group": "admissible",
+    "procede": true,
+    "kind": "Treatment interrupted after an EPS change"
+  },
+  "08-medicamento-biologico": {
+    "group": "admissible",
+    "procede": true,
+    "kind": "Drug denied (biologic)"
+  },
+  "09-cirugia-cadera-sin-fecha": {
+    "group": "admissible",
+    "procede": true,
+    "kind": "Surgery authorized, never scheduled"
+  },
+  "10-sin-solicitud-previa": {
+    "group": "not_admissible",
+    "procede": false,
+    "kind": "No prior request to the EPS, no urgency",
+    "next_step": "file the request with the EPS first"
+  },
+  "11-mal-trato-sin-negacion": {
+    "group": "not_admissible",
+    "procede": false,
+    "kind": "Mistreatment, no service denied",
+    "next_step": "a complaint (PQRS) to the EPS or the Superintendencia Nacional de Salud"
+  },
+  "12-relato-ambiguo": {
+    "group": "adversarial",
+    "procede": null,
+    "kind": "Very short, ambiguous story",
+    "expect_questions": true
+  },
+  "13-datos-contradictorios": {
+    "group": "adversarial",
+    "procede": null,
+    "kind": "Contradictory data (age, dates, surgery already done)",
+    "expect_questions": true
+  }
+}

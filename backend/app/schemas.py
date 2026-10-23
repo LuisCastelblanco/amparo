@@ -65,6 +65,9 @@ class ClarifyingQuestions(BaseModel):
 class Procedencia(BaseModel):
     procede: bool
     razon: str = Field(description="Why the tutela is or is not admissible, in Spanish")
+    paso_previo: OptionalText = Field(
+        description="If not admissible: the concrete step to take first, in plain Spanish; null if admissible"
+    )
 
 
 class LegalAnalysis(BaseModel):
@@ -210,9 +213,20 @@ class ReviewerSummary(BaseModel):
     rulings: list[ReviewerRuling] = Field(description="Each cited ruling and why it is cited")
 
 
+class NextSteps(BaseModel):
+    """What to do instead, when the analysis finds that a tutela is not the right tool yet."""
+
+    por_que_no_ahora: str = Field(description="Why a tutela is not the right tool now, in plain Spanish")
+    pasos: list[str] = Field(description="2 to 5 concrete steps to take first, in order, in plain Spanish")
+    cuando_procede: str = Field(description="When a tutela would become the right tool, in plain Spanish")
+
+
 class FinalPackage(PackageGuidance):
-    draft: TutelaDraft
-    verification: VerificationReport
+    # False when the analysis found that a tutela is not admissible yet: no draft, only next steps.
+    tutela_recomendada: bool = True
+    draft: TutelaDraft | None
+    verification: VerificationReport | None
+    orientacion: NextSteps | None = None
     canal_radicacion: FilingChannel | None = None
     resumen_revisores: ReviewerSummary | None = None
     aviso: str

@@ -105,9 +105,19 @@ export interface ReviewerSummary {
   rulings: { ruling_id: string; why: string }[];
 }
 
+/** What to do first when a tutela is not the right tool yet. */
+export interface NextSteps {
+  por_que_no_ahora: string;
+  pasos: string[];
+  cuando_procede: string;
+}
+
 export interface FinalPackage {
-  draft: TutelaDraft;
-  verification: VerificationReport;
+  /** False when the analysis found the tutela is not admissible yet: no draft, only next steps. */
+  tutela_recomendada: boolean;
+  draft: TutelaDraft | null;
+  verification: VerificationReport | null;
+  orientacion: NextSteps | null;
   checklist_anexos: string[];
   donde_radicar: string;
   que_hacer_si_no_cumplen: string;
@@ -126,7 +136,7 @@ export interface Totals {
   cost_all_reasoning_usd?: number;
 }
 
-export type StepStatus = "pending" | "running" | "done" | "failed";
+export type StepStatus = "pending" | "running" | "done" | "failed" | "skipped";
 
 export interface StepState {
   status: StepStatus;
@@ -146,6 +156,7 @@ export type CaseEvent =
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: { step: StepName; index: number; result: any; metrics: StepMetrics };
     }
+  | { event: "step_skipped"; data: { step: StepName; index: number; reason: string } }
   | { event: "escalated"; data: Escalation }
   | { event: "verify_iteration"; data: VerifyIteration }
   | { event: "step_failed"; data: { step: StepName; index: number; error: string; metrics: StepMetrics } }
