@@ -13,6 +13,7 @@ from app import document, storage, usage
 from app.config import get_settings
 from app.pipeline import StepUsage, clarifying_questions, intake, run_case, with_answers
 from app.schemas import TutelaSections
+from app.search import Searcher
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("amparo.api")
@@ -83,7 +84,9 @@ async def usage_today() -> dict[str, Any]:
         "cases_completed": day.get("completed", 0),
         "cases_failed": day.get("failed", 0),
         "intake_checks": day.get("intake_checks", 0),
+        # Models + Tavily; the Tavily part is tavily.credits x tavily.usd_per_credit.
         "estimated_cost_usd": round(day.get("cost_usd", 0.0), 6),
+        "tavily": _tavily_usage(day, settings.tavily_daily_credit_limit),
         "refused": day.get("refused", {}),
         "running_on_this_instance": usage.concurrency.running,
         "limits": {
@@ -94,6 +97,7 @@ async def usage_today() -> dict[str, Any]:
             "max_concurrent_cases_per_instance": settings.max_concurrent_cases,
             "max_narrative_chars": settings.max_narrative_chars,
             "max_tavily_searches_per_case": settings.max_tavily_searches_per_case,
+            "tavily_daily_credit_limit": settings.tavily_daily_credit_limit,
         },
         "judges": {
             "cases_started": judges.get("cases", 0),
@@ -101,13 +105,27 @@ async def usage_today() -> dict[str, Any]:
             "cases_failed": judges.get("failed", 0),
             "intake_checks": judges.get("intake_checks", 0),
             "estimated_cost_usd": round(judges.get("cost_usd", 0.0), 6),
+            "tavily": _tavily_usage(judges, settings.judge_tavily_daily_credit_limit),
             "refused": judges.get("refused", {}),
             "limits": {
                 "judge_daily_case_limit": settings.judge_daily_case_limit,
                 "judge_daily_cost_limit_usd": settings.judge_daily_cost_limit_usd,
+                "judge_tavily_daily_credit_limit": settings.judge_tavily_daily_credit_limit,
                 "judge_extra_concurrent_cases_per_instance": settings.judge_extra_concurrent_cases,
             },
         },
+    }
+
+
+def _tavily_usage(day: dict[str, Any], credit_limit: int) -> dict[str, Any]:
+    credits = day.get("tavily_credits", 0)
+    return {
+        "credits": credits,
+        "credit_limit": credit_limit,
+        "usd_per_credit": get_settings().tavily_usd_per_credit,
+        "estimated_cost_usd": round(credits * get_settings().tavily_usd_per_credit, 6),
+        "live_searches": day.get("tavily_live", 0),
+        "cached_searches": day.get("tavily_cached", 0),
     }
 
 
@@ -115,19 +133,26 @@ def _sse(event: str, data: dict) -> str:
     return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
 
 
-def _record_result(cost_usd: float, completed: bool, judge: bool) -> None:
-    task = asyncio.create_task(usage.get_store().record_result(usage.now_utc(), cost_usd, completed, judge))
+def _record_result(cost_usd: float, completed: bool, judge: bool, searches: tuple[int, int]) -> None:
+    task = asyncio.create_task(
+        usage.get_store().record_result(usage.now_utc(), cost_usd, completed, judge, searches)
+    )
     _background.add(task)
     task.add_done_callback(_background.discard)
 
 
 async def _stream(narrative: str, english_summary: bool, slot: int, judge: bool) -> AsyncIterator[str]:
     cost = 0.0
+    live = cached = 0
     completed = False
+    # Tavily: cache first; live searches count against the day's credit cap as they run.
+    searcher = Searcher(gate=usage.DailyCreditGate(usage.get_store(), judge))
     try:
-        async for event, data in run_case(narrative, english_summary=english_summary):
-            if event in ("step_completed", "step_failed"):
-                cost += data["metrics"]["cost_usd"]
+        async for event, data in run_case(narrative, english_summary=english_summary, searcher=searcher):
+            if event in ("step_completed", "step_failed", "step_unavailable"):
+                cost += data["metrics"]["cost_usd"]  # models + Tavily
+                live += data["metrics"]["tavily_live"]
+                cached += data["metrics"]["tavily_cached"]
             if event == "case_completed":
                 completed = True
                 data["documents"] = await _save_documents(data["package"].get("draft"))
@@ -138,8 +163,11 @@ async def _stream(narrative: str, english_summary: bool, slot: int, judge: bool)
     finally:
         # Runs on completion, failure and client disconnect; spend counts against the daily cap.
         usage.concurrency.release(slot)
-        _record_result(cost, completed, judge)
-        logger.info("case finished judge=%s completed=%s cost_usd=%.6f", judge, completed, cost)
+        _record_result(cost, completed, judge, (live, cached))
+        logger.info(
+            "case finished judge=%s completed=%s cost_usd=%.6f tavily_live=%d tavily_cached=%d",
+            judge, completed, cost, live, cached,
+        )
 
 
 async def _save_documents(draft: dict | None) -> dict[str, str] | None:

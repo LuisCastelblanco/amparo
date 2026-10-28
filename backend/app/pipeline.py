@@ -38,7 +38,7 @@ from app.schemas import (
     TutelaSections,
     VerificationReport,
 )
-from app.search import OFFICIAL_DOMAINS, SearchResult, asearch_jurisprudence, asearch_official
+from app.search import JURISPRUDENCE_DOMAINS, OFFICIAL_DOMAINS, Depth, Searcher, SearchResult, SearchUnavailable, is_official
 
 logger = logging.getLogger("amparo.pipeline")
 
@@ -68,6 +68,15 @@ DISCLAIMER = (
     "abogado, un consultorio jurídico universitario o la Defensoría del Pueblo antes de radicarlo."
 )
 OUTPUT_LANGUAGE = "All user-facing text values in the JSON must be written in Spanish (Colombia)."
+# Shown verbatim by the UI when a case stops before drafting because there is no case law to cite.
+UNAVAILABLE_MESSAGES = {
+    "search_unavailable": "Case-law search is not available right now, so Amparo did not draft a tutela: it never "
+    "drafts one without verified Constitutional Court rulings. Please try again later, or watch a recorded "
+    "sample run.",
+    "no_case_law": "The case-law search found no Constitutional Court rulings relevant to this story, so Amparo "
+    "did not draft a tutela: it never drafts one without verified rulings. Try describing the denied service "
+    "in more detail, or watch a recorded sample run.",
+}
 
 
 # --- Usage tracking ----------------------------------------------------------
@@ -75,6 +84,14 @@ OUTPUT_LANGUAGE = "All user-facing text values in the JSON must be written in Sp
 
 class SearchBudgetExceeded(RuntimeError):
     pass
+
+
+class NoCaseLaw(RuntimeError):
+    """Research ended without a single ruling to cite; the case stops before drafting."""
+
+    def __init__(self, reason: str) -> None:
+        super().__init__(UNAVAILABLE_MESSAGES[reason])
+        self.reason = reason
 
 
 @dataclass
@@ -93,8 +110,12 @@ class SearchBudget:
 @dataclass
 class StepUsage:
     calls: list[ChatResult] = field(default_factory=list)
-    tavily_searches: int = 0
+    # Tavily searches answered live (and the credits they cost) and from the cache (free).
+    tavily_live: int = 0
+    tavily_cached: int = 0
+    tavily_credits: int = 0
     budget: SearchBudget = field(default_factory=lambda: SearchBudget(get_settings().max_tavily_searches_per_case))
+    searcher: Searcher = field(default_factory=Searcher)
     # Sends an intermediate SSE event (escalations, verification iterations) while the step runs.
     emit: Callable[[str, dict[str, Any]], None] = lambda event, data: None
     escalations: list[dict[str, Any]] = field(default_factory=list)
@@ -103,11 +124,23 @@ class StepUsage:
     # Model of the step's main output when calls run in parallel (otherwise the last call's model).
     resolved_by: str | None = None
 
+    async def search(self, query: str, domains: list[str], depth: Depth) -> list[SearchResult]:
+        found = await self.searcher.search(query, domains=domains, depth=depth)
+        if found.cached:
+            self.tavily_cached += 1
+        else:
+            self.tavily_live += 1
+            self.tavily_credits += found.credits
+        return found.results
+
     def metrics(self) -> dict[str, Any]:
+        settings = get_settings()
         costs = [c.cost_usd for c in self.calls]
         # Counterfactual: the same calls, with the same token counts, priced at the reasoning tier.
-        reasoning = get_settings().model_for_tier("reasoning")
+        reasoning = settings.model_for_tier("reasoning")
         all_reasoning = [estimate_cost(reasoning, c.input_tokens, c.output_tokens) for c in self.calls]
+        llm_cost = sum(c for c in costs if c is not None)
+        search_cost = self.tavily_credits * settings.tavily_usd_per_credit
         return {
             "models": list(dict.fromkeys(c.model for c in self.calls)),
             "final_model": self.resolved_by or (self.calls[-1].model if self.calls else None),
@@ -117,11 +150,18 @@ class StepUsage:
             "input_tokens": sum(c.input_tokens for c in self.calls),
             "output_tokens": sum(c.output_tokens for c in self.calls),
             "llm_latency_s": round(sum(c.latency_s for c in self.calls), 2),
-            "cost_usd": round(sum(c for c in costs if c is not None), 6),
+            # cost_usd = models (llm_cost_usd) + Tavily (search_cost_usd).
+            "cost_usd": round(llm_cost + search_cost, 6),
+            "llm_cost_usd": round(llm_cost, 6),
+            "search_cost_usd": round(search_cost, 6),
             "cost_complete": all(c is not None for c in costs),
             "tiers": list(dict.fromkeys(c.tier for c in self.calls)),
+            # Models only: compare with llm_cost_usd.
             "cost_all_reasoning_usd": round(sum(c for c in all_reasoning if c is not None), 6),
-            "tavily_searches": self.tavily_searches,
+            "tavily_searches": self.tavily_live + self.tavily_cached,
+            "tavily_live": self.tavily_live,
+            "tavily_cached": self.tavily_cached,
+            "tavily_credits": self.tavily_credits,
         }
 
 
@@ -339,13 +379,18 @@ Return one item per ruling, using exactly the sentencia_id given.
 
 
 async def _search_all(queries: list[str], usage: StepUsage) -> list[list[SearchResult]]:
-    """Run the queries in parallel (each with its own timeout), within the case's search budget."""
+    """Run the queries in parallel (each with its own timeout), within the case's search budget.
+
+    Raises SearchUnavailable when every query failed: the case must not be drafted without case law.
+    """
     granted = usage.budget.take(len(queries))
     if granted == 0:
         raise SearchBudgetExceeded("Tavily search budget for this case is exhausted")
     queries = queries[:granted]
-    outcomes = await asyncio.gather(*(asearch_jurisprudence(q) for q in queries), return_exceptions=True)
-    usage.tavily_searches += len(queries)
+    depth = get_settings().tavily_research_depth
+    outcomes = await asyncio.gather(
+        *(usage.search(q, JURISPRUDENCE_DOMAINS, depth) for q in queries), return_exceptions=True
+    )
     batches = []
     for query, outcome in zip(queries, outcomes):
         if isinstance(outcome, BaseException):
@@ -353,7 +398,8 @@ async def _search_all(queries: list[str], usage: StepUsage) -> list[list[SearchR
             continue
         batches.append(outcome)
     if not batches:
-        raise RuntimeError(f"All {len(queries)} Tavily searches failed; see server logs")
+        first = next((o for o in outcomes if isinstance(o, SearchUnavailable)), None)
+        raise first or SearchUnavailable("error", f"all {len(queries)} Tavily searches failed")
     return batches
 
 
@@ -402,7 +448,7 @@ async def research(facts: CaseFacts, legal: LegalAnalysis, usage: StepUsage) -> 
     batches = await _search_all(legal.queries_de_busqueda, usage)
     candidates = _candidates(_round_robin(batches))
     if not candidates:
-        return Precedents(precedentes=[])
+        raise NoCaseLaw("no_case_law")
 
     listing = "\n\n".join(
         f"sentencia_id: {p.sentencia_id}\ntitle: {r.title}\nexcerpt: {p.extracto_fuente[:SCREENING_CHARS]}"
@@ -423,6 +469,8 @@ async def research(facts: CaseFacts, legal: LegalAnalysis, usage: StepUsage) -> 
             precedent.resumen_relevancia = item.resumen_relevancia
         selected.append(precedent)
     selected = selected[:MAX_PRECEDENTS]
+    if not selected:
+        raise NoCaseLaw("no_case_law")
     await enrich_from_pages(selected)
     return Precedents(precedentes=selected)
 
@@ -553,12 +601,12 @@ async def targeted_search(pending: list[str], usage: StepUsage) -> dict[str, Pre
     if not searched:
         return {}
     # "sentencia T-760/08 relatoria" finds the ruling page; "Sentencia T-760 de 2008" mostly returns the
-    # follow-up autos of famous rulings.
+    # follow-up autos of famous rulings. A lookup by ID needs no advanced depth. A failed search leaves the
+    # ruling unverified, so it is removed from the draft.
     outcomes = await asyncio.gather(
-        *(asearch_jurisprudence(f"sentencia {sid} relatoria") for sid in searched),
+        *(usage.search(f"sentencia {sid} relatoria", JURISPRUDENCE_DOMAINS, "basic") for sid in searched),
         return_exceptions=True,
     )
-    usage.tavily_searches += len(searched)
     found: dict[str, Precedent] = {}
     for sid, outcome in zip(searched, outcomes):
         if isinstance(outcome, BaseException):
@@ -817,15 +865,14 @@ async def filing_channel(ciudad: str, usage: StepUsage) -> FilingChannel:
     ][: usage.budget.take(2)]
     if not queries:
         return general
-    outcomes = await asyncio.gather(*(asearch_official(q, d) for q, d in queries), return_exceptions=True)
-    usage.tavily_searches += len(queries)
+    outcomes = await asyncio.gather(*(usage.search(q, d, "basic") for q, d in queries), return_exceptions=True)
     results: list[SearchResult] = []
     for (query, _), outcome in zip(queries, outcomes):
         if isinstance(outcome, BaseException):
             logger.warning("channel search failed query=%r error=%r", query, outcome)
             continue
         seen = {r.url for r in results}
-        results += [r for r in outcome if r.url not in seen]
+        results += [r for r in outcome if r.url not in seen and is_official(r.url)]
     results = [r for r in results if channel_applies(ciudad, r)][:8]
     if not results:
         return general
@@ -889,7 +936,7 @@ async def reviewer_summary(tutela: TutelaDraft, report: VerificationReport, usag
     sections = json.dumps(tutela.model_dump(include=set(_TEXT_FIELDS)), ensure_ascii=False, indent=2)
     user = f"Draft sections (Spanish):\n{sections}\n\nCited rulings: {', '.join(verified) or 'none'}"
     # Own usage: the filing-channel search runs in parallel on the step's usage and may escalate too.
-    own = StepUsage(budget=usage.budget, emit=usage.emit)
+    own = StepUsage(budget=usage.budget, searcher=usage.searcher, emit=usage.emit)
     try:
         summary = await _checked_summary(tutela, user, own)
     finally:
@@ -971,7 +1018,7 @@ async def package(
         f"Draft annexes:\n{_numbered(tutela.pruebas_y_anexos)}"
     )
     # Filing guidance is legal orientation the person reads as is: draft tier (the fast tier garbled it).
-    guidance_usage = StepUsage(budget=usage.budget)
+    guidance_usage = StepUsage(budget=usage.budget, searcher=usage.searcher)
     guidance, channel, summary = await asyncio.gather(
         structured("draft", PackageGuidance, PACKAGE_SYSTEM, user, guidance_usage, max_tokens=MAX_TOKENS["package"]),
         filing_channel(facts.ciudad, usage) if facts.ciudad else _nothing(),
@@ -1006,16 +1053,20 @@ def with_answers(narrative: str, answers: list[tuple[str, str]]) -> str:
     return f"{narrative}\n\nRespuestas a preguntas aclaratorias:\n{lines}"
 
 
-async def run_case(narrative: str, english_summary: bool = False) -> AsyncIterator[tuple[str, dict[str, Any]]]:
+async def run_case(
+    narrative: str, english_summary: bool = False, searcher: Searcher | None = None
+) -> AsyncIterator[tuple[str, dict[str, Any]]]:
     """Run all steps, yielding (event, payload) tuples for each step and the final result.
 
-    english_summary adds an English summary of the final draft for reviewers (fast tier).
+    english_summary adds an English summary of the final draft for reviewers (fast tier). searcher sets
+    the cache and the daily credit cap for Tavily (default: cache on, no cap).
+
+    If research finds no case law (search unavailable, or nothing relevant), the case ends with
+    case_unavailable instead of drafting a tutela without verified rulings.
     """
     state: dict[str, Any] = {}
-    totals = {
-        "input_tokens": 0, "output_tokens": 0, "cost_usd": 0.0, "latency_s": 0.0, "tavily_searches": 0,
-        "escalations": 0, "cost_all_reasoning_usd": 0.0,
-    }
+    totals = {key: 0 for key in _SUMMED} | {"escalations": 0}
+    searcher = searcher or Searcher()
 
     async def step_intake(u: StepUsage) -> BaseModel:
         state["facts"] = await intake(narrative, u)
@@ -1061,14 +1112,18 @@ async def run_case(narrative: str, english_summary: bool = False) -> AsyncIterat
     }
 
     budget = SearchBudget(get_settings().max_tavily_searches_per_case)
+    stopped: NoCaseLaw | SearchUnavailable | None = None
     for index, name in enumerate(STEPS, 1):
+        if stopped is not None:
+            yield "step_skipped", {"step": name, "index": index, "reason": "no_case_law"}
+            continue
         if name in SKIPPABLE and not admissible():
             # A tutela that would be rejected is not drafted; delivery explains what to do first.
             yield "step_skipped", {"step": name, "index": index, "reason": "La tutela no procede todavía."}
             continue
         yield "step_started", {"step": name, "index": index, "total": len(STEPS)}
         events: asyncio.Queue[tuple[str, dict[str, Any]]] = asyncio.Queue()
-        usage = StepUsage(budget=budget, emit=lambda event, data: events.put_nowait((event, data)))
+        usage = StepUsage(budget=budget, searcher=searcher, emit=lambda event, data: events.put_nowait((event, data)))
         start = time.perf_counter()
         task = asyncio.create_task(runners[name](usage))
         try:
@@ -1083,6 +1138,18 @@ async def run_case(narrative: str, english_summary: bool = False) -> AsyncIterat
             while not events.empty():
                 yield events.get_nowait()
             result = task.result()
+        except (NoCaseLaw, SearchUnavailable) as exc:
+            # No rulings to cite: stop before drafting, without failing the case.
+            logger.warning("no case law for this case: %s", exc)
+            stopped = exc
+            metrics = usage.metrics() | {"latency_s": round(time.perf_counter() - start, 2)}
+            _accumulate(totals, metrics)
+            reason = exc.reason if isinstance(exc, NoCaseLaw) else "search_unavailable"
+            yield "step_unavailable", {
+                "step": name, "index": index, "reason": reason, "message": UNAVAILABLE_MESSAGES[reason],
+                "metrics": metrics,
+            }
+            continue
         except Exception as exc:  # noqa: BLE001 - reported to the client as step_failed
             logger.exception("step %s failed", name)
             metrics = usage.metrics() | {"latency_s": round(time.perf_counter() - start, 2)}
@@ -1098,21 +1165,29 @@ async def run_case(narrative: str, english_summary: bool = False) -> AsyncIterat
         _accumulate(totals, metrics)
         yield "step_completed", {"step": name, "index": index, "result": result.model_dump(), "metrics": metrics}
 
+    if stopped is not None:
+        reason = stopped.reason if isinstance(stopped, NoCaseLaw) else "search_unavailable"
+        yield "case_unavailable", {"reason": reason, "message": UNAVAILABLE_MESSAGES[reason], "totals": _round(totals)}
+        return
     yield "case_completed", {"package": state["package"].model_dump(), "totals": _round(totals)}
 
 
+_SUMMED = (
+    "input_tokens", "output_tokens", "cost_usd", "llm_cost_usd", "search_cost_usd", "cost_all_reasoning_usd",
+    "latency_s", "tavily_searches", "tavily_live", "tavily_cached", "tavily_credits",
+)
+
+
 def _accumulate(totals: dict[str, Any], metrics: dict[str, Any]) -> None:
-    for key in ("input_tokens", "output_tokens", "cost_usd", "cost_all_reasoning_usd", "latency_s", "tavily_searches"):
+    for key in _SUMMED:
         totals[key] += metrics[key]
     totals["escalations"] += len(metrics["escalations"])
 
 
 def _round(totals: dict[str, Any]) -> dict[str, Any]:
     return totals | {
-        "cost_usd": round(totals["cost_usd"], 6),
-        "cost_all_reasoning_usd": round(totals["cost_all_reasoning_usd"], 6),
-        "latency_s": round(totals["latency_s"], 2),
-    }
+        key: round(totals[key], 6) for key in ("cost_usd", "llm_cost_usd", "search_cost_usd", "cost_all_reasoning_usd")
+    } | {"latency_s": round(totals["latency_s"], 2)}
 
 
 def _error_message(exc: Exception) -> str:

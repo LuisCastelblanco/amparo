@@ -6,6 +6,7 @@ import { documentUrl, downloadDocument } from "@/lib/sse";
 import {
   STEPS,
   STEP_LABELS,
+  costSplit,
   type DocumentLinks,
   type FilingChannel,
   type FinalPackage,
@@ -389,7 +390,9 @@ function FilingCard({ pkg }: { pkg: FinalPackage }) {
 }
 
 function RoutingPanel({ steps, totals }: { steps: Record<StepName, StepState>; totals: Totals | null }) {
-  const real = totals?.cost_usd ?? 0;
+  const cost = totals ? costSplit(totals) : { models: 0, search: 0, total: 0 };
+  // Routing compares models only: Tavily costs the same whichever model runs each step.
+  const real = cost.models;
   const ultra = totals?.cost_all_reasoning_usd ?? 0;
   const ratio = real > 0 && ultra > 0 ? ultra / real : null;
   return (
@@ -399,11 +402,11 @@ function RoutingPanel({ steps, totals }: { steps: Record<StepName, StepState>; t
       </h2>
       <dl className="grid grid-cols-3 gap-2 text-center">
         <div className="rounded-md bg-slate-50 p-2">
-          <dt className="text-[11px] text-slate-600">Actual cost</dt>
+          <dt className="text-[11px] text-slate-600">Models</dt>
           <dd className="text-base font-semibold">${real.toFixed(4)}</dd>
         </div>
         <div className="rounded-md bg-slate-50 p-2">
-          <dt className="text-[11px] text-slate-600">All on Ultra</dt>
+          <dt className="text-[11px] text-slate-600">Models all on Ultra</dt>
           <dd className="text-base font-semibold">${ultra.toFixed(4)}</dd>
         </div>
         <div className="rounded-md bg-emerald-50 p-2">
@@ -411,6 +414,18 @@ function RoutingPanel({ steps, totals }: { steps: Record<StepName, StepState>; t
           <dd className="text-base font-semibold text-emerald-900">{ratio ? `${ratio.toFixed(1)}× cheaper` : "–"}</dd>
         </div>
       </dl>
+      {totals?.search_cost_usd === undefined ? (
+        <p className="mt-2 rounded-md bg-slate-50 p-2 text-xs text-slate-700">
+          Case-law search (Tavily): {totals?.tavily_searches ?? 0} searches; this run was recorded before search
+          costs were tracked, so the cost above covers the models only.
+        </p>
+      ) : (
+        <p className="mt-2 rounded-md bg-slate-50 p-2 text-xs text-slate-700">
+          Case-law search (Tavily): <span className="font-semibold">${cost.search.toFixed(4)}</span> ·{" "}
+          {totals.tavily_live ?? 0} live searches ({totals.tavily_credits ?? 0} credits) · {totals.tavily_cached ?? 0}{" "}
+          from cache. Whole case: <span className="font-semibold">${cost.total.toFixed(4)}</span>.
+        </p>
+      )}
       <div className="mt-3 overflow-x-auto">
         <table className="w-full text-left text-xs">
           <caption className="sr-only">Model that resolved each step and its cost</caption>
@@ -418,8 +433,9 @@ function RoutingPanel({ steps, totals }: { steps: Record<StepName, StepState>; t
             <tr>
               <th scope="col" className="py-1 pr-2 font-medium">Step</th>
               <th scope="col" className="py-1 pr-2 font-medium">Resolved by</th>
-              <th scope="col" className="py-1 pr-2 text-right font-medium">Cost</th>
-              <th scope="col" className="py-1 text-right font-medium">On Ultra</th>
+              <th scope="col" className="py-1 pr-2 text-right font-medium">Models</th>
+              <th scope="col" className="py-1 pr-2 text-right font-medium">Models on Ultra</th>
+              <th scope="col" className="py-1 text-right font-medium">Search</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -439,8 +455,9 @@ function RoutingPanel({ steps, totals }: { steps: Record<StepName, StepState>; t
                       </span>
                     ))}
                   </td>
-                  <td className="py-1.5 pr-2 text-right tabular-nums">${m.cost_usd.toFixed(4)}</td>
-                  <td className="py-1.5 text-right tabular-nums">${(m.cost_all_reasoning_usd ?? 0).toFixed(4)}</td>
+                  <td className="py-1.5 pr-2 text-right tabular-nums">${costSplit(m).models.toFixed(4)}</td>
+                  <td className="py-1.5 pr-2 text-right tabular-nums">${(m.cost_all_reasoning_usd ?? 0).toFixed(4)}</td>
+                  <td className="py-1.5 text-right tabular-nums">${costSplit(m).search.toFixed(4)}</td>
                 </tr>
               );
             })}
@@ -448,8 +465,10 @@ function RoutingPanel({ steps, totals }: { steps: Record<StepName, StepState>; t
         </table>
       </div>
       <p className="mt-2 text-[11px] leading-snug text-slate-600">
-        Escalations: {totals?.escalations ?? 0}. “All on Ultra” prices the same calls and tokens at the reasoning
-        tier&apos;s rate; Ultra would also spend thinking tokens, so the real gap is larger. Prices are estimates.
+        Escalations: {totals?.escalations ?? 0}. “All on Ultra” prices the same model calls and tokens at the
+        reasoning tier&apos;s rate; Ultra would also spend thinking tokens, so the real gap is larger. The saving
+        compares models only: search costs the same whichever model runs. Prices are estimates; search costs its Tavily
+        credits (basic search 1, advanced 2) and a cached search is free.
       </p>
     </section>
   );

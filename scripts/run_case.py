@@ -6,7 +6,9 @@ Usage (from the repo root):
     uv run --project backend python scripts/run_case.py --all --quiet
     uv run --project backend python scripts/run_case.py --all --quiet --record frontend/src/data/samples
     uv run --project backend python scripts/run_case.py --sample-documents frontend/src/data/samples
+    uv run --project backend python scripts/run_case.py 01 --no-cache        # force live Tavily searches
 
+Tavily results come from the search cache when possible (0 credits); --no-cache searches live and refreshes it.
 Recording also writes each sample's .docx and PDF to frontend/public/samples/<case>/ and links them from the
 recorded case_completed event, so sample runs download static files; --sample-documents only redoes that.
 """
@@ -25,6 +27,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 from app import storage  # noqa: E402
 from app.pipeline import run_case  # noqa: E402
+from app.search import Searcher  # noqa: E402
 
 DEMO_DIR = REPO_ROOT / "docs" / "demo_cases"
 SAMPLE_FILES_DIR = REPO_ROOT / "frontend" / "public" / "samples"
@@ -81,23 +84,32 @@ def fmt_metrics(m: dict) -> str:
         f"cost={cost}",
     ]
     if m["tavily_searches"]:
-        parts.append(f"tavily_searches={m['tavily_searches']}")
+        parts.append(fmt_tavily(m))
     return " ".join(parts)
 
 
+def fmt_tavily(m: dict) -> str:
+    return (
+        f"tavily live={m.get('tavily_live', 0)} cached={m.get('tavily_cached', 0)} "
+        f"credits={m.get('tavily_credits', 0)} (${m.get('search_cost_usd', 0):.4f})"
+    )
+
+
 def fmt_routing(t: dict) -> str:
-    """Real cost against the counterfactual of running every call on the reasoning tier."""
-    real, ultra = t.get("cost_usd", 0), t.get("cost_all_reasoning_usd", 0)
+    """Model cost against the counterfactual of running every call on the reasoning tier (models only)."""
+    real, ultra = t.get("llm_cost_usd", 0), t.get("cost_all_reasoning_usd", 0)
     ratio = f"{ultra / real:.1f}x cheaper" if real else "n/a"
-    return f"real=${real:.6f} all-reasoning=${ultra:.6f} ({ratio})"
+    return f"models=${real:.6f} all-reasoning=${ultra:.6f} ({ratio})"
 
 
-async def run(title: str, narrative: str, quiet: bool, english_summary: bool) -> tuple[dict, list[dict]]:
+async def run(
+    title: str, narrative: str, quiet: bool, english_summary: bool, use_cache: bool = True
+) -> tuple[dict, list[dict]]:
     print(f"\n{'#' * 78}\n# {title}\n{'#' * 78}")
     summary: dict = {"title": title, "steps": {}, "completed": False, "escalations": []}
     recorded: list[dict] = []
     start = time.perf_counter()
-    async for event, data in run_case(narrative, english_summary=english_summary):
+    async for event, data in run_case(narrative, english_summary=english_summary, searcher=Searcher(use_cache)):
         recorded.append({"t": round(time.perf_counter() - start, 2), "event": event, "data": data})
         if event == "escalated":
             summary["escalations"].append(data)
@@ -118,7 +130,11 @@ async def run(title: str, narrative: str, quiet: bool, english_summary: bool) ->
         elif event == "step_failed":
             summary["failed"] = data
             print(f"    FAILED {data['error']}")
-        elif event == "case_failed":
+        elif event == "step_unavailable":
+            summary["steps"][data["step"]] = data["metrics"]
+            summary["unavailable"] = data["reason"]
+            print(f"    UNAVAILABLE {data['message']}")
+        elif event in ("case_failed", "case_unavailable"):
             summary["totals"] = data["totals"]
         elif event == "case_completed":
             pkg = data["package"]
@@ -141,8 +157,10 @@ async def run(title: str, narrative: str, quiet: bool, english_summary: bool) ->
     t = summary.get("totals", {})
     print(
         f"\nTOTAL tokens in/out={t.get('input_tokens')}/{t.get('output_tokens')} "
-        f"latency={t.get('latency_s')}s cost=${t.get('cost_usd', 0):.6f}"
+        f"latency={t.get('latency_s')}s cost=${t.get('cost_usd', 0):.6f} "
+        f"(models ${t.get('llm_cost_usd', 0):.6f} + search ${t.get('search_cost_usd', 0):.6f})"
     )
+    print(f"TAVILY  {fmt_tavily(t)}")
     print(f"ROUTING {fmt_routing(t)}")
     return summary, recorded
 
@@ -151,7 +169,12 @@ def print_summary(summaries: list[dict]) -> None:
     print(f"\n{'#' * 78}\n# SUMMARY\n{'#' * 78}")
     for s in summaries:
         v = s.get("verification") or {}
-        status = "6/6 steps completed" if s["completed"] else f"FAILED at {s['failed']['step']}"
+        if s["completed"]:
+            status = "6/6 steps completed"
+        elif s.get("unavailable"):
+            status = f"stopped before drafting: {s['unavailable']}"
+        else:
+            status = f"FAILED at {s['failed']['step']}"
         print(f"\n{s['title']}\n  {status}")
         if "precedents" in s:
             print(f"  precedents: {len(s['precedents'])} {s['precedents']} accents_restored={s['accents_restored']}")
@@ -173,7 +196,11 @@ def print_summary(summaries: list[dict]) -> None:
         for step, m in s["steps"].items():
             print(f"  {step:<9} {fmt_metrics(m)}")
         t = s.get("totals", {})
-        print(f"  {'TOTAL':<9} latency={t.get('latency_s')}s cost=${t.get('cost_usd', 0):.6f}")
+        print(
+            f"  {'TOTAL':<9} latency={t.get('latency_s')}s cost=${t.get('cost_usd', 0):.6f} "
+            f"(models ${t.get('llm_cost_usd', 0):.6f} + search ${t.get('search_cost_usd', 0):.6f})"
+        )
+        print(f"  {'TAVILY':<9} {fmt_tavily(t)}")
         print(f"  {'ROUTING':<9} {fmt_routing(t)}")
         print("  models per step: " + ", ".join(
             f"{step}={(m.get('final_model') or '-').split('/')[-1]}" for step, m in s["steps"].items()
@@ -189,6 +216,7 @@ async def main() -> None:
     parser.add_argument("--record", metavar="DIR", help="save every SSE event of each case as DIR/<case>.json")
     parser.add_argument("--english-summary", action="store_true", help="add the English reviewer summary")
     parser.add_argument("--sample-documents", metavar="DIR", help="only (re)write the documents of DIR/*.json")
+    parser.add_argument("--no-cache", action="store_true", help="search Tavily live instead of using the cache")
     args = parser.parse_args()
     if args.sample_documents:
         for recording in sorted(Path(args.sample_documents).glob("*.json")):
@@ -202,7 +230,9 @@ async def main() -> None:
     for path in paths:
         title, narrative = load_case(path)
         # Recorded sample runs always include the English reviewer summary.
-        summary, recorded = await run(title, narrative, args.quiet, args.english_summary or bool(args.record))
+        summary, recorded = await run(
+            title, narrative, args.quiet, args.english_summary or bool(args.record), use_cache=not args.no_cache
+        )
         summaries.append(summary)
         if args.record:
             out = Path(args.record) / f"{resolve_case(path).stem}.json"

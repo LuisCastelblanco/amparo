@@ -22,3 +22,6 @@ dist/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local Tavily result cache (scripts)
+.cache/

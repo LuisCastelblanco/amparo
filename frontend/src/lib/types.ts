@@ -39,15 +39,22 @@ export interface StepMetrics {
   output_tokens: number;
   llm_latency_s: number;
   latency_s: number;
+  /** Models + Tavily. Recordings made before the Tavily accounting have models only and no split. */
   cost_usd: number;
+  llm_cost_usd?: number;
+  search_cost_usd?: number;
   cost_complete: boolean;
   /** Tiers used by the step's LLM calls ("fast", "draft", "reasoning"). */
   tiers: string[];
-  /** The same calls and token counts priced at the reasoning tier (Ultra). */
+  /** The same calls and token counts priced at the reasoning tier (Ultra); models only. */
   cost_all_reasoning_usd: number;
   /** Deterministic corrections made without an LLM call. */
   notes: string[];
   tavily_searches: number;
+  /** Searches answered live (costing credits) and from the cache (free). */
+  tavily_live?: number;
+  tavily_cached?: number;
+  tavily_credits?: number;
 }
 
 export interface CitationCheck {
@@ -126,12 +133,23 @@ export interface FinalPackage {
   aviso: string;
 }
 
+/** Model and search cost of a step or a case; older recordings have no split (everything was models). */
+export function costSplit(m: { cost_usd: number; llm_cost_usd?: number; search_cost_usd?: number }) {
+  return { models: m.llm_cost_usd ?? m.cost_usd, search: m.search_cost_usd ?? 0, total: m.cost_usd };
+}
+
 export interface Totals {
   input_tokens: number;
   output_tokens: number;
+  /** Models + Tavily (models only in older recordings, which lack llm_cost_usd). */
   cost_usd: number;
+  llm_cost_usd?: number;
+  search_cost_usd?: number;
   latency_s: number;
   tavily_searches: number;
+  tavily_live?: number;
+  tavily_cached?: number;
+  tavily_credits?: number;
   escalations?: number;
   cost_all_reasoning_usd?: number;
 }
@@ -145,6 +163,8 @@ export interface StepState {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   result?: any;
   error?: string;
+  /** Why a step did not run, or ran without a result (no case law to cite). */
+  note?: string;
   escalations?: Escalation[];
   iterations?: VerifyIteration[];
 }
@@ -161,6 +181,12 @@ export type CaseEvent =
   | { event: "verify_iteration"; data: VerifyIteration }
   | { event: "step_failed"; data: { step: StepName; index: number; error: string; metrics: StepMetrics } }
   | { event: "case_failed"; data: { failed_step: StepName | null; totals?: Totals; error?: string } }
+  /** Research found no case law to cite (search unavailable, or nothing relevant): no tutela is drafted. */
+  | {
+      event: "step_unavailable";
+      data: { step: StepName; index: number; reason: string; message: string; metrics: StepMetrics };
+    }
+  | { event: "case_unavailable"; data: { reason: string; message: string; totals: Totals } }
   | { event: "case_completed"; data: { package: FinalPackage; totals: Totals; documents?: DocumentLinks | null } };
 
 /** Download paths of the finished files: on the API (/api/...) for live runs, static (/samples/...) for samples. */

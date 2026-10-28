@@ -11,6 +11,7 @@ import { checkIntake, checkJudgeCode, fetchUsageStatus, replaySample, runCase, R
 import {
   STEPS,
   STEP_LABELS,
+  costSplit,
   type CaseEvent,
   type DocumentLinks,
   type FinalPackage,
@@ -112,7 +113,18 @@ export default function AmparoApp() {
         updateStep(data.step, () => ({ status: "running" }));
         break;
       case "step_skipped":
-        updateStep(data.step, () => ({ status: "skipped" }));
+        updateStep(data.step, () => ({
+          status: "skipped",
+          note: data.reason === "no_case_law" ? "no verified case law to cite." : undefined,
+        }));
+        break;
+      case "step_unavailable":
+        updateStep(data.step, () => ({ status: "skipped", metrics: data.metrics, note: data.message }));
+        break;
+      case "case_unavailable":
+        // Shown like a refusal: what happened, and a recorded sample run to watch instead.
+        setTotals(data.totals);
+        setRefusal({ error: data.reason, message: data.message, retry_after_s: null });
         break;
       case "escalated":
         updateStep(data.step, (s) => ({ escalations: [...(s.escalations ?? []), data] }));
@@ -503,7 +515,9 @@ function Timeline({ steps, totals }: { steps: Record<StepName, StepState>; total
                 {s.status === "done" && <StepSummary step={name} result={s.result} />}
                 {s.status === "failed" && <p className="mt-1 break-words text-xs text-red-700">{s.error}</p>}
                 {s.status === "skipped" && (
-                  <p className="mt-1 text-xs text-slate-600">Skipped: a tutela is not the right tool yet.</p>
+                  <p className="mt-1 text-xs text-slate-600">
+                    {s.metrics ? s.note : `Skipped: ${s.note ?? "a tutela is not the right tool yet."}`}
+                  </p>
                 )}
                 {s.result && (
                   <details className="mt-1">
@@ -522,10 +536,12 @@ function Timeline({ steps, totals }: { steps: Record<StepName, StepState>; total
         <div className="mt-4 border-t border-slate-200 pt-3 text-xs text-slate-700">
           <p className="font-medium text-slate-900">Total</p>
           <p>
-            {totals.latency_s.toFixed(1)} s · ${totals.cost_usd.toFixed(4)} ·{" "}
+            {totals.latency_s.toFixed(1)} s · ${costSplit(totals).total.toFixed(4)} (models $
+            {costSplit(totals).models.toFixed(4)} + search ${costSplit(totals).search.toFixed(4)}) ·{" "}
             {totals.input_tokens.toLocaleString("en-US")} in / {totals.output_tokens.toLocaleString("en-US")} out
-            tokens · {totals.tavily_searches} Tavily searches
+            tokens
           </p>
+          <p>{searchLine(totals)}</p>
         </div>
       )}
     </aside>
@@ -565,9 +581,16 @@ function MetricsLine({ metrics }: { metrics: StepMetrics }) {
       )}
       {others.length > 0 && ` (also ${others.join(", ")})`} · {metrics.latency_s.toFixed(1)} s · $
       {metrics.cost_usd.toFixed(4)}
-      {metrics.tavily_searches > 0 && ` · ${metrics.tavily_searches} Tavily`}
+      {metrics.tavily_searches > 0 && ` · ${searchLine(metrics)}`}
     </p>
   );
+}
+
+/** "Tavily: 3 live (6 credits) · 1 cached"; older recordings only know the number of searches. */
+function searchLine(m: Pick<Totals, "tavily_searches" | "tavily_live" | "tavily_cached" | "tavily_credits">) {
+  if (m.tavily_live === undefined) return `Tavily: ${m.tavily_searches} searches`;
+  const credits = m.tavily_credits ?? 0;
+  return `Tavily: ${m.tavily_live} live (${credits} credit${credits === 1 ? "" : "s"}) · ${m.tavily_cached ?? 0} cached`;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

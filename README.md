@@ -75,10 +75,14 @@ are configuration (`MODEL_FAST`, `MODEL_DRAFT`, `MODEL_REASONING`, `MODEL_FALLBA
 - **Structured output.** Every step returns JSON against a strict schema (every field required, no extra fields),
   validated with Pydantic, with one retry that feeds the validation error back.
 - **Model fallback.** If a tier's model returns 404 or reports deprecation, the call is retried on `MODEL_FALLBACK`.
-- **Measured.** On the [13-case evaluation](docs/EVALUATION.md): a drafted tutela costs **$0.0135** on average
-  against **$0.0293** with every call on Ultra (**2.2× cheaper**, a lower bound since Ultra would also spend thinking
-  tokens); **5 of 13 cases** escalated a call; latency is 32 s at p50 and 53 s at p95. Each step's model and cost are
-  shown in the UI.
+- **Measured (models only).** On the [13-case evaluation](docs/EVALUATION.md), the model calls of a drafted tutela
+  cost **$0.0135** on average against **$0.0293** with every call on Ultra (**2.2× cheaper**; 2.1× over the latest 6
+  demo runs), a lower bound since Ultra would also spend thinking tokens. This comparison covers the models only: the
+  Tavily searches cost the same whichever model runs. **5 of 13 cases** escalated a call; latency is 32 s at p50 and
+  53 s at p95. Each step's model and cost are shown in the UI.
+- **Whole case (models + Tavily).** A drafted tutela costs **$0.057** cold ($0.014 models + $0.043 Tavily,
+  5.3 credits) and **$0.046** when the same story runs again with the search cache, down from $0.102 when every
+  search was advanced and uncached. Details: [docs/COSTS.md](docs/COSTS.md).
 
 <img src="docs/images/desktop-routing.png" alt="Models and cost panel: actual cost, cost if everything ran on Ultra, model per step and escalations" width="70%">
 
@@ -92,7 +96,13 @@ are configuration (`MODEL_FAST`, `MODEL_DRAFT`, `MODEL_REASONING`, `MODEL_FALLBA
 - **Filing channel by city.** Two searches restricted to `.gov.co` and the Rama Judicial find the official online
   filing channel for the person's city; regional pages for other cities are filtered out, and a link or e-mail is
   shown only if it appears in the source, with the source and the date of the search.
-- **Budget.** At most 10 searches per case.
+- **Depth by use.** Every search is basic (1 credit): on the demo cases, basic found as many relevant rulings as
+  advanced for the main search, at half the credits ([comparison](docs/COSTS.md#basic-vs-advanced-for-the-main-search)).
+- **Cache.** Results are cached for 7 days (Firestore) by normalized query and parameters; a cache hit costs no
+  credits, and the UI shows how many searches were live and how many came from the cache.
+- **Budget and degradation.** At most 10 searches per case and a daily credit cap (300 public, 600 for judges). If
+  Tavily is out of credits or keeps failing, the case stops before drafting and the UI offers a sample run: Amparo
+  never drafts a tutela without verified case law.
 
 ## Trust and safety
 

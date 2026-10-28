@@ -6,6 +6,9 @@ hours are UTC. Client IPs are stored only as HMAC-SHA256 hashes, and per-IP docu
 
 Judges use an access code instead: no per-IP or public daily limits, but their own daily allowance, counted
 in separate documents so the public demo and the judges never use up each other's capacity.
+
+Tavily credits have their own daily cap (TAVILY_DAILY_CREDIT_LIMIT, JUDGE_TAVILY_DAILY_CREDIT_LIMIT): each live
+search reserves its credits in the day document before it runs; cache hits cost nothing.
 """
 
 import asyncio
@@ -45,6 +48,10 @@ MESSAGES = {
     "It resets at 00:00 UTC; meanwhile you can watch a recorded sample run.",
     "judge_daily_cost_limit": "Judge access has reached today's budget for live runs. "
     "It resets at 00:00 UTC; meanwhile you can watch a recorded sample run.",
+    "tavily_credit_limit": "The public demo has used today's case-law search budget. "
+    "It resets at 00:00 UTC; meanwhile you can watch a recorded sample run.",
+    "judge_tavily_credit_limit": "Judge access has used today's case-law search budget. "
+    "It resets at 00:00 UTC; meanwhile you can watch a recorded sample run.",
 }
 
 
@@ -83,6 +90,8 @@ def check_limits(
     """Pure decision from the current counters; None means the case may run."""
     if day.get("cost_usd", 0.0) >= settings.daily_cost_limit_usd:
         return Refusal("daily_cost_limit", MESSAGES["daily_cost_limit"], 429, _seconds_to_next_day(now))
+    if day.get("tavily_credits", 0) >= settings.tavily_daily_credit_limit:
+        return Refusal("tavily_credit_limit", MESSAGES["tavily_credit_limit"], 429, _seconds_to_next_day(now))
     if day.get("cases", 0) >= settings.daily_case_limit:
         msg = MESSAGES["daily_case_limit"].format(limit=settings.daily_case_limit)
         return Refusal("daily_case_limit", msg, 429, _seconds_to_next_day(now))
@@ -99,6 +108,9 @@ def check_judge_limits(settings: Settings, now: datetime, day: dict[str, Any]) -
     """The judges' own daily allowance; the public counters are not consulted."""
     if day.get("cost_usd", 0.0) >= settings.judge_daily_cost_limit_usd:
         return Refusal("judge_daily_cost_limit", MESSAGES["judge_daily_cost_limit"], 429, _seconds_to_next_day(now))
+    if day.get("tavily_credits", 0) >= settings.judge_tavily_daily_credit_limit:
+        msg = MESSAGES["judge_tavily_credit_limit"]
+        return Refusal("judge_tavily_credit_limit", msg, 429, _seconds_to_next_day(now))
     if day.get("cases", 0) >= settings.judge_daily_case_limit:
         msg = MESSAGES["judge_daily_case_limit"].format(limit=settings.judge_daily_case_limit)
         return Refusal("judge_daily_case_limit", msg, 429, _seconds_to_next_day(now))
@@ -116,6 +128,10 @@ def _day_id(now: datetime, judge: bool) -> str:
     return f"{'judge-day' if judge else 'day'}-{_day(now)}"
 
 
+def credit_limit(settings: Settings, judge: bool) -> int:
+    return settings.judge_tavily_daily_credit_limit if judge else settings.tavily_daily_credit_limit
+
+
 class UsageStore(Protocol):
     async def reserve(self, ip_hash: str, now: datetime) -> Refusal | None:
         """Atomically check the limits and, if allowed, count one case for the day and the IP."""
@@ -123,8 +139,16 @@ class UsageStore(Protocol):
     async def reserve_judge(self, now: datetime) -> Refusal | None:
         """Atomically check the judges' allowance and, if allowed, count one judge case."""
 
-    # judge=True counts in the judges' documents instead of the public ones.
-    async def record_result(self, now: datetime, cost_usd: float, completed: bool, judge: bool = False) -> None: ...
+    # judge=True counts in the judges' documents instead of the public ones. cost_usd is models + Tavily;
+    # searches are the case's (live, cached) Tavily searches; its credits were counted as they ran.
+    async def record_result(
+        self, now: datetime, cost_usd: float, completed: bool, judge: bool = False, searches: tuple[int, int] = (0, 0)
+    ) -> None: ...
+
+    async def reserve_credits(self, now: datetime, credits: int, judge: bool = False) -> bool:
+        """Atomically count Tavily credits for today if they fit under the daily credit cap."""
+
+    async def release_credits(self, now: datetime, credits: int, judge: bool = False) -> None: ...
 
     async def record_refusal(self, now: datetime, code: str, judge: bool = False) -> None: ...
 
@@ -162,10 +186,25 @@ class MemoryStore:
             day["cases"] += 1
         return refusal
 
-    async def record_result(self, now: datetime, cost_usd: float, completed: bool, judge: bool = False) -> None:
+    async def record_result(
+        self, now: datetime, cost_usd: float, completed: bool, judge: bool = False, searches: tuple[int, int] = (0, 0)
+    ) -> None:
         day = self._day_doc(now, judge)
         day["cost_usd"] += cost_usd
         day["completed" if completed else "failed"] += 1
+        day["tavily_live"] = day.get("tavily_live", 0) + searches[0]
+        day["tavily_cached"] = day.get("tavily_cached", 0) + searches[1]
+
+    async def reserve_credits(self, now: datetime, credits: int, judge: bool = False) -> bool:
+        day = self._day_doc(now, judge)
+        if day.get("tavily_credits", 0) + credits > credit_limit(self.settings, judge):
+            return False
+        day["tavily_credits"] = day.get("tavily_credits", 0) + credits
+        return True
+
+    async def release_credits(self, now: datetime, credits: int, judge: bool = False) -> None:
+        day = self._day_doc(now, judge)
+        day["tavily_credits"] = max(0, day.get("tavily_credits", 0) - credits)
 
     async def record_refusal(self, now: datetime, code: str, judge: bool = False) -> None:
         refused = self._day_doc(now, judge)["refused"]
@@ -230,7 +269,7 @@ class FirestoreStore:
 
         return await self._run(txn)
 
-    async def _run(self, txn: Any) -> Refusal | None:
+    async def _run(self, txn: Any) -> Any:
         from google.api_core.exceptions import Aborted
 
         # Concurrent reservations contend on the day document; the SDK does not retry an abort
@@ -244,12 +283,35 @@ class FirestoreStore:
                 await asyncio.sleep(0.05 * 2**attempt + random.uniform(0, 0.1))
         raise AssertionError("unreachable")
 
-    async def record_result(self, now: datetime, cost_usd: float, completed: bool, judge: bool = False) -> None:
+    async def record_result(
+        self, now: datetime, cost_usd: float, completed: bool, judge: bool = False, searches: tuple[int, int] = (0, 0)
+    ) -> None:
         fs = self.fs
         await self.col.document(_day_id(now, judge)).set(
-            {"cost_usd": fs.Increment(cost_usd), ("completed" if completed else "failed"): fs.Increment(1)},
+            {
+                "cost_usd": fs.Increment(cost_usd), ("completed" if completed else "failed"): fs.Increment(1),
+                "tavily_live": fs.Increment(searches[0]), "tavily_cached": fs.Increment(searches[1]),
+            },
             merge=True,
         )
+
+    async def reserve_credits(self, now: datetime, credits: int, judge: bool = False) -> bool:
+        fs = self.fs
+        day_ref = self.col.document(_day_id(now, judge))
+        limit = credit_limit(self.settings, judge)
+
+        @fs.async_transactional
+        async def txn(transaction: Any) -> bool:
+            day = (await day_ref.get(transaction=transaction)).to_dict() or {}
+            if day.get("tavily_credits", 0) + credits > limit:
+                return False
+            transaction.set(day_ref, {"tavily_credits": fs.Increment(credits), "date": _day(now)}, merge=True)
+            return True
+
+        return await self._run(txn)
+
+    async def release_credits(self, now: datetime, credits: int, judge: bool = False) -> None:
+        await self.col.document(_day_id(now, judge)).set({"tavily_credits": self.fs.Increment(-credits)}, merge=True)
 
     async def record_refusal(self, now: datetime, code: str, judge: bool = False) -> None:
         await self.col.document(_day_id(now, judge)).set({"refused": {code: self.fs.Increment(1)}}, merge=True)
@@ -262,6 +324,20 @@ class FirestoreStore:
     async def day(self, now: datetime, judge: bool = False) -> dict[str, Any]:
         snap = await self.col.document(_day_id(now, judge)).get()
         return snap.to_dict() or {}
+
+
+class DailyCreditGate:
+    """The search module's CreditGate for one case, backed by the usage store's day document."""
+
+    def __init__(self, store: UsageStore, judge: bool) -> None:
+        self.store = store
+        self.judge = judge
+
+    async def reserve(self, credits: int) -> bool:
+        return await self.store.reserve_credits(now_utc(), credits, self.judge)
+
+    async def release(self, credits: int) -> None:
+        await self.store.release_credits(now_utc(), credits, self.judge)
 
 
 @lru_cache

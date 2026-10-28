@@ -62,19 +62,33 @@ class Settings(BaseSettings):
     rate_limit_per_hour: int = 3  # cases per client IP
     rate_limit_per_day: int = 10  # cases per client IP (UTC day)
     daily_case_limit: int = 150  # cases per UTC day, all clients
-    daily_cost_limit_usd: float = 2.0  # estimated LLM spend per UTC day, all clients
+    daily_cost_limit_usd: float = 2.0  # estimated spend (models + Tavily) per UTC day, all clients
     max_concurrent_cases: int = 2  # per instance
     max_narrative_chars: int = 4000
     # Clarifying-question checks (intake only, fast tier) per client IP per hour, per instance.
     intake_rate_limit_per_hour: int = 10
     max_clarifying_questions: int = 3
     max_tavily_searches_per_case: int = 10
+    # --- Tavily credits ---
+    # USD per Tavily credit (a basic search costs 1 credit, an advanced one 2). Counts in the case cost and
+    # in the daily cost limits.
+    tavily_usd_per_credit: float = 0.008
+    tavily_daily_credit_limit: int = 300  # live-search credits per UTC day, public demo
+    # Depth of the main case-law search; the verification and filing-channel searches always use basic.
+    # Basic found as many relevant rulings as advanced on the demo cases, at half the credits (docs/COSTS.md).
+    tavily_research_depth: str = "basic"
+    # Search results cached by normalized query and parameters; a cache hit costs 0 credits.
+    # "firestore" or "file" (.cache/tavily); empty: firestore when USAGE_STORE=firestore, else file.
+    search_cache_store: str = ""
+    search_cache_collection: str = "amparo_search_cache"
+    search_cache_ttl_days: int = 7
     # --- Judge access ---
     # A valid code skips the per-IP and public daily limits; judges have their own daily allowance,
     # counted apart from the public one. Empty: judge access is off. LIVE_RUNS_ENABLED applies to judges too.
     judge_access_code: str = ""
     judge_daily_case_limit: int = 100
     judge_daily_cost_limit_usd: float = 3.0
+    judge_tavily_daily_credit_limit: int = 600
     # Extra running cases per instance reserved for judges on top of MAX_CONCURRENT_CASES.
     judge_extra_concurrent_cases: int = 2
     # "firestore" keeps counters across restarts and instances; "memory" is for local development.

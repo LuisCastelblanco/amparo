@@ -46,6 +46,8 @@ Firestore for the usage counters, with a TTL policy that deletes the per-IP docu
 ```bash
 gcloud firestore databases create --location=us-central1 --type=firestore-native
 gcloud firestore fields ttls update expire_at --collection-group=amparo_usage --enable-ttl --async
+# Tavily search cache (7 days); the API also ignores entries older than SEARCH_CACHE_TTL_DAYS.
+gcloud firestore fields ttls update expire_at --collection-group=amparo_search_cache --enable-ttl --async
 ```
 
 Cloud Storage for the finished .docx and PDF files: private (public access prevention), deleted after 7 days by a
@@ -142,7 +144,11 @@ All limits are environment variables on the Cloud Run service; counters are per 
 | --- | --- | --- |
 | `RATE_LIMIT_PER_HOUR` / `RATE_LIMIT_PER_DAY` | 3 / 10 | cases per client IP (hashed with `IP_HASH_KEY`) |
 | `DAILY_CASE_LIMIT` | 150 | cases per day, all clients |
-| `DAILY_COST_LIMIT_USD` | 2 | estimated LLM spend per day; live runs stop until 00:00 UTC |
+| `DAILY_COST_LIMIT_USD` | 2 | estimated spend per day (models + Tavily); live runs stop until 00:00 UTC |
+| `TAVILY_DAILY_CREDIT_LIMIT` / `JUDGE_TAVILY_DAILY_CREDIT_LIMIT` | 300 / 600 | Tavily credits per day (public / judges); each live search reserves its credits, cache hits are free; new cases are refused until 00:00 UTC |
+| `TAVILY_USD_PER_CREDIT` | 0.008 | price of a Tavily credit in the case cost |
+| `TAVILY_RESEARCH_DEPTH` | basic | depth of the main case-law search (the others are always basic) |
+| `SEARCH_CACHE_TTL_DAYS` | 7 | Tavily results cached in `amparo_search_cache` (Firestore) |
 | `MAX_CONCURRENT_CASES` | 2 | running cases per instance; others get "try again in a minute" |
 | `MAX_NARRATIVE_CHARS` / `MAX_TAVILY_SEARCHES_PER_CASE` | 4000 / 10 | input size and search budget |
 | `LIVE_RUNS_ENABLED` | true | kill switch: `false` leaves only the recorded sample runs |
