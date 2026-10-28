@@ -12,7 +12,7 @@
    }
   },
   {
-   "t": 2.57,
+   "t": 2.08,
    "event": "step_completed",
    "data": {
     "step": "intake",
@@ -25,19 +25,19 @@
      "fechas_relevantes": [
       {
        "fecha": "3 de agosto de 2026",
-       "evento": "formulación de tofacitinib por reumatóloga en clínica"
+       "evento": "formulación del medicamento tofacitinib"
       },
       {
        "fecha": "10 de agosto",
-       "evento": "radicado de radicación en EPS Salud Andina"
+       "evento": "radicación en la EPS Salud Andina"
       },
       {
        "fecha": "2 de septiembre",
-       "evento": "recepción de carta de negación del medicamento"
+       "evento": "carta de negación"
       },
       {
        "fecha": "8 de septiembre",
-       "evento": "presentación de derecho de petición"
+       "evento": "derecho de petición"
       }
      ],
      "situacion_del_paciente": {
@@ -47,14 +47,9 @@
      "anexos_mencionados": [
       "carta de la negación",
       "radicado de la petición",
-      "fórmula",
       "historia clínica"
      ],
-     "datos_faltantes": [
-      "¿En qué ciudad radicó la solicitud?",
-      "¿Cuál es número de radicado de la petición?",
-      "¿Tiene algún documento de respaldo de la negación (cita, resoluciones)?"
-     ]
+     "datos_faltantes": []
     },
     "metrics": {
      "models": [
@@ -65,21 +60,26 @@
      "notes": [],
      "llm_calls": 1,
      "input_tokens": 630,
-     "output_tokens": 327,
-     "llm_latency_s": 2.56,
-     "cost_usd": 0.000116,
+     "output_tokens": 256,
+     "llm_latency_s": 2.07,
+     "cost_usd": 9.9e-05,
+     "llm_cost_usd": 9.9e-05,
+     "search_cost_usd": 0.0,
      "cost_complete": true,
      "tiers": [
       "fast"
      ],
-     "cost_all_reasoning_usd": 0.001611,
+     "cost_all_reasoning_usd": 0.001398,
      "tavily_searches": 0,
-     "latency_s": 2.56
+     "tavily_live": 0,
+     "tavily_cached": 0,
+     "tavily_credits": 0,
+     "latency_s": 2.08
     }
    }
   },
   {
-   "t": 2.57,
+   "t": 2.08,
    "event": "step_started",
    "data": {
     "step": "analysis",
@@ -88,7 +88,7 @@
    }
   },
   {
-   "t": 5.43,
+   "t": 5.36,
    "event": "step_completed",
    "data": {
     "step": "analysis",
@@ -98,19 +98,20 @@
       "salud",
       "vida digna",
       "seguridad social",
-      "dignidad humana"
+      "dignidad humana",
+      "vida"
      ],
      "procedencia_tutela": {
       "procede": true,
-      "razon": "La EPS negó expresamente el medicamento (carta del 2 de septiembre) y no ha respondido el derecho de petición presentado el 8 de septiembre; la negación de un servicio de salud ordenado por el médico tratante basta para la procedencia de la acción de tutela.",
+      "razon": "La EPS negó el medicamento (carta del 2 de septiembre) y no ha respondido el derecho de petición radicado el 8 de septiembre; la paciente presenta deterioro progresivo de su capacidad funcional y no puede costear el tratamiento.",
       "paso_previo": null
      },
      "urgencia": "alta",
      "queries_de_busqueda": [
-      "tutela tofacitinib artritis reumatoide Plan de Beneficios en Salud negación EPS",
-      "sentencia tutela medicamento no incluido en PBS artritis reumatoide falla terapéutica",
-      "acción de tutela derecho de petición sin respuesta EPS medicamento de alto costo",
-      "jurisprudencia Corte Constitucional tofacitinib artritis reumatoide protección reforzada"
+      "tutela tofacitinib artritis reumatoide falla terapéutica no incluido PBS",
+      "acción de tutela medicamento alto costo negado por EPS derecho de petición sin respuesta",
+      "artritis reumatoide tofacitinib sentencia tutela plan de beneficios en salud",
+      "tutela paciente 54 años deterioro funcional medicamento no PBS"
      ]
     },
     "metrics": {
@@ -121,22 +122,27 @@
      "escalations": [],
      "notes": [],
      "llm_calls": 1,
-     "input_tokens": 1088,
-     "output_tokens": 810,
-     "llm_latency_s": 2.86,
-     "cost_usd": 0.003518,
+     "input_tokens": 1019,
+     "output_tokens": 864,
+     "llm_latency_s": 3.28,
+     "cost_usd": 0.003611,
+     "llm_cost_usd": 0.003611,
+     "search_cost_usd": 0.0,
      "cost_complete": true,
      "tiers": [
       "reasoning"
      ],
-     "cost_all_reasoning_usd": 0.003518,
+     "cost_all_reasoning_usd": 0.003611,
      "tavily_searches": 0,
-     "latency_s": 2.86
+     "tavily_live": 0,
+     "tavily_cached": 0,
+     "tavily_credits": 0,
+     "latency_s": 3.28
     }
    }
   },
   {
-   "t": 5.43,
+   "t": 5.36,
    "event": "step_started",
    "data": {
     "step": "research",
@@ -145,7 +151,7 @@
    }
   },
   {
-   "t": 21.11,
+   "t": 14.62,
    "event": "step_completed",
    "data": {
     "step": "research",
@@ -153,84 +159,401 @@
     "result": {
      "precedentes": [
       {
-       "sentencia_id": "T-305/06",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2006/t-305-06.htm",
-       "resumen_relevancia": "Aborda un caso de artritis reumatoide y denegación por medicamento excluido del Manual del Plan Obligatorio de Salud, vulnerando el derecho fundamental a la salud, tal como se pretende replicar en este caso contra Salud Andina por negación de tofacitinib.",
-       "extracto_fuente": "La actora,\nquien padece de artritis reumatoide, interpuso accin de tutela contra la\nE.P.S. a la cual esta afiliada en calidad de beneficiaria, para que esta\nentidad le suministre un medicamento excluido del Manual de Medicamentos del\nPlan Obligatorio de Salud. El juez de primera instancia concedi el amparo\nsolicitado y previ que la entidad prestadora pudiera repetir contra el FOSYGA.\nEl Ministerio de la Proteccin Social como representante del Fondo de Seguridad\ny Garanta solicit la nulidad de todo lo actuado por no haber sido notificado\nde la tutela interpuesta y no haber podido intervenir en defensa de los\nintereses pblicos. Una vez saneada la irregularidad puesta de manifiesto por\nel ente estatal corresponde a esta Corporacin determinar si en este caso [...] I.\nANTECEDENTES.\n\n1. Hechos\n\n \n\n1.    \nLa seora Martha Patricia del Socorro Delgado\nSarmiento present accin de tutela contra la E.P.S. SANITAS, entidad a la cual\nse encuentra afiliada en calidad de beneficiaria, por considerar que dicha\nentidad ha vulnerado sus derechos fundamentales a la salud, a la vida, a la\nigualdad, a la dignidad humana y a la seguridad social. Seala que el origen de\nla vulneracin consiste en la negativa",
+       "sentencia_id": "T-549/23",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-549-23.htm",
+       "resumen_relevancia": "La EPS rechaza el tofacitinib porque está excluido del PBS y niega su financiación por el Ministerio de Salud, argumentando que el procedimiento no puede tramitarse en MIPRES, lo cual es directamente aplicable al caso de Salud Andina y la negativa al medicamento no incluido en el plan.",
+       "extracto_fuente": "9. Después, mediante\nescrito del 25 de octubre de 2022, la EPS respondió nuevamente y reiteró que no\nera posible autorizar el tratamiento médico que la tutelante solicitaba. Esto\nporque, al no encontrarse previsto en el PBS, el médico tratante tendría que\nsolicitarlo al Ministerio de Salud y Protección Social por la página de MIPRES.\nSin embargo, la EPS de nuevo indicó que esto no era posible, porque el\nprocedimiento se encontraba excluido de la financiación(#_ftn10). [...] excluido del PBS y tampoco podía ser financiado con los recursos del Sistema\nGeneral de Seguridad Social en Salud. La accionada expresó que esta\nintervención ni siquiera podría registrarse en la plataforma del MIPRES por\nparte del médico tratante, por lo que la acción de tutela debía ser declarada\nimprocedente. De igual manera, la entidad prestadora indicó que la orden de\ntratamiento integral concedida también era improcedente al no encontrarse [...] por el médico tratante. Los derechos fundamentales de la accionante se\nampararon en ese primer fallo de tutela y la EPS cumplió con la realización de\nla valoración por la especialidad de cirugía plástica. Sin embargo, el cirujano\nplástico le prescribió la realización de una cirugía no cubierta ",
        "origen": "busqueda",
-       "charset": null,
-       "acentos_restaurados": 0,
-       "citas_mencionadas": []
+       "charset": "windows-1252",
+       "acentos_restaurados": 29,
+       "citas_mencionadas": [
+        "SU-508/20",
+        "T-414/16",
+        "T-322/18",
+        "T-490/20",
+        "T-760/08",
+        "T-610/13",
+        "T-975/10",
+        "T-573/13",
+        "T-142/14",
+        "T-579/17",
+        "T-159/15",
+        "T-003/19",
+        "T-436/19",
+        "T-081/19",
+        "T-136/21",
+        "T-038/22",
+        "T-513/20",
+        "T-275/20",
+        "T-259/19",
+        "T-005/23",
+        "T-133/20",
+        "T-030/94",
+        "T-059/97",
+        "T-088/98",
+        "T-428/98",
+        "T-057/13",
+        "T-121/15",
+        "T-673/17",
+        "T-224/99",
+        "T-520/12",
+        "T-405/17",
+        "T-069/18"
+       ]
       },
       {
-       "sentencia_id": "T-1314/05",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2005/t-1314-05.htm",
-       "resumen_relevancia": "Expone jurisprudencia sobre el deber del EPS de surtir medicamentos excluidos del POS cuando su omisión ponga en riesgo derechos fundamentales como la salud, aplicable directamente al contexto de una denegación similar en artritis reumatoide.",
-       "extracto_fuente": "Esta fue la regla jurisprudencial\nutilizada por esta Corporacin en la Sentencia T-344 de 2002 (M.P. Manuel Jos\nCepeda Espinosa) que revis la decisin de un juez de tutela que concedi el\namparo de los derechos fundamentales a la vida y a la salud de una persona que\npadeca de artritis reumatoide severa, circunstancia que llev a que su mdico\ntratante le prescribiera un medicamento por fuera del POS, cuya entrega fue\nnegada por el Comit Tcnico Cientfico bajo el argumento de la ausencia de\nutilizacin de las alternativas teraputicas que s estaban contempladas en el\nplan obligatorio.",
+       "sentencia_id": "T-124/19",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2019/t-124-19.htm",
+       "resumen_relevancia": "Explica que los usuarios tienen derecho al tratamiento completo para su recuperación y que la tutela es procedente cuando se niega un medicamento no incluido en el plan de beneficios, lo que se aplica al caso de la negativa del tofacitinib por parte de la EPS.",
+       "extracto_fuente": "Concretamente, acerca de la\nprocedencia de la acción de tutela para acceder a beneficios del plan de salud, la\nCorte ha señalado que los usuarios tienen derecho a recibir el tratamiento\ncompleto que garantice la recuperación de su salud.  [...] 8. Mediante sentencia del 27 de agosto de 2018, el Juzgado\nPrimero Promiscuo Municipal de Acacías, Meta, negó por improcedente la\nacción al considerar que el amparo fue iniciado prematuramente y concluyó que\nMedimás no ha tenido la oportunidad de pronunciarse sobre la solicitud del\nmedicamento no incluido en el plan de beneficios con cargo a la UPC, máxime si\nse tiene en cuenta que entre la orden médica y la interposición de la tutela [...] # Sentencia T-124/19\n\n \n\nACCION DE TUTELA CONTRA ENTIDAD PROMOTORA\nDE SALUD-Improcedencia por\ncuanto la tutela fue presentada en forma directa, sin que hubiere mediado una\nsolicitud previa de la prestación de los servicios a la entidad demandada\n\n \n\nPLAN DE BENEFICIOS EN SALUD-Concepto",
        "origen": "busqueda",
-       "charset": null,
-       "acentos_restaurados": 0,
-       "citas_mencionadas": []
+       "charset": "windows-1252",
+       "acentos_restaurados": 12,
+       "citas_mencionadas": [
+        "T-760/08",
+        "C-313/14",
+        "T-020/13",
+        "T-121/15",
+        "T-094/16",
+        "T-174/15",
+        "T-096/16",
+        "T-066/02",
+        "SU-975/03",
+        "T-130/14",
+        "T-115/18",
+        "T-603/01",
+        "T-476/02",
+        "T-219/07",
+        "T-726/07",
+        "T-406/92",
+        "T-816/08",
+        "T-180/13",
+        "T-573/97",
+        "C-543/92",
+        "T-471/17",
+        "T-702/00"
+       ]
       },
       {
-       "sentencia_id": "T-500/25",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2025/T-500-25.htm",
-       "resumen_relevancia": "Reafirma que el derecho a la salud exige la disponibilidad inmediata de tratamientos médicos prescritos, incluso cuando no estén incluidos en el PBS, siendo relevante para sustentar la obligación de la EPS de entregar tofacitinib ante riesgo de agravamiento clínico si no se suministra de forma oportuna.",
-       "extracto_fuente": "| Identidad de objeto | Al inicio del escrito de tutela solicit la proteccin del derecho a la salud y, luego, en las peticiones precis que acuda ante el juez constitucional con el propsito de interponer accin de tutela [en] contra de NUEVA EPS por no dar respuesta al derecho de peticin del 14/11/2024 (). | Solicit se tutelen los derechos a la salud, a la vida digna y al mnimo vital de Sofa. Y, en consecuencia, se ordene a la accionada autorizar y hacer efectivos los siguientes servicios: 24 terapias fsicas, terapias de fonoaudiologa, estudios moleculares de genes, consulta por especialista en gentica mdica y rehabilitacin funcional de la deficiencia; as como el suministro de los medicamentos Fenobarbital 0.4% frasco por 120ML y cido Benzoico 25/1ml suspensin oral. Por [...] c.\nExonerar a la beb de pagos de cuota\nmoderadora para su proceso de rehabilitacin y medicacin, pues la Hiperglicinemia\nno cetsica\nse encuentra en el listado de enfermedades hurfanas en Colombia(#_ftn9).\n\nd.    \nAmpliar la licencia de maternidad por dos\nsemanas a la progenitora(#_ftn10).\n\n \n\n5.      \nNo obstante, la actora expuso que hasta el\nmomento de la presentacin de la accin de tutela no se haba dado respue",
+       "sentencia_id": "T-319/25",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2025/t-319-25.htm",
+       "resumen_relevancia": "Destaca la protección especial a personas en condiciones de vulnerabilidad por edad y enfermedad, aplicable al paciente con artritis reumatoide de 54 años que requiere tratamiento integral, lo que refuerza la justificación de la tutela en este caso.",
+       "extracto_fuente": "54.  \nLas\npersonas de la tercera edad que enfrentan condiciones de salud complejas son\nreconocidas por la Constitución y la jurisprudencia constitucional como sujetos\nde especial protección(#_ftn77).\nLos cambios fisiológicos asociados al envejecimiento, el deterioro funcional\nprogresivo y la mayor exposición a enfermedades pueden situarlas en escenarios\nde vulnerabilidad que demandan una respuesta institucional reforzada(#_ftn78). Esta [...] 118.       \nFinalmente, se confirmar el fallo de tutela proferido por el juez\nde primera instancia y confirmado por el juez de segunda instancia en cuanto le\norden a la EPS prestar el tratamiento que requiere la paciente de forma\nintegral, en consideración a la condición de vulnerabilidad de la accionante\nantes descrita, por su avanzada edad y las enfermedades que le han\ndiagnosticado, situación que demanda una atención continua, reforzada y\nprevalente por parte de la EPS. [...] silencio durante el trámite de la acción de tutela y la demora para realizar la\nvaloración que orden el juez de tutela en segunda instancia, lo que refleja\nlas deficiencias y omisiones que afectaron la garantía oportuna de los derechos\nfundamentales de la accionante. La segunda, re",
        "origen": "busqueda",
-       "charset": null,
-       "acentos_restaurados": 0,
-       "citas_mencionadas": []
+       "charset": "windows-1252",
+       "acentos_restaurados": 12,
+       "citas_mencionadas": [
+        "T-199/25",
+        "T-011/25",
+        "T-583/23",
+        "T-150/24",
+        "SU-419/24",
+        "SU-016/21",
+        "T-005/23",
+        "T-077/24",
+        "SU-239/24",
+        "SU-508/20",
+        "T-005/18",
+        "T-264/23",
+        "T-124/24",
+        "T-224/20",
+        "T-046/25",
+        "T-498/24",
+        "SU-150/21",
+        "T-471/18",
+        "T-122/21",
+        "T-338/21",
+        "T-570/23",
+        "T-446/24",
+        "T-016/25",
+        "T-389/22",
+        "T-760/08",
+        "T-017/21",
+        "T-926/99",
+        "T-689/01",
+        "T-968/02",
+        "T-259/03",
+        "T-630/04",
+        "T-184/24",
+        "T-1198/03",
+        "T-412/14",
+        "T-417/17",
+        "T-013/20",
+        "T-015/25",
+        "C-400/24",
+        "T-012/24",
+        "T-285/24",
+        "T-377/24",
+        "C-313/14",
+        "T-327/24",
+        "T-406/24",
+        "T-167/25",
+        "T-394/21",
+        "T-038/22",
+        "T-399/23",
+        "T-801/98",
+        "T-154/14",
+        "T-1207/01",
+        "T-158/25",
+        "T-046/24",
+        "T-336/23",
+        "T-099/23",
+        "T-015/21",
+        "T-065/23"
+       ]
       },
       {
-       "sentencia_id": "T-558/23",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-558-23.htm",
-       "resumen_relevancia": "Reconoce la protección reforzada a los sujetos de especial protección constitucional, como los menores de edad, pero extiende el principio de protección integral a casos de enfermedad crónica grave (artritis reumatoide), estableciendo criterios aplicables en el análisis de vulnerabilidad y necesidad de acceso oportuno a terapias no cubiertas por el PBS.",
-       "extracto_fuente": "7.4. A partir de los hechos probados y de las\npiezas procesales del caso sub examine, la Sala evidencia lo siguientes:\ni) el nio cuenta con 8 aos de edad(#_ftn46), ii) vive con una enfermedad llamadaArtritis reumatoidea juvenil poliarticular, diagnosticada a sus nueve meses\nde edad, que le ha afectado en su parte de movilidad y posiblemente en su\ncalidad de vida; y por tanto, iii) su calidad de sujeto de especial proteccin\nconstitucional est dada al ser un menor de edad, en una condicin de\nvulnerabilidad, que pertenece al rgimen subsidiado en salud, quien merece una\nproteccin reforzada de su derecho a la salud. [...] Sntesis de la decisin\n\n \n\n7.15. La Corte Constitucional\nconoci la accin de tutela promovida por un menor de edad (sujeto de especial\nproteccin) a travs de su representante legal, que vive con una enfermedad\nruinosa y catastrfica (artritis reumatoidea) que le produce dolores en sus\narticulaciones y limitaciones en su movilidad. El nio requiere una cita con la\nespecialidad de reumatologa peditrica y un medicamento denominado Inyeccin o\ninfusin de modificador de respuesta biolgica (cantidad: 2), tratamiento prescrito por mdico tratante, esencial\npara brindar unas condicio",
+       "sentencia_id": "T-728/05",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2005/T-728-05.htm",
+       "resumen_relevancia": "Analiza una negativa de medicamento excluido del POS para artritis reumatoide severa, incluyendo la vulnerabilidad del paciente, lo que es directamente relevante para el caso de la negativa de tofacitinib por la EPS a un paciente con artritis reumatoide.",
+       "extracto_fuente": "1. Nelson Figueroa Fandiño presentó\nacción de tutela contra el Instituto de Seguros Sociales EPS (en adelante ISS\nE.P.S), Seccional Cesar, pues considera que esa entidad ha desconocido sus\nderechos a la vida, la salud y la seguridad social, al haber negado el\nsuministro de un medicamento [adalimuned (humira)], excluido del POS,\nnecesario para tratar la artritis reumatoide severa progresiva que padece, recetado\npor su médico tratante, afiliado a esta EPS, tras haber sido tratado con otros [...] \n\n2. El 24 de\nnoviembre de 2004 el Juzgado Tercero de Familia de Valledupar, en primera\ninstancia, concedió la acción de tutela argumentando que la dilación en el\nsuministro del medicamento que solicita el accionante pone en peligro su vida.\nEn su fallo, orden al ISS EPS suministrar, en el término de 48 horas\nsiguientes a la notificación del fallo, el medicamento reclamado por el señor\nFigueroa Fandiño. [...] En el presente\ncaso, efectivamente (i) la falta del adalimumed (humira) afecta la\nintegridad física del accionante y puede exacerbar los síntomas de la\nenfermedad que padece (artritis reumatoide severa progresiva de difícil\ncontrol) aumentando la limitación funcional poliarticular y la inflamación\npersi",
        "origen": "busqueda",
-       "charset": null,
-       "acentos_restaurados": 0,
-       "citas_mencionadas": []
+       "charset": "windows-1252",
+       "acentos_restaurados": 16,
+       "citas_mencionadas": [
+        "T-549/95",
+        "T-396/99",
+        "T-054/02",
+        "T-392/04",
+        "T-959/04",
+        "T-1204/00",
+        "T-484/92",
+        "T-505/92",
+        "T-548/92",
+        "T-224/97",
+        "SU-480/97",
+        "T-236/98",
+        "T-691/98",
+        "SU-819/99",
+        "T-080/01",
+        "T-591/03",
+        "T-984/04",
+        "T-086/05",
+        "T-868/04",
+        "T-096/05",
+        "T-972/01",
+        "T-280/02",
+        "T-069/05",
+        "T-074/05",
+        "T-502/94",
+        "T-271/95",
+        "C-079/96",
+        "SU-256/96",
+        "T-417/97",
+        "T-328/98",
+        "T-171/99",
+        "T-523/01",
+        "T-436/03",
+        "T-925/03",
+        "T-326/04",
+        "T-395/98",
+        "T-597/01",
+        "T-1181/01",
+        "T-992/02",
+        "T-883/03",
+        "T-977/04",
+        "T-1043/01",
+        "T-1020/00",
+        "T-945/04",
+        "T-1210/03",
+        "T-882/04",
+        "T-666/97",
+        "T-155/00",
+        "T-179/00",
+        "T-378/00",
+        "T-344/02",
+        "T-1083/03",
+        "T-1234/04",
+        "T-414/01",
+        "T-786/01",
+        "T-284/01",
+        "T-566/01",
+        "T-722/01",
+        "T-1188/01"
+       ]
       },
       {
-       "sentencia_id": "T-061/14",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2014/t-061-14.htm",
-       "resumen_relevancia": "Refuerza que la negativa prolongada a suministrar un medicamento esencial sanciona la vulneración del derecho a la salud y puede justificar la tutela, especialmente cuando la demora subsana un daño irreversible al paciente, como en el escenario presentado con la demora en la entrega de tofacitinib.",
-       "extracto_fuente": "8.3. Ante todo, debe tomarse en\nconsideracin la situacin de debilidad manifiesta en que se encuentra la\naccionante por la enfermedad que padece y el severo perjuicio que le acarrea no\nconsumir el medicamento, lo que ostensiblemente redunda en la procedencia de\nesta accin.\n\n \n\nSe puede constatar, de otra parte, que\nla demandante ha realizado el trmite ante la EPS y aunque existe la\nposibilidad de acudir ante la Superintendencia Nacional de Salud (artculo 41\nde la Ley 1122 de 2007), exigirlo en el presente asunto desnaturalizara la\naccin de tutela, extendiendo los graves riesgos contra la salud(#_ftn22),\ndespus de tanto que ha esperado la paciente. [...] En el presente caso, la accin de tutela instaurada por las\nseoras Erika Pardiz Redondo y Yasmith Maritza\nGaona contra Saludcoop EPS resulta improcedente, en la medida en que se logr\nverificar el incumplimiento del principio de subsidiariedad. Lo anterior, por\ncuanto la pretensin de las accionantes y la conducta que vulnera los derechos\nfundamentales de sus hijos menores tienen que ver con la negativa de la entidad\nprestadora de servicios de suministrar algunos tratamientos mdicos excluidos\ndel Plan Obligatorio de Salud. As, tal como ",
+       "sentencia_id": "T-349/24",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2024/T-349-24.htm",
+       "resumen_relevancia": "Menciona que la EPS negó los servicios médicos y medicamentos solicitados en la tutela, indicando argumentos similares a los de la EPS en este caso, lo que es relevante para el análisis de la negativa de tratamiento.",
+       "extracto_fuente": "8.                \nEscrito\nde respuesta de la Nueva EPS. El 24 de enero de\n2024,\nla\nNueva EPSpresent escrito de respuesta a la acción\nde tutela en el que solicitó no tutelar los derechos de la agenciada(#_ftn16).\nConsideró que el suministro de los servicios, medicamentos y tecnologías en\nsalud solicitados debía ser negado, con fundamento en los argumentos que se\nsintetizan en la siguiente tabla:\n\n \n\n|  | [...] 77.            \nPosiciones\nde las partes.\nLa\naccionante solicitó en la tutela el reconocimiento definitivo para\nla señora Cecilia de las citas\nmédicas, exámenes, intervenciones quirúrgicas, medicamentos, terapias\ndomiciliarias, pañales, transporte intermunicipal, aéreo y/o urbano,\nalimentación, alojamiento y todo aquello que se relacione con las enfermedades\nque está padeciendo(#_ftn158).\nPor\nsu parte, frente a esta pretensión, la Nueva EPS sostuvo que no ha negado",
        "origen": "busqueda",
-       "charset": null,
-       "acentos_restaurados": 0,
-       "citas_mencionadas": []
+       "charset": "windows-1252",
+       "acentos_restaurados": 15,
+       "citas_mencionadas": [
+        "SU-508/20",
+        "T-381/18",
+        "T-623/12",
+        "T-773/12",
+        "SU-173/15",
+        "T-898/14",
+        "T-1025/05",
+        "T-552/06",
+        "T-382/21",
+        "T-652/08",
+        "T-486/16",
+        "T-406/17",
+        "SU-055/15",
+        "T-162/16",
+        "T-120/17",
+        "T-733/17",
+        "T-020/18",
+        "SU-150/21",
+        "T-397/17",
+        "T-709/98",
+        "T-1326/00",
+        "SU-288/16",
+        "T-174/17",
+        "SU-707/96",
+        "T-976/00",
+        "T-593/17",
+        "SU-424/21",
+        "T-405/22",
+        "SU-961/99",
+        "T-273/15",
+        "SU-168/17",
+        "T-550/20",
+        "T-011/22",
+        "SU-691/17",
+        "T-391/22",
+        "T-071/21",
+        "SU-379/19",
+        "T-449/19",
+        "T-020/17",
+        "C-313/14",
+        "T-050/23",
+        "T-409/19",
+        "T-196/18",
+        "T-124/19",
+        "T-156/21",
+        "T-160/22",
+        "T-332/22",
+        "T-047/23",
+        "SU-508/22",
+        "T-309/21",
+        "T-394/21",
+        "T-245/20",
+        "T-971/11",
+        "T-918/12",
+        "T-073/13",
+        "T-160/14",
+        "T-255/15",
+        "T-083/21",
+        "T-298/21",
+        "T-573/23",
+        "T-612/14",
+        "T-139/11",
+        "T-460/12",
+        "T-433/14",
+        "T-121/15",
+        "T-092/18",
+        "T-277/22",
+        "T-881/03",
+        "T-384/13",
+        "T-745/13",
+        "T-098/16",
+        "T-710/17",
+        "T-069/18",
+        "C-035/15",
+        "C-165/23",
+        "T-013/24",
+        "T-086/24",
+        "T-760/08",
+        "T-130/21",
+        "T-491/18",
+        "T-287/22",
+        "T-329/18",
+        "T-206/13",
+        "T-147/23",
+        "T-259/19",
+        "T-346/09",
+        "T-1158/01",
+        "T-459/22",
+        "T-101/21",
+        "T-309/18",
+        "T-359/22",
+        "T-266/20",
+        "T-081/19",
+        "T-178/17",
+        "T-365/09",
+        "T-369/22",
+        "T-475/20",
+        "T-519/14",
+        "T-122/21"
+       ]
       },
       {
-       "sentencia_id": "T-377/24",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2024/t-377-24.htm",
-       "resumen_relevancia": "Ilustra la aplicación práctica del derecho a la salud en casos de costos como barrera para el acceso a medicamentos, demostrando que actuaciones judiciales previas han obligado a EPS a garantizar suministros críticos, sentando precedente relevante para exigir a Salud Andina la continuidad del tratamiento con tofacitinib.",
-       "extracto_fuente": "18.       \nLa personera manifest haberse comunicado con Dispensadora 1\ny EPS XYZ en aras de solicitar el transporte de los medicamentos al\nsitio de residencia de la actora, pero recibi respuesta negativa debido al\nalto costo(#_ftn16).\nLa tutela indica que la seora Salom teme que la falta de medicamentos\nlleve a que su estado de salud recaiga hasta un punto de no poder controlar sus\nenfermedades. [...] 27.       \nLa Personera se comunic con EPS XYZ y con Dispensadora\n1 en aras de solicitar el transporte de los medicamentos para su entrega(#_ftn26). Sin embargo, segn la respuesta que\nrecibi, no era posible debido al alto costo(#_ftn27),\npor lo que solo podan ser entregados en los lugares indicados. [...] 109.   Segn la jurisprudencia constitucional, cuando el juez de amparo\nno cuenta con una orden mdica que prescriba el servicio de salud que la parte\naccionante solicita a travs de la accin de tutela, debe proceder, por regla\ngeneral, segn dos parmetros(#_ftn144). De un lado, si no existe ninguna evidencia, distinta a la\nprescripcin inexistente, de que el accionante requiere el servicio, pero s\nhay un indicio razonable de afectacin al derecho a la salud de la persona, el\njuez debe ord",
+       "sentencia_id": "T-336/18",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2019/t-336-18.htm",
+       "resumen_relevancia": "Explica que la expedición de medicamentos no incluidos en el PBS busca garantizar el derecho a la salud y la vida en condiciones dignas, lo que es aplicable al caso de la negativa de tofacitinib a un paciente con artritis reumatoide que lo necesita para su tratamiento.",
+       "extracto_fuente": "De hecho, esta sentencia puntualiza, además, que\notorgar en casos excepcionales un medicamento o un servicio médico no incluido\nen el PBS, en un caso específico, no implica per se la modificación del\nPlan de Beneficios en Salud, ni la inclusión del medicamento o del servicio\ndentro del mismo, pues lo que exige es que exista un goce efectivo de los\nderechos a la salud y a la vida en condiciones dignas en cada caso concreto. [...] (#_ftnref107) Por la\ncual se modifica el Plan de Beneficios en Salud con cargo a la Unidad de Pago\npor Capitación (UPC). La Resolución 6408 de 2016 fue\nderogada por el artículo 132 de la Resolución 5269 de 2017 del Ministerio de\nSalud y Protección Social. Sin embargo se cita la disposición que se encontraba\nvigente al momento en que la accionante interpuso la acción de tutela. [...] (#_ftnref109) Artículo 61,\nparágrafo 2 de la Resolución 6408 de 2016 del Ministerio de Salud y de la\nProtección Social: El Plan de Beneficios en Salud con cargo a la UPC cubre las\nsiguientes ayudas técnicas: // 1. Prótesis ortopédicas internas (endoprótesis\nortopédicas) para los procedimientos quirúrgicos incluidos en este Plan de\nBeneficios. // 2. Prótesis ortopédicas externas (exoprótesis) para miembr",
        "origen": "busqueda",
-       "charset": null,
-       "acentos_restaurados": 0,
-       "citas_mencionadas": []
-      },
-      {
-       "sentencia_id": "T-101/23",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-101-23.htm",
-       "resumen_relevancia": "Confirma que la negativa de la EPS a cubrir procedimientos médicos constituye una vulneración del derecho fundamental a la salud, independientemente del argumento de exclusión técnica, reforzando la posición de que la negativa de Salud Andina a suministrar tofacitinib debe ser legalmente cuestionable por vulnerar normas constitucionales de acceso a la salud.",
-       "extracto_fuente": "28. La Nueva EPS niega dichos\nprocedimientos porque considera que aquellos corresponden a tratamientos\nestticos, los cuales estn expresamente excluidos del PBS. Adems, indica que\nningn mdico adscrito a su red los ha ordenado. Por su parte, Salud Total EPS\nafirma que, desde la afiliacin, la actora no ha solicitado ningn servicio\npara tratar las patologas descritas en la accin de tutela. [...] 71. De otro lado, la Sala anota que ha\ntranscurrido un tiempo considerable desde la negativa de la atencin en salud\npor parte de Nueva EPS, la sentencia de primera instancia y la revisin de la\nsentencia por parte de la Corte. Tal paso del tiempo no es imputable a la\nactora y no puede considerarse como un obstculo para la proteccin de su\nderecho a la salud. Aquel incluso ha implicado el cambio de EPS y de rgimen de\nafiliacin. La Sala considera que tal situacin ha agravado el desconocimiento\nde sus garantas superiores y genera la necesidad de intervencin urgente por\nparte del juez de tutela. Bajo este contexto, claramente existe una afectacin\nactual al derecho a la salud de la actora que se caus, inicialmente, por la [...] 72. La Sala observa que la accionante no ha\nrequerido a Salud Total EPS la",
-       "origen": "busqueda",
-       "charset": null,
-       "acentos_restaurados": 0,
-       "citas_mencionadas": []
-      },
-      {
-       "sentencia_id": "T-245/20",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2020/t-245-20.htm",
-       "resumen_relevancia": "Establece pauta jurisprudencial sobre la obligación del juez de tutela de ordenar el suministro de medicamentos excluidos del PBS cuando su uso esté justificado por necesidad médica, criterio directamente aplicable al caso actual de negación de tofacitinib para tratamiento de artritis reumatoide.",
-       "extracto_fuente": "ante la Administradora\nde los Recursos del Sistema General de Seguridad Social en Salud (en adelante\nADRES). La jurisprudencia constitucional(#_ftn170)\nha dicho que el juez de tutela puede autorizar el suministro de elementos no\nincluidos expresamente en el PBS cuando se acredite que: [...] (v)       \nMedicamentos prescritos por el\nmdico. Los medicamentos formulados por el\nmdico tratante pueden estar incluidos en el PBS, no incluidos expresamente(#_ftn190) en el PBS, o encontrarse\nexpresamente excluidos mediante la Resolucin 244 de 2019, por tanto, su\nnaturaleza depender del caso en concreto. [...] En aplicacin de la citada regla\njurisprudencial, esta Corte ha proferido diferentes sentencias de las cuales se\ndestacan las siguientes premisas que el juez de tutela debe considerar al\nmomento de inaplicar una exclusin: (i) no basta la\norden del mdico tratante adscrito a la EPS para que con esta se autorice un\nservicio excluido(#_ftn174),\nadems se requiere el cumplimiento de los otros citados requisitos de la\nSentencia C-313 de 2014(#_ftn175); y (ii) la orden mdica es relevante para establecer objetivamente\nsi el servicio, tecnologa o medicamento excluido(#_ftn176) es\npertinente para el",
-       "origen": "busqueda",
-       "charset": null,
-       "acentos_restaurados": 0,
-       "citas_mencionadas": []
+       "charset": "windows-1252",
+       "acentos_restaurados": 25,
+       "citas_mencionadas": [
+        "C-119/08",
+        "T-825/12",
+        "T-914/12",
+        "T-226/15",
+        "T-414/16",
+        "T-314/17",
+        "T-760/08",
+        "C-313/14",
+        "T-017/13",
+        "T-899/02",
+        "T-014/17",
+        "T-120/17",
+        "T-131/15",
+        "T-196/18",
+        "T-218/18",
+        "T-373/15",
+        "T-313/05",
+        "T-662/16",
+        "T-662/13",
+        "T-527/15",
+        "T-235/18",
+        "T-206/13",
+        "T-930/14",
+        "T-234/13",
+        "T-862/13",
+        "T-316/13",
+        "T-450/16",
+        "T-126/15",
+        "T-593/15",
+        "T-094/16",
+        "T-737/13",
+        "C-754/15",
+        "T-199/13",
+        "T-384/13",
+        "T-361/14",
+        "T-468/13",
+        "T-563/13",
+        "T-318/14",
+        "T-447/14",
+        "T-076/15",
+        "T-455/15",
+        "T-745/13",
+        "T-200/14",
+        "T-519/14",
+        "T-612/14",
+        "T-499/14",
+        "T-742/17",
+        "T-034/12",
+        "T-099/99",
+        "T-975/08",
+        "T-1024/10",
+        "T-180/13",
+        "T-955/14",
+        "T-829/06",
+        "T-155/06",
+        "T-1219/03",
+        "T-873/07",
+        "T-644/15",
+        "T-510/15",
+        "T-345/13",
+        "T-154/14",
+        "T-154/17"
+       ]
       }
      ]
     },
@@ -242,22 +565,27 @@
      "escalations": [],
      "notes": [],
      "llm_calls": 1,
-     "input_tokens": 2996,
-     "output_tokens": 1046,
-     "llm_latency_s": 9.98,
-     "cost_usd": 0.000431,
+     "input_tokens": 3044,
+     "output_tokens": 951,
+     "llm_latency_s": 4.16,
+     "cost_usd": 0.032411,
+     "llm_cost_usd": 0.000411,
+     "search_cost_usd": 0.032,
      "cost_complete": true,
      "tiers": [
       "fast"
      ],
-     "cost_all_reasoning_usd": 0.006134,
+     "cost_all_reasoning_usd": 0.005897,
      "tavily_searches": 4,
-     "latency_s": 15.69
+     "tavily_live": 4,
+     "tavily_cached": 0,
+     "tavily_credits": 4,
+     "latency_s": 9.26
     }
    }
   },
   {
-   "t": 21.11,
+   "t": 14.62,
    "event": "step_started",
    "data": {
     "step": "draft",
@@ -266,42 +594,40 @@
    }
   },
   {
-   "t": 29.62,
+   "t": 28.39,
    "event": "step_completed",
    "data": {
     "step": "draft",
     "index": 4,
     "result": {
      "hechos": [
-      "Yo, mayor de edad, residente en Bucaramanga, afiliado a la EPS Salud Andina, formulo los siguientes hechos:",
-      "El 3 de agosto de 2026, mi reumatóloga en clínica me formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.",
-      "El 10 de agosto de 2026, presenté la solicitud de autorización y entrega del medicamento tofacitinib ante la EPS Salud Andina.",
-      "El 2 de septiembre de 2026, recibí una carta de negación por parte de la EPS Salud Andina, en la cual se negó expresamente la entrega del medicamento tofacitinib.",
-      "El 8 de septiembre de 2026, presenté un derecho de petición ante la EPS Salud Andina solicitando la revisión y respuesta a mi solicitud de tofacitinib, el cual no ha sido respondido a la fecha."
+      "El 3 de agosto de 2026 mi médico tratante formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.",
+      "El 10 de agosto de 2026 radiqué la solicitud de autorización del medicamento tofacitinib ante la EPS Salud Andina.",
+      "El 2 de septiembre de 2026 recibí carta de negación por parte de la EPS Salud Andina, en la cual se indica que el medicamento tofacitinib no está incluido en el Plan de Beneficios en Salud (PBS) y que no puede ser financiado por el Sistema General de Seguridad Social en Salud.",
+      "El 8 de septiembre de 2026 presenté un derecho de petición ante la EPS Salud Andina solicitando una respuesta fundamentada a la negación del medicamento tofacitinib, al cual no he recibido respuesta hasta la fecha."
      ],
      "derechos_vulnerados": [
-      "El derecho fundamental a la salud, consagrado en el artículo 49 de la Constitución Política.",
-      "El derecho a la vida digna, vinculado al artículo 1° de la Constitución Política.",
-      "El derecho a la seguridad social, establecido en el artículo 48 de la Constitución Política.",
-      "El derecho a la dignidad humana, reconocido en el artículo 1° de la Constitución Política."
+      "salud",
+      "vida digna",
+      "seguridad social",
+      "dignidad humana",
+      "vida"
      ],
-     "fundamentos_juridicos": "La acción de tutela procede conforme al artículo 86 de la Constitución Política, ya que se trata de un derecho fundamental vulnerado por actuación u omisión de autoridad pública o de quien ejerza funciones públicas, como es el caso de la EPS Salud Andina al negar un servicio de salud prescrito por el médico tratante. Asimismo, el Decreto 2591 de 1991 regula la acción de tutela y establece su procedencia cuando se vulneran derechos fundamentales y no existe otro medio más idóneo para su protección. La Ley Estatutaria de Salud 1751 de 2015, en su artículo 1°, garantiza el acceso oportuno y necesario a los servicios de salud, incluyendo medicamentos, cuando sean indispensables para la protección de la vida y la dignidad humana. En este sentido, la Corte Constitucional ha señalado que la negativa de una EPS a suministrar un medicamento prescrito por el médico tratante, aun cuando no esté incluido en el Plan de Beneficios en Salud (PBS), vulnera el derecho fundamental a la salud cuando su omisión pone en riesgo la integridad física o la vida del paciente. Esto ha sido reiterado en múltiples sentencias: la Sentencia T-305 de 2006 establece que la negación de un medicamento excluido del Manual del Plan Obligatorio de Salud por una EPS vulnera el derecho a la salud, tal como ocurre en este caso con el tofacitinib para artritis reumatoide. La Sentencia T-1314 de 2005 reitera el deber del EPS de surtir medicamentos excluidos del POS cuando su omisión pone en riesgo derechos fundamentales como la salud, aplicable directamente a la denegación de tofacitinib. La Sentencia T-500 de 2025 reafirma que el derecho a la salud exige la disponibilidad inmediata de tratamientos médicos prescritos, incluso cuando no estén incluidos en el PBS, siendo relevante para sostener la obligación de la EPS de entregar tofacitinib ante riesgo de agravamiento clínico si no se suministra de forma oportuna. Finalmente, la Sentencia T-061 de 2014 refuerza que la negativa prolongada a suministrar un medicamento esencial sanciona la vulneración del derecho a la salud y puede justificar la tutela, especialmente cuando la demora causa un daño irreversible al paciente, como ocurre con la demora en la entrega de tofacitinib tras la negación del 2 de septiembre y la falta de respuesta al derecho de petición del 8 de septiembre.",
+     "fundamentos_juridicos": "Tengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política de Colombia. El Decreto 2591 de 1991 establece que la acción de tutela procede cuando se vulneran derechos fundamentales y no existe otro medio idóneo para su protección. La Ley 1751 de 2015 (Ley Estatutaria de Salud) garantiza el acceso oportuno a los servicios de salud necesarios. La Sentencia T-549 de 2023 establece que la EPS no puede negar un medicamento excluido del PBS alegando imposibilidad de financiación mediante MIPRES, ya que ello vulnera el derecho a la salud. La Sentencia T-124 de 2019 señala que los usuarios tienen derecho al tratamiento completo para su recuperación, procediendo la tutela cuando se niega un medicamento no incluido en el plan de beneficios. La Sentencia T-319 de 2025 reconoce protección especial a personas en condiciones de vulnerabilidad por edad y enfermedad, aplicable a mi caso como paciente de 54 años con artritis reumatoide que requiere tratamiento integral. La Sentencia T-728 de 2005 analiza la negativa de medicamento excluido del POS para artritis reumatoide severa, considerando la vulnerabilidad del paciente, lo que es directamente aplicable a la negativa de tofacitinib por parte de la EPS Salud Andina.",
      "pretensiones": [
-      "Que se ordene a la EPS Salud Andina autorizar, garantizar y hacer efectiva la entrega inmediata del medicamento tofacitinib, formulado por mi reumatóloga el 3 de agosto de 2026, para el tratamiento de mi artritis reumatoide.",
-      "Que se le ordene a la EPS Salud Andina proporcionar el medicamento tofacitinib de manera continua y conforme al esquema terapéutico indicado por el médico tratante, sin interrupciones ni nuevas negaciones injustificadas.",
-      "Que, en caso de que la EPS alegue falta de cobertura en el PBS, se le ordene gestionar el medicamento mediante los mecanismos de excepción y ampliación del PBS previstos en la ley, garantizando mi acceso al tratamiento esencial.",
-      "Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de esta orden, conforme a lo dispuesto en el Decreto 2591 de 1991 y la jurisprudencia constitucional aplicable."
+      "Que se ordene a la EPS Salud Andina autorizar, garantizar y suministrar de manera inmediata el medicamento tofacitinib formulado por mi médico tratante para el tratamiento de mi artritis reumatoide.",
+      "Que se le ordene a la EPS Salud Andina proporcionar el tratamiento integral y continuo necesario para mi condición, incluyendo el medicamento tofacitinib, dentro de un término máximo de 48 horas contadas desde la notificación de esta tutela.",
+      "Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de la orden judicial, conforme a lo dispuesto en el Decreto 2591 de 1991."
      ],
      "pruebas_y_anexos": [
-      "Copia de la fórmula médica del medicamento tofacitinib, fechada el 3 de agosto de 2026.",
-      "Copia de la carta de negación del medicamento tofacitinib recibida el 2 de septiembre de 2026.",
-      "Copia del radicado del derecho de petición presentado ante la EPS Salud Andina el 8 de septiembre de 2026.",
-      "Copias relevantes de mi historia clínica que evidencian el diagnóstico de artritis reumatoide y la necesidad del tratamiento con tofacitinib."
+      "Copia de la carta de negación del medicamento tofacitinib fechada el 2 de septiembre de 2026.",
+      "Copia del radicado del derecho de petición presentado el 8 de septiembre de 2026.",
+      "Copia de mi historia clínica relevante que respalda el diagnóstico de artritis reumatoide y la necesidad del medicamento tofacitinib."
      ],
-     "juramento": "Juro solemnemente que no he presentado previamente otra acción de tutela por los mismos hechos y por la vulneración de los mismos derechos fundamentales aquí expuestos.",
+     "juramento": "Juro solemnemente que no he presentado otra acción de tutela por los mismos hechos y con el mismo objeto que la presente acción.",
      "accionada": "Salud Andina",
      "ciudad": "Bucaramanga",
-     "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBucaramanga\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Salud Andina\nDERECHOS INVOCADOS: la salud, consagrado en el artículo 49 de la Constitución Política., la vida digna, vinculado al artículo 1° de la Constitución Política., la seguridad social, establecido en el artículo 48 de la Constitución Política., la dignidad humana, reconocido en el artículo 1° de la Constitución Política.\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Bucaramanga, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Salud Andina, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a la salud, consagrado en el artículo 49 de la Constitución Política., la vida digna, vinculado al artículo 1° de la Constitución Política., la seguridad social, establecido en el artículo 48 de la Constitución Política., la dignidad humana, reconocido en el artículo 1° de la Constitución Política., con base en los siguientes:\n\nI. HECHOS\n\n1. Yo, mayor de edad, residente en Bucaramanga, afiliado a la EPS Salud Andina, formulo los siguientes hechos:\n2. El 3 de agosto de 2026, mi reumatóloga en clínica me formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.\n3. El 10 de agosto de 2026, presenté la solicitud de autorización y entrega del medicamento tofacitinib ante la EPS Salud Andina.\n4. El 2 de septiembre de 2026, recibí una carta de negación por parte de la EPS Salud Andina, en la cual se negó expresamente la entrega del medicamento tofacitinib.\n5. El 8 de septiembre de 2026, presenté un derecho de petición ante la EPS Salud Andina solicitando la revisión y respuesta a mi solicitud de tofacitinib, el cual no ha sido respondido a la fecha.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. El derecho fundamental a la salud, consagrado en el artículo 49 de la Constitución Política.\n2. El derecho a la vida digna, vinculado al artículo 1° de la Constitución Política.\n3. El derecho a la seguridad social, establecido en el artículo 48 de la Constitución Política.\n4. El derecho a la dignidad humana, reconocido en el artículo 1° de la Constitución Política.\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nLa acción de tutela procede conforme al artículo 86 de la Constitución Política, ya que se trata de un derecho fundamental vulnerado por actuación u omisión de autoridad pública o de quien ejerza funciones públicas, como es el caso de la EPS Salud Andina al negar un servicio de salud prescrito por el médico tratante. Asimismo, el Decreto 2591 de 1991 regula la acción de tutela y establece su procedencia cuando se vulneran derechos fundamentales y no existe otro medio más idóneo para su protección. La Ley Estatutaria de Salud 1751 de 2015, en su artículo 1°, garantiza el acceso oportuno y necesario a los servicios de salud, incluyendo medicamentos, cuando sean indispensables para la protección de la vida y la dignidad humana. En este sentido, la Corte Constitucional ha señalado que la negativa de una EPS a suministrar un medicamento prescrito por el médico tratante, aun cuando no esté incluido en el Plan de Beneficios en Salud (PBS), vulnera el derecho fundamental a la salud cuando su omisión pone en riesgo la integridad física o la vida del paciente. Esto ha sido reiterado en múltiples sentencias: la Sentencia T-305 de 2006 establece que la negación de un medicamento excluido del Manual del Plan Obligatorio de Salud por una EPS vulnera el derecho a la salud, tal como ocurre en este caso con el tofacitinib para artritis reumatoide. La Sentencia T-1314 de 2005 reitera el deber del EPS de surtir medicamentos excluidos del POS cuando su omisión pone en riesgo derechos fundamentales como la salud, aplicable directamente a la denegación de tofacitinib. La Sentencia T-500 de 2025 reafirma que el derecho a la salud exige la disponibilidad inmediata de tratamientos médicos prescritos, incluso cuando no estén incluidos en el PBS, siendo relevante para sostener la obligación de la EPS de entregar tofacitinib ante riesgo de agravamiento clínico si no se suministra de forma oportuna. Finalmente, la Sentencia T-061 de 2014 refuerza que la negativa prolongada a suministrar un medicamento esencial sanciona la vulneración del derecho a la salud y puede justificar la tutela, especialmente cuando la demora causa un daño irreversible al paciente, como ocurre con la demora en la entrega de tofacitinib tras la negación del 2 de septiembre y la falta de respuesta al derecho de petición del 8 de septiembre.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Salud Andina autorizar, garantizar y hacer efectiva la entrega inmediata del medicamento tofacitinib, formulado por mi reumatóloga el 3 de agosto de 2026, para el tratamiento de mi artritis reumatoide.\n2. Que se le ordene a la EPS Salud Andina proporcionar el medicamento tofacitinib de manera continua y conforme al esquema terapéutico indicado por el médico tratante, sin interrupciones ni nuevas negaciones injustificadas.\n3. Que, en caso de que la EPS alegue falta de cobertura en el PBS, se le ordene gestionar el medicamento mediante los mecanismos de excepción y ampliación del PBS previstos en la ley, garantizando mi acceso al tratamiento esencial.\n4. Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de esta orden, conforme a lo dispuesto en el Decreto 2591 de 1991 y la jurisprudencia constitucional aplicable.\n\nV. PRUEBAS Y ANEXOS\n\n1. Copia de la fórmula médica del medicamento tofacitinib, fechada el 3 de agosto de 2026.\n2. Copia de la carta de negación del medicamento tofacitinib recibida el 2 de septiembre de 2026.\n3. Copia del radicado del derecho de petición presentado ante la EPS Salud Andina el 8 de septiembre de 2026.\n4. Copias relevantes de mi historia clínica que evidencian el diagnóstico de artritis reumatoide y la necesidad del tratamiento con tofacitinib.\n\nVI. JURAMENTO\n\n\nJuro solemnemente que no he presentado previamente otra acción de tutela por los mismos hechos y por la vulneración de los mismos derechos fundamentales aquí expuestos.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Salud Andina, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
+     "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBucaramanga\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Salud Andina\nDERECHOS INVOCADOS: salud, vida digna, seguridad social, dignidad humana, vida\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Bucaramanga, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Salud Andina, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida digna, seguridad social, dignidad humana, vida, con base en los siguientes:\n\nI. HECHOS\n\n1. El 3 de agosto de 2026 mi médico tratante formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.\n2. El 10 de agosto de 2026 radiqué la solicitud de autorización del medicamento tofacitinib ante la EPS Salud Andina.\n3. El 2 de septiembre de 2026 recibí carta de negación por parte de la EPS Salud Andina, en la cual se indica que el medicamento tofacitinib no está incluido en el Plan de Beneficios en Salud (PBS) y que no puede ser financiado por el Sistema General de Seguridad Social en Salud.\n4. El 8 de septiembre de 2026 presenté un derecho de petición ante la EPS Salud Andina solicitando una respuesta fundamentada a la negación del medicamento tofacitinib, al cual no he recibido respuesta hasta la fecha.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida digna\n3. seguridad social\n4. dignidad humana\n5. vida\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política de Colombia. El Decreto 2591 de 1991 establece que la acción de tutela procede cuando se vulneran derechos fundamentales y no existe otro medio idóneo para su protección. La Ley 1751 de 2015 (Ley Estatutaria de Salud) garantiza el acceso oportuno a los servicios de salud necesarios. La Sentencia T-549 de 2023 establece que la EPS no puede negar un medicamento excluido del PBS alegando imposibilidad de financiación mediante MIPRES, ya que ello vulnera el derecho a la salud. La Sentencia T-124 de 2019 señala que los usuarios tienen derecho al tratamiento completo para su recuperación, procediendo la tutela cuando se niega un medicamento no incluido en el plan de beneficios. La Sentencia T-319 de 2025 reconoce protección especial a personas en condiciones de vulnerabilidad por edad y enfermedad, aplicable a mi caso como paciente de 54 años con artritis reumatoide que requiere tratamiento integral. La Sentencia T-728 de 2005 analiza la negativa de medicamento excluido del POS para artritis reumatoide severa, considerando la vulnerabilidad del paciente, lo que es directamente aplicable a la negativa de tofacitinib por parte de la EPS Salud Andina.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Salud Andina autorizar, garantizar y suministrar de manera inmediata el medicamento tofacitinib formulado por mi médico tratante para el tratamiento de mi artritis reumatoide.\n2. Que se le ordene a la EPS Salud Andina proporcionar el tratamiento integral y continuo necesario para mi condición, incluyendo el medicamento tofacitinib, dentro de un término máximo de 48 horas contadas desde la notificación de esta tutela.\n3. Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de la orden judicial, conforme a lo dispuesto en el Decreto 2591 de 1991.\n\nV. PRUEBAS Y ANEXOS\n\n1. Copia de la carta de negación del medicamento tofacitinib fechada el 2 de septiembre de 2026.\n2. Copia del radicado del derecho de petición presentado el 8 de septiembre de 2026.\n3. Copia de mi historia clínica relevante que respalda el diagnóstico de artritis reumatoide y la necesidad del medicamento tofacitinib.\n\nVI. JURAMENTO\n\n\nJuro solemnemente que no he presentado otra acción de tutela por los mismos hechos y con el mismo objeto que la presente acción.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Salud Andina, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
     },
     "metrics": {
      "models": [
@@ -310,23 +636,28 @@
      "final_model": "nvidia/nemotron-3-super-120b-a12b",
      "escalations": [],
      "notes": [],
-     "llm_calls": 1,
-     "input_tokens": 3185,
-     "output_tokens": 1285,
-     "llm_latency_s": 8.5,
-     "cost_usd": 0.002112,
+     "llm_calls": 2,
+     "input_tokens": 5016,
+     "output_tokens": 1606,
+     "llm_latency_s": 13.77,
+     "cost_usd": 0.00295,
+     "llm_cost_usd": 0.00295,
+     "search_cost_usd": 0.0,
      "cost_complete": true,
      "tiers": [
       "draft"
      ],
-     "cost_all_reasoning_usd": 0.00704,
+     "cost_all_reasoning_usd": 0.009834,
      "tavily_searches": 0,
-     "latency_s": 8.51
+     "tavily_live": 0,
+     "tavily_cached": 0,
+     "tavily_credits": 0,
+     "latency_s": 13.77
     }
    }
   },
   {
-   "t": 29.62,
+   "t": 28.39,
    "event": "step_started",
    "data": {
     "step": "verify",
@@ -335,41 +666,41 @@
    }
   },
   {
-   "t": 37.05,
+   "t": 34.0,
    "event": "step_completed",
    "data": {
     "step": "verify",
     "index": 5,
     "result": {
      "citas_encontradas": [
-      "T-305/06",
-      "T-1314/05",
-      "T-500/25",
-      "T-061/14"
+      "T-549/23",
+      "T-124/19",
+      "T-319/25",
+      "T-728/05"
      ],
      "citas_verificadas": [
       {
-       "sentencia_id": "T-305/06",
+       "sentencia_id": "T-549/23",
        "estado": "verificada",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2006/t-305-06.htm",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-549-23.htm",
        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
       },
       {
-       "sentencia_id": "T-1314/05",
+       "sentencia_id": "T-124/19",
        "estado": "verificada",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2005/t-1314-05.htm",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2019/t-124-19.htm",
        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
       },
       {
-       "sentencia_id": "T-500/25",
+       "sentencia_id": "T-319/25",
        "estado": "verificada",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2025/T-500-25.htm",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2025/t-319-25.htm",
        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
       },
       {
-       "sentencia_id": "T-061/14",
+       "sentencia_id": "T-728/05",
        "estado": "verificada",
-       "url": "https://www.corteconstitucional.gov.co/relatoria/2014/t-061-14.htm",
+       "url": "https://www.corteconstitucional.gov.co/relatoria/2005/T-728-05.htm",
        "detalle": "Coincide con una sentencia encontrada en la búsqueda."
       }
      ],
@@ -378,10 +709,8 @@
      "ciclo": [],
      "iteraciones": 0,
      "observaciones": [
-      "En los hechos se describe al accionante como \"mayor de edad\", pero los datos del caso indican que tiene 54 años; en Colombia la calidad de \"mayor de edad\" se reconoce a partir de los 60 años (Ley 1251 de 2008), por lo que esa calificación es inexacta.",
-      "En el hecho 5 se afirma que el derecho de petición \"no ha sido respondido a la fecha\", pero los hechos del caso no contienen información sobre si hubo o no respuesta; se trata de una aseveración no verificada que podría resultar falsa.",
-      "Los hechos no incluyen el número de radicado de la solicitud del 10 de agosto ni del derecho de petición del 8 de septiembre, datos que el caso señala como faltantes; aunque no son hechos inventados, su omisión puede generar inconsistencias al momento de aportar las pruebas.",
-      "El hecho 3 menciona \"presenté la solicitud de autorización y entrega... ante la EPS Salud Andina\" sin precisar la ciudad donde se radicó, dato que el caso registra como faltante."
+      "En el hecho 3 se incluye contenido específico de la carta de negación (\"no está incluido en el Plan de Beneficios en Salud (PBS) y que no puede ser financiado por el Sistema General de Seguridad Social en Salud\") que no figura en los hechos del caso; los hechos solo mencionan \"carta de negación\" sin detalle de su motivación.",
+      "En el hecho 4 se afirma \"al cual no he recibido respuesta hasta la fecha\", pero los hechos del caso no informan si hubo o no respuesta al derecho de petición; es una afirmación no respaldada por la información entregada."
      ]
     },
     "metrics": {
@@ -392,22 +721,27 @@
      "escalations": [],
      "notes": [],
      "llm_calls": 1,
-     "input_tokens": 1769,
-     "output_tokens": 2830,
-     "llm_latency_s": 7.43,
-     "cost_usd": 0.010259,
+     "input_tokens": 1278,
+     "output_tokens": 1950,
+     "llm_latency_s": 5.61,
+     "cost_usd": 0.007128,
+     "llm_cost_usd": 0.007128,
+     "search_cost_usd": 0.0,
      "cost_complete": true,
      "tiers": [
       "reasoning"
      ],
-     "cost_all_reasoning_usd": 0.010259,
+     "cost_all_reasoning_usd": 0.007128,
      "tavily_searches": 0,
-     "latency_s": 7.43
+     "tavily_live": 0,
+     "tavily_cached": 0,
+     "tavily_credits": 0,
+     "latency_s": 5.61
     }
    }
   },
   {
-   "t": 37.05,
+   "t": 34.0,
    "event": "step_started",
    "data": {
     "step": "package",
@@ -416,101 +750,81 @@
    }
   },
   {
-   "t": 39.8,
-   "event": "escalated",
-   "data": {
-    "step": "package",
-    "from_tier": "fast",
-    "from_model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
-    "to_tier": "draft",
-    "to_model": "nvidia/nemotron-3-super-120b-a12b",
-    "reasons": [
-     "a right in the summary is a sentence, not a right"
-    ],
-    "remaining_issues": [
-     "a right in the summary is a sentence, not a right"
-    ]
-   }
-  },
-  {
-   "t": 43.27,
+   "t": 36.96,
    "event": "step_completed",
    "data": {
     "step": "package",
     "index": 6,
     "result": {
      "checklist_anexos": [
-      "Copia de cédula de ciudadanía",
-      "Copia de la fórmula médica del medicamento tofacitinib, fechada el 3 de agosto de 2026.",
-      "Copia de la carta de negación del medicamento tofacitinib recibida el 2 de septiembre de 2026.",
-      "Copia del radicado del derecho de petición presentado ante la EPS Salud Andina el 8 de septiembre de 2026.",
-      "Copias relevantes de la historia clínica que evidencian el diagnóstico de artritis reumatoide y la necesidad del tratamiento con tofacitinib."
+      "Copia de identificación",
+      "Copia de la carta de negación del medicamento tofacitinib fechada el 2 de septiembre de 2026",
+      "Copia del radicado del derecho de petición presentado el 8 de septiembre de 2026",
+      "Copia de mi historia clínica relevante que respalda el diagnóstico de artritis reumatoide y la necesidad del medicamento tofacitinib"
      ],
-     "donde_radicar": "Radique la acción de tutela ante cualquier juez de Bucaramanga, ya sea en la oficina judicial o reparto correspondiente al lugar donde ocurrió la violación (EPS Salud Andina). Puede hacerlo de forma presencial o mediante el servicio virtual de la Rama Judicial sin necesidad de abogado. El juez tiene 10 días hábiles para decidir. Dada la urgencia alta, solicite expresamente una medida provisional para que el juez ordene la entrega inmediata del medicamento mientras se resuelve el fondo.",
-     "que_hacer_si_no_cumplen": "Si la EPS Salud Andina no cumple con la orden del juez dentro del plazo indicado, presente un incidente de desacato ante el mismo juez que profirió la sentencia, adjuntando prueba del incumplimiento (como constancia de que no recibió el medicamento).",
+     "donde_radicar": "Radique directamente ante cualquier juez de Bucaramanga, ya sea en persona en la oficina judicial o reparto correspondiente, o mediante el servicio virtual de radicación de la Rama Judicial. No necesita abogado. El juez tiene 10 días hábiles para decidir. Dada la urgencia alta, solicite medida provisional para que se ordene la entrega inmediata del medicamento mientras se resuelve el fondo.",
+     "que_hacer_si_no_cumplen": "Si la EPS Salud Andina no cumple con la orden judicial, presente un incidente de desacato ante el mismo juez que profirió la sentencia.",
      "tutela_recomendada": true,
      "draft": {
       "hechos": [
-       "Yo, mayor de edad, residente en Bucaramanga, afiliado a la EPS Salud Andina, formulo los siguientes hechos:",
-       "El 3 de agosto de 2026, mi reumatóloga en clínica me formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.",
-       "El 10 de agosto de 2026, presenté la solicitud de autorización y entrega del medicamento tofacitinib ante la EPS Salud Andina.",
-       "El 2 de septiembre de 2026, recibí una carta de negación por parte de la EPS Salud Andina, en la cual se negó expresamente la entrega del medicamento tofacitinib.",
-       "El 8 de septiembre de 2026, presenté un derecho de petición ante la EPS Salud Andina solicitando la revisión y respuesta a mi solicitud de tofacitinib, el cual no ha sido respondido a la fecha."
+       "El 3 de agosto de 2026 mi médico tratante formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.",
+       "El 10 de agosto de 2026 radiqué la solicitud de autorización del medicamento tofacitinib ante la EPS Salud Andina.",
+       "El 2 de septiembre de 2026 recibí carta de negación por parte de la EPS Salud Andina, en la cual se indica que el medicamento tofacitinib no está incluido en el Plan de Beneficios en Salud (PBS) y que no puede ser financiado por el Sistema General de Seguridad Social en Salud.",
+       "El 8 de septiembre de 2026 presenté un derecho de petición ante la EPS Salud Andina solicitando una respuesta fundamentada a la negación del medicamento tofacitinib, al cual no he recibido respuesta hasta la fecha."
       ],
       "derechos_vulnerados": [
-       "El derecho fundamental a la salud, consagrado en el artículo 49 de la Constitución Política.",
-       "El derecho a la vida digna, vinculado al artículo 1° de la Constitución Política.",
-       "El derecho a la seguridad social, establecido en el artículo 48 de la Constitución Política.",
-       "El derecho a la dignidad humana, reconocido en el artículo 1° de la Constitución Política."
+       "salud",
+       "vida digna",
+       "seguridad social",
+       "dignidad humana",
+       "vida"
       ],
-      "fundamentos_juridicos": "La acción de tutela procede conforme al artículo 86 de la Constitución Política, ya que se trata de un derecho fundamental vulnerado por actuación u omisión de autoridad pública o de quien ejerza funciones públicas, como es el caso de la EPS Salud Andina al negar un servicio de salud prescrito por el médico tratante. Asimismo, el Decreto 2591 de 1991 regula la acción de tutela y establece su procedencia cuando se vulneran derechos fundamentales y no existe otro medio más idóneo para su protección. La Ley Estatutaria de Salud 1751 de 2015, en su artículo 1°, garantiza el acceso oportuno y necesario a los servicios de salud, incluyendo medicamentos, cuando sean indispensables para la protección de la vida y la dignidad humana. En este sentido, la Corte Constitucional ha señalado que la negativa de una EPS a suministrar un medicamento prescrito por el médico tratante, aun cuando no esté incluido en el Plan de Beneficios en Salud (PBS), vulnera el derecho fundamental a la salud cuando su omisión pone en riesgo la integridad física o la vida del paciente. Esto ha sido reiterado en múltiples sentencias: la Sentencia T-305 de 2006 establece que la negación de un medicamento excluido del Manual del Plan Obligatorio de Salud por una EPS vulnera el derecho a la salud, tal como ocurre en este caso con el tofacitinib para artritis reumatoide. La Sentencia T-1314 de 2005 reitera el deber del EPS de surtir medicamentos excluidos del POS cuando su omisión pone en riesgo derechos fundamentales como la salud, aplicable directamente a la denegación de tofacitinib. La Sentencia T-500 de 2025 reafirma que el derecho a la salud exige la disponibilidad inmediata de tratamientos médicos prescritos, incluso cuando no estén incluidos en el PBS, siendo relevante para sostener la obligación de la EPS de entregar tofacitinib ante riesgo de agravamiento clínico si no se suministra de forma oportuna. Finalmente, la Sentencia T-061 de 2014 refuerza que la negativa prolongada a suministrar un medicamento esencial sanciona la vulneración del derecho a la salud y puede justificar la tutela, especialmente cuando la demora causa un daño irreversible al paciente, como ocurre con la demora en la entrega de tofacitinib tras la negación del 2 de septiembre y la falta de respuesta al derecho de petición del 8 de septiembre.",
+      "fundamentos_juridicos": "Tengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política de Colombia. El Decreto 2591 de 1991 establece que la acción de tutela procede cuando se vulneran derechos fundamentales y no existe otro medio idóneo para su protección. La Ley 1751 de 2015 (Ley Estatutaria de Salud) garantiza el acceso oportuno a los servicios de salud necesarios. La Sentencia T-549 de 2023 establece que la EPS no puede negar un medicamento excluido del PBS alegando imposibilidad de financiación mediante MIPRES, ya que ello vulnera el derecho a la salud. La Sentencia T-124 de 2019 señala que los usuarios tienen derecho al tratamiento completo para su recuperación, procediendo la tutela cuando se niega un medicamento no incluido en el plan de beneficios. La Sentencia T-319 de 2025 reconoce protección especial a personas en condiciones de vulnerabilidad por edad y enfermedad, aplicable a mi caso como paciente de 54 años con artritis reumatoide que requiere tratamiento integral. La Sentencia T-728 de 2005 analiza la negativa de medicamento excluido del POS para artritis reumatoide severa, considerando la vulnerabilidad del paciente, lo que es directamente aplicable a la negativa de tofacitinib por parte de la EPS Salud Andina.",
       "pretensiones": [
-       "Que se ordene a la EPS Salud Andina autorizar, garantizar y hacer efectiva la entrega inmediata del medicamento tofacitinib, formulado por mi reumatóloga el 3 de agosto de 2026, para el tratamiento de mi artritis reumatoide.",
-       "Que se le ordene a la EPS Salud Andina proporcionar el medicamento tofacitinib de manera continua y conforme al esquema terapéutico indicado por el médico tratante, sin interrupciones ni nuevas negaciones injustificadas.",
-       "Que, en caso de que la EPS alegue falta de cobertura en el PBS, se le ordene gestionar el medicamento mediante los mecanismos de excepción y ampliación del PBS previstos en la ley, garantizando mi acceso al tratamiento esencial.",
-       "Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de esta orden, conforme a lo dispuesto en el Decreto 2591 de 1991 y la jurisprudencia constitucional aplicable."
+       "Que se ordene a la EPS Salud Andina autorizar, garantizar y suministrar de manera inmediata el medicamento tofacitinib formulado por mi médico tratante para el tratamiento de mi artritis reumatoide.",
+       "Que se le ordene a la EPS Salud Andina proporcionar el tratamiento integral y continuo necesario para mi condición, incluyendo el medicamento tofacitinib, dentro de un término máximo de 48 horas contadas desde la notificación de esta tutela.",
+       "Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de la orden judicial, conforme a lo dispuesto en el Decreto 2591 de 1991."
       ],
       "pruebas_y_anexos": [
-       "Copia de la fórmula médica del medicamento tofacitinib, fechada el 3 de agosto de 2026.",
-       "Copia de la carta de negación del medicamento tofacitinib recibida el 2 de septiembre de 2026.",
-       "Copia del radicado del derecho de petición presentado ante la EPS Salud Andina el 8 de septiembre de 2026.",
-       "Copias relevantes de mi historia clínica que evidencian el diagnóstico de artritis reumatoide y la necesidad del tratamiento con tofacitinib."
+       "Copia de la carta de negación del medicamento tofacitinib fechada el 2 de septiembre de 2026.",
+       "Copia del radicado del derecho de petición presentado el 8 de septiembre de 2026.",
+       "Copia de mi historia clínica relevante que respalda el diagnóstico de artritis reumatoide y la necesidad del medicamento tofacitinib."
       ],
-      "juramento": "Juro solemnemente que no he presentado previamente otra acción de tutela por los mismos hechos y por la vulneración de los mismos derechos fundamentales aquí expuestos.",
+      "juramento": "Juro solemnemente que no he presentado otra acción de tutela por los mismos hechos y con el mismo objeto que la presente acción.",
       "accionada": "Salud Andina",
       "ciudad": "Bucaramanga",
-      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBucaramanga\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Salud Andina\nDERECHOS INVOCADOS: la salud, consagrado en el artículo 49 de la Constitución Política., la vida digna, vinculado al artículo 1° de la Constitución Política., la seguridad social, establecido en el artículo 48 de la Constitución Política., la dignidad humana, reconocido en el artículo 1° de la Constitución Política.\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Bucaramanga, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Salud Andina, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a la salud, consagrado en el artículo 49 de la Constitución Política., la vida digna, vinculado al artículo 1° de la Constitución Política., la seguridad social, establecido en el artículo 48 de la Constitución Política., la dignidad humana, reconocido en el artículo 1° de la Constitución Política., con base en los siguientes:\n\nI. HECHOS\n\n1. Yo, mayor de edad, residente en Bucaramanga, afiliado a la EPS Salud Andina, formulo los siguientes hechos:\n2. El 3 de agosto de 2026, mi reumatóloga en clínica me formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.\n3. El 10 de agosto de 2026, presenté la solicitud de autorización y entrega del medicamento tofacitinib ante la EPS Salud Andina.\n4. El 2 de septiembre de 2026, recibí una carta de negación por parte de la EPS Salud Andina, en la cual se negó expresamente la entrega del medicamento tofacitinib.\n5. El 8 de septiembre de 2026, presenté un derecho de petición ante la EPS Salud Andina solicitando la revisión y respuesta a mi solicitud de tofacitinib, el cual no ha sido respondido a la fecha.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. El derecho fundamental a la salud, consagrado en el artículo 49 de la Constitución Política.\n2. El derecho a la vida digna, vinculado al artículo 1° de la Constitución Política.\n3. El derecho a la seguridad social, establecido en el artículo 48 de la Constitución Política.\n4. El derecho a la dignidad humana, reconocido en el artículo 1° de la Constitución Política.\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nLa acción de tutela procede conforme al artículo 86 de la Constitución Política, ya que se trata de un derecho fundamental vulnerado por actuación u omisión de autoridad pública o de quien ejerza funciones públicas, como es el caso de la EPS Salud Andina al negar un servicio de salud prescrito por el médico tratante. Asimismo, el Decreto 2591 de 1991 regula la acción de tutela y establece su procedencia cuando se vulneran derechos fundamentales y no existe otro medio más idóneo para su protección. La Ley Estatutaria de Salud 1751 de 2015, en su artículo 1°, garantiza el acceso oportuno y necesario a los servicios de salud, incluyendo medicamentos, cuando sean indispensables para la protección de la vida y la dignidad humana. En este sentido, la Corte Constitucional ha señalado que la negativa de una EPS a suministrar un medicamento prescrito por el médico tratante, aun cuando no esté incluido en el Plan de Beneficios en Salud (PBS), vulnera el derecho fundamental a la salud cuando su omisión pone en riesgo la integridad física o la vida del paciente. Esto ha sido reiterado en múltiples sentencias: la Sentencia T-305 de 2006 establece que la negación de un medicamento excluido del Manual del Plan Obligatorio de Salud por una EPS vulnera el derecho a la salud, tal como ocurre en este caso con el tofacitinib para artritis reumatoide. La Sentencia T-1314 de 2005 reitera el deber del EPS de surtir medicamentos excluidos del POS cuando su omisión pone en riesgo derechos fundamentales como la salud, aplicable directamente a la denegación de tofacitinib. La Sentencia T-500 de 2025 reafirma que el derecho a la salud exige la disponibilidad inmediata de tratamientos médicos prescritos, incluso cuando no estén incluidos en el PBS, siendo relevante para sostener la obligación de la EPS de entregar tofacitinib ante riesgo de agravamiento clínico si no se suministra de forma oportuna. Finalmente, la Sentencia T-061 de 2014 refuerza que la negativa prolongada a suministrar un medicamento esencial sanciona la vulneración del derecho a la salud y puede justificar la tutela, especialmente cuando la demora causa un daño irreversible al paciente, como ocurre con la demora en la entrega de tofacitinib tras la negación del 2 de septiembre y la falta de respuesta al derecho de petición del 8 de septiembre.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Salud Andina autorizar, garantizar y hacer efectiva la entrega inmediata del medicamento tofacitinib, formulado por mi reumatóloga el 3 de agosto de 2026, para el tratamiento de mi artritis reumatoide.\n2. Que se le ordene a la EPS Salud Andina proporcionar el medicamento tofacitinib de manera continua y conforme al esquema terapéutico indicado por el médico tratante, sin interrupciones ni nuevas negaciones injustificadas.\n3. Que, en caso de que la EPS alegue falta de cobertura en el PBS, se le ordene gestionar el medicamento mediante los mecanismos de excepción y ampliación del PBS previstos en la ley, garantizando mi acceso al tratamiento esencial.\n4. Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de esta orden, conforme a lo dispuesto en el Decreto 2591 de 1991 y la jurisprudencia constitucional aplicable.\n\nV. PRUEBAS Y ANEXOS\n\n1. Copia de la fórmula médica del medicamento tofacitinib, fechada el 3 de agosto de 2026.\n2. Copia de la carta de negación del medicamento tofacitinib recibida el 2 de septiembre de 2026.\n3. Copia del radicado del derecho de petición presentado ante la EPS Salud Andina el 8 de septiembre de 2026.\n4. Copias relevantes de mi historia clínica que evidencian el diagnóstico de artritis reumatoide y la necesidad del tratamiento con tofacitinib.\n\nVI. JURAMENTO\n\n\nJuro solemnemente que no he presentado previamente otra acción de tutela por los mismos hechos y por la vulneración de los mismos derechos fundamentales aquí expuestos.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Salud Andina, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
+      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBucaramanga\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Salud Andina\nDERECHOS INVOCADOS: salud, vida digna, seguridad social, dignidad humana, vida\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Bucaramanga, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Salud Andina, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida digna, seguridad social, dignidad humana, vida, con base en los siguientes:\n\nI. HECHOS\n\n1. El 3 de agosto de 2026 mi médico tratante formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.\n2. El 10 de agosto de 2026 radiqué la solicitud de autorización del medicamento tofacitinib ante la EPS Salud Andina.\n3. El 2 de septiembre de 2026 recibí carta de negación por parte de la EPS Salud Andina, en la cual se indica que el medicamento tofacitinib no está incluido en el Plan de Beneficios en Salud (PBS) y que no puede ser financiado por el Sistema General de Seguridad Social en Salud.\n4. El 8 de septiembre de 2026 presenté un derecho de petición ante la EPS Salud Andina solicitando una respuesta fundamentada a la negación del medicamento tofacitinib, al cual no he recibido respuesta hasta la fecha.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida digna\n3. seguridad social\n4. dignidad humana\n5. vida\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política de Colombia. El Decreto 2591 de 1991 establece que la acción de tutela procede cuando se vulneran derechos fundamentales y no existe otro medio idóneo para su protección. La Ley 1751 de 2015 (Ley Estatutaria de Salud) garantiza el acceso oportuno a los servicios de salud necesarios. La Sentencia T-549 de 2023 establece que la EPS no puede negar un medicamento excluido del PBS alegando imposibilidad de financiación mediante MIPRES, ya que ello vulnera el derecho a la salud. La Sentencia T-124 de 2019 señala que los usuarios tienen derecho al tratamiento completo para su recuperación, procediendo la tutela cuando se niega un medicamento no incluido en el plan de beneficios. La Sentencia T-319 de 2025 reconoce protección especial a personas en condiciones de vulnerabilidad por edad y enfermedad, aplicable a mi caso como paciente de 54 años con artritis reumatoide que requiere tratamiento integral. La Sentencia T-728 de 2005 analiza la negativa de medicamento excluido del POS para artritis reumatoide severa, considerando la vulnerabilidad del paciente, lo que es directamente aplicable a la negativa de tofacitinib por parte de la EPS Salud Andina.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Salud Andina autorizar, garantizar y suministrar de manera inmediata el medicamento tofacitinib formulado por mi médico tratante para el tratamiento de mi artritis reumatoide.\n2. Que se le ordene a la EPS Salud Andina proporcionar el tratamiento integral y continuo necesario para mi condición, incluyendo el medicamento tofacitinib, dentro de un término máximo de 48 horas contadas desde la notificación de esta tutela.\n3. Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de la orden judicial, conforme a lo dispuesto en el Decreto 2591 de 1991.\n\nV. PRUEBAS Y ANEXOS\n\n1. Copia de la carta de negación del medicamento tofacitinib fechada el 2 de septiembre de 2026.\n2. Copia del radicado del derecho de petición presentado el 8 de septiembre de 2026.\n3. Copia de mi historia clínica relevante que respalda el diagnóstico de artritis reumatoide y la necesidad del medicamento tofacitinib.\n\nVI. JURAMENTO\n\n\nJuro solemnemente que no he presentado otra acción de tutela por los mismos hechos y con el mismo objeto que la presente acción.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Salud Andina, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
      },
      "verification": {
       "citas_encontradas": [
-       "T-305/06",
-       "T-1314/05",
-       "T-500/25",
-       "T-061/14"
+       "T-549/23",
+       "T-124/19",
+       "T-319/25",
+       "T-728/05"
       ],
       "citas_verificadas": [
        {
-        "sentencia_id": "T-305/06",
+        "sentencia_id": "T-549/23",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2006/t-305-06.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-549-23.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
-        "sentencia_id": "T-1314/05",
+        "sentencia_id": "T-124/19",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2005/t-1314-05.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2019/t-124-19.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
-        "sentencia_id": "T-500/25",
+        "sentencia_id": "T-319/25",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2025/T-500-25.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2025/t-319-25.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
-        "sentencia_id": "T-061/14",
+        "sentencia_id": "T-728/05",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2014/t-061-14.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2005/T-728-05.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        }
       ],
@@ -519,53 +833,51 @@
       "ciclo": [],
       "iteraciones": 0,
       "observaciones": [
-       "En los hechos se describe al accionante como \"mayor de edad\", pero los datos del caso indican que tiene 54 años; en Colombia la calidad de \"mayor de edad\" se reconoce a partir de los 60 años (Ley 1251 de 2008), por lo que esa calificación es inexacta.",
-       "En el hecho 5 se afirma que el derecho de petición \"no ha sido respondido a la fecha\", pero los hechos del caso no contienen información sobre si hubo o no respuesta; se trata de una aseveración no verificada que podría resultar falsa.",
-       "Los hechos no incluyen el número de radicado de la solicitud del 10 de agosto ni del derecho de petición del 8 de septiembre, datos que el caso señala como faltantes; aunque no son hechos inventados, su omisión puede generar inconsistencias al momento de aportar las pruebas.",
-       "El hecho 3 menciona \"presenté la solicitud de autorización y entrega... ante la EPS Salud Andina\" sin precisar la ciudad donde se radicó, dato que el caso registra como faltante."
+       "En el hecho 3 se incluye contenido específico de la carta de negación (\"no está incluido en el Plan de Beneficios en Salud (PBS) y que no puede ser financiado por el Sistema General de Seguridad Social en Salud\") que no figura en los hechos del caso; los hechos solo mencionan \"carta de negación\" sin detalle de su motivación.",
+       "En el hecho 4 se afirma \"al cual no he recibido respuesta hasta la fecha\", pero los hechos del caso no informan si hubo o no respuesta al derecho de petición; es una afirmación no respaldada por la información entregada."
       ]
      },
      "orientacion": null,
      "canal_radicacion": {
       "ciudad": "Bucaramanga",
       "encontrado": true,
-      "descripcion": "La fuente oficial citada publica los medios autorizados para presentar tutelas en línea en Bucaramanga. Consulte allí el enlace o el correo vigente.",
-      "enlace": "https://www.ramajudicial.gov.co/web/ventanilla/servicios",
+      "descripcion": "Recepción y reparto de demandas ordinarias de la Dirección Seccional de Administración Judicial de Bucaramanga - Ventanilla de servicios",
+      "enlace": null,
       "correo": null,
-      "fuente_url": "https://www.ramajudicial.gov.co/web/ventanilla/servicios",
-      "fuente_titulo": "Ventanilla Única - Ventanilla de servicios",
-      "consultado": "2026-10-23"
+      "fuente_url": "https://www.ramajudicial.gov.co/web/direccion-seccional-de-administracion-judicial-de-bucaramanga/novedades/-/asset_publisher/0dzRda5kPM3V/content/medios-electronicos-autorizados-recepcion-de-acciones-constitucionales-acciones-de-tutela-y-habeas-corpus-",
+      "fuente_titulo": "MEDIOS ELECTRÓNICOS AUTORIZADOS-RECEPCIÓN DE ACCIONES CONSTITUCIONALES (ACCIONES DE TUTELA Y HABEAS CORPUS) - DIRECCIÓN SECCIONAL DE ADMINISTRACIÓN JUDICIAL DE BUCARAMANGA",
+      "consultado": "2026-10-28"
      },
      "resumen_revisores": {
-      "facts": "The petitioner is an adult resident of Bucaramanga affiliated with EPS Salud Andina. On August 3, 2026, their rheumatologist prescribed tofacitinib for rheumatoid arthritis treatment. On August 10, 2026, they requested authorization and delivery of the medication from EPS Salud Andina. On September 2, 2026, they received a denial letter from the EPS refusing to provide tofacitinib. On September 8, 2026, they submitted a petition right (derecho de petición) requesting review and response, which remains unanswered.",
+      "facts": "On August 3, 2026, the petitioner's treating physician prescribed tofacitinib for rheumatoid arthritis. On August 10, 2026, the petitioner submitted a request for authorization of tofacitinib to EPS Salud Andina. On September 2, 2026, EPS Salud Andina sent a denial letter stating that tofacitinib is not included in the Plan de Beneficios en Salud (PBS) and cannot be financed by the General Social Security System in Health. On September 8, 2026, the petitioner filed a petition for information before EPS Salud Andina to obtain a justified response to the denial; no response has been received.",
       "rights_invoked": [
-       "The fundamental right to health under Article 49 of the Political Constitution.",
-       "The right to a dignified life linked to Article 1 of the Political Constitution.",
-       "The right to social security established in Article 48 of the Political Constitution.",
-       "The right to human dignity recognized in Article 1 of the Political Constitution."
+       "health",
+       "dignified life",
+       "social security",
+       "human dignity",
+       "life"
       ],
       "requests": [
-       "Order EPS Salud Andina to authorize, guarantee, and immediately deliver the tofacitinib prescribed on August 3, 2026, for rheumatoid arthritis treatment.",
-       "Order EPS Salud Andina to provide tofacitinib continuously and according to the treating physician’s therapeutic scheme without interruption or unjustified denials.",
-       "If EPS Salud Andina claims lack of PBS coverage, order it to obtain the medication via PBS exception and expansion mechanisms under the law to ensure access to essential treatment.",
-       "Impose a daily fine on EPS Salud Andina for each day of delay in complying with this order, per Decree 2591 of 1991 and applicable constitutional jurisprudence."
+       "The EPS must immediately authorize, guarantee, and provide tofacitinib prescribed for rheumatoid arthritis.",
+       "The EPS must provide the necessary integral and continuous treatment within 48 hours from notification of the judgment.",
+       "EPS must pay a daily fine for each day of delay in complying with the judicial order."
       ],
       "rulings": [
        {
-        "ruling_id": "T-305/06",
-        "why": "It establishes that denying a medication excluded from the Mandatory Health Benefits Plan by an EPS violates the right to health when such omission endangers physical integrity or life, as with tofacitinib for rheumatoid arthritis here."
+        "ruling_id": "T-549/23",
+        "why": "It states that EPS cannot deny a PBS-excluded medication claiming financing impossibility via MIPRES, as this violates the right to health, directly relevant to the denial based on PBS exclusion."
        },
        {
-        "ruling_id": "T-1314/05",
-        "why": "It reiterates the EPS duty to supply medications excluded from the POS when omission threatens fundamental rights like health, directly applicable to the tofacitinib denial."
+        "ruling_id": "T-124/19",
+        "why": "It confirms users' right to full treatment for recovery, allowing tutela when a non-PBS medication is denied, applicable to refusal of tofacitinib."
        },
        {
-        "ruling_id": "T-500/25",
-        "why": "It reaffirms that the right to health requires immediate availability of prescribed treatments, even if not in the PBS, supporting the EPS obligation to deliver tofacitinib to prevent clinical deterioration."
+        "ruling_id": "T-319/25",
+        "why": "It recognizes special protection for individuals vulnerable due to age and illness, applicable to a 54-year-old patient with rheumatoid arthritis requiring comprehensive treatment."
        },
        {
-        "ruling_id": "T-061/14",
-        "why": "It reinforces that prolonged denial of an essential medication sanctions health right violations and may justify tutela when delay causes irreversible harm, as with the delay here after the September 2 denial and unanswered petition."
+        "ruling_id": "T-728/05",
+        "why": "It analyzes denial of medication excluded from the POS for severe rheumatoid arthritis, considering patient vulnerability and confirming applicable principles to the present case."
        }
       ]
      },
@@ -577,115 +889,103 @@
       "nvidia/nemotron-3-super-120b-a12b"
      ],
      "final_model": "nvidia/nemotron-3-super-120b-a12b",
-     "escalations": [
-      {
-       "step": "package",
-       "from_tier": "fast",
-       "from_model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
-       "to_tier": "draft",
-       "to_model": "nvidia/nemotron-3-super-120b-a12b",
-       "reasons": [
-        "a right in the summary is a sentence, not a right"
-       ],
-       "remaining_issues": [
-        "a right in the summary is a sentence, not a right"
-       ]
-      }
-     ],
+     "escalations": [],
      "notes": [],
-     "llm_calls": 4,
-     "input_tokens": 6256,
-     "output_tokens": 1642,
-     "llm_latency_s": 9.31,
-     "cost_usd": 0.0019,
+     "llm_calls": 3,
+     "input_tokens": 3823,
+     "output_tokens": 842,
+     "llm_latency_s": 6.24,
+     "cost_usd": 0.000723,
+     "llm_cost_usd": 0.000723,
+     "search_cost_usd": 0.0,
      "cost_complete": true,
      "tiers": [
       "fast",
       "draft"
      ],
-     "cost_all_reasoning_usd": 0.011182,
+     "cost_all_reasoning_usd": 0.006349,
      "tavily_searches": 2,
-     "latency_s": 6.22
+     "tavily_live": 0,
+     "tavily_cached": 2,
+     "tavily_credits": 0,
+     "latency_s": 2.96
     }
    }
   },
   {
-   "t": 43.27,
+   "t": 36.96,
    "event": "case_completed",
    "data": {
     "package": {
      "checklist_anexos": [
-      "Copia de cédula de ciudadanía",
-      "Copia de la fórmula médica del medicamento tofacitinib, fechada el 3 de agosto de 2026.",
-      "Copia de la carta de negación del medicamento tofacitinib recibida el 2 de septiembre de 2026.",
-      "Copia del radicado del derecho de petición presentado ante la EPS Salud Andina el 8 de septiembre de 2026.",
-      "Copias relevantes de la historia clínica que evidencian el diagnóstico de artritis reumatoide y la necesidad del tratamiento con tofacitinib."
+      "Copia de identificación",
+      "Copia de la carta de negación del medicamento tofacitinib fechada el 2 de septiembre de 2026",
+      "Copia del radicado del derecho de petición presentado el 8 de septiembre de 2026",
+      "Copia de mi historia clínica relevante que respalda el diagnóstico de artritis reumatoide y la necesidad del medicamento tofacitinib"
      ],
-     "donde_radicar": "Radique la acción de tutela ante cualquier juez de Bucaramanga, ya sea en la oficina judicial o reparto correspondiente al lugar donde ocurrió la violación (EPS Salud Andina). Puede hacerlo de forma presencial o mediante el servicio virtual de la Rama Judicial sin necesidad de abogado. El juez tiene 10 días hábiles para decidir. Dada la urgencia alta, solicite expresamente una medida provisional para que el juez ordene la entrega inmediata del medicamento mientras se resuelve el fondo.",
-     "que_hacer_si_no_cumplen": "Si la EPS Salud Andina no cumple con la orden del juez dentro del plazo indicado, presente un incidente de desacato ante el mismo juez que profirió la sentencia, adjuntando prueba del incumplimiento (como constancia de que no recibió el medicamento).",
+     "donde_radicar": "Radique directamente ante cualquier juez de Bucaramanga, ya sea en persona en la oficina judicial o reparto correspondiente, o mediante el servicio virtual de radicación de la Rama Judicial. No necesita abogado. El juez tiene 10 días hábiles para decidir. Dada la urgencia alta, solicite medida provisional para que se ordene la entrega inmediata del medicamento mientras se resuelve el fondo.",
+     "que_hacer_si_no_cumplen": "Si la EPS Salud Andina no cumple con la orden judicial, presente un incidente de desacato ante el mismo juez que profirió la sentencia.",
      "tutela_recomendada": true,
      "draft": {
       "hechos": [
-       "Yo, mayor de edad, residente en Bucaramanga, afiliado a la EPS Salud Andina, formulo los siguientes hechos:",
-       "El 3 de agosto de 2026, mi reumatóloga en clínica me formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.",
-       "El 10 de agosto de 2026, presenté la solicitud de autorización y entrega del medicamento tofacitinib ante la EPS Salud Andina.",
-       "El 2 de septiembre de 2026, recibí una carta de negación por parte de la EPS Salud Andina, en la cual se negó expresamente la entrega del medicamento tofacitinib.",
-       "El 8 de septiembre de 2026, presenté un derecho de petición ante la EPS Salud Andina solicitando la revisión y respuesta a mi solicitud de tofacitinib, el cual no ha sido respondido a la fecha."
+       "El 3 de agosto de 2026 mi médico tratante formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.",
+       "El 10 de agosto de 2026 radiqué la solicitud de autorización del medicamento tofacitinib ante la EPS Salud Andina.",
+       "El 2 de septiembre de 2026 recibí carta de negación por parte de la EPS Salud Andina, en la cual se indica que el medicamento tofacitinib no está incluido en el Plan de Beneficios en Salud (PBS) y que no puede ser financiado por el Sistema General de Seguridad Social en Salud.",
+       "El 8 de septiembre de 2026 presenté un derecho de petición ante la EPS Salud Andina solicitando una respuesta fundamentada a la negación del medicamento tofacitinib, al cual no he recibido respuesta hasta la fecha."
       ],
       "derechos_vulnerados": [
-       "El derecho fundamental a la salud, consagrado en el artículo 49 de la Constitución Política.",
-       "El derecho a la vida digna, vinculado al artículo 1° de la Constitución Política.",
-       "El derecho a la seguridad social, establecido en el artículo 48 de la Constitución Política.",
-       "El derecho a la dignidad humana, reconocido en el artículo 1° de la Constitución Política."
+       "salud",
+       "vida digna",
+       "seguridad social",
+       "dignidad humana",
+       "vida"
       ],
-      "fundamentos_juridicos": "La acción de tutela procede conforme al artículo 86 de la Constitución Política, ya que se trata de un derecho fundamental vulnerado por actuación u omisión de autoridad pública o de quien ejerza funciones públicas, como es el caso de la EPS Salud Andina al negar un servicio de salud prescrito por el médico tratante. Asimismo, el Decreto 2591 de 1991 regula la acción de tutela y establece su procedencia cuando se vulneran derechos fundamentales y no existe otro medio más idóneo para su protección. La Ley Estatutaria de Salud 1751 de 2015, en su artículo 1°, garantiza el acceso oportuno y necesario a los servicios de salud, incluyendo medicamentos, cuando sean indispensables para la protección de la vida y la dignidad humana. En este sentido, la Corte Constitucional ha señalado que la negativa de una EPS a suministrar un medicamento prescrito por el médico tratante, aun cuando no esté incluido en el Plan de Beneficios en Salud (PBS), vulnera el derecho fundamental a la salud cuando su omisión pone en riesgo la integridad física o la vida del paciente. Esto ha sido reiterado en múltiples sentencias: la Sentencia T-305 de 2006 establece que la negación de un medicamento excluido del Manual del Plan Obligatorio de Salud por una EPS vulnera el derecho a la salud, tal como ocurre en este caso con el tofacitinib para artritis reumatoide. La Sentencia T-1314 de 2005 reitera el deber del EPS de surtir medicamentos excluidos del POS cuando su omisión pone en riesgo derechos fundamentales como la salud, aplicable directamente a la denegación de tofacitinib. La Sentencia T-500 de 2025 reafirma que el derecho a la salud exige la disponibilidad inmediata de tratamientos médicos prescritos, incluso cuando no estén incluidos en el PBS, siendo relevante para sostener la obligación de la EPS de entregar tofacitinib ante riesgo de agravamiento clínico si no se suministra de forma oportuna. Finalmente, la Sentencia T-061 de 2014 refuerza que la negativa prolongada a suministrar un medicamento esencial sanciona la vulneración del derecho a la salud y puede justificar la tutela, especialmente cuando la demora causa un daño irreversible al paciente, como ocurre con la demora en la entrega de tofacitinib tras la negación del 2 de septiembre y la falta de respuesta al derecho de petición del 8 de septiembre.",
+      "fundamentos_juridicos": "Tengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política de Colombia. El Decreto 2591 de 1991 establece que la acción de tutela procede cuando se vulneran derechos fundamentales y no existe otro medio idóneo para su protección. La Ley 1751 de 2015 (Ley Estatutaria de Salud) garantiza el acceso oportuno a los servicios de salud necesarios. La Sentencia T-549 de 2023 establece que la EPS no puede negar un medicamento excluido del PBS alegando imposibilidad de financiación mediante MIPRES, ya que ello vulnera el derecho a la salud. La Sentencia T-124 de 2019 señala que los usuarios tienen derecho al tratamiento completo para su recuperación, procediendo la tutela cuando se niega un medicamento no incluido en el plan de beneficios. La Sentencia T-319 de 2025 reconoce protección especial a personas en condiciones de vulnerabilidad por edad y enfermedad, aplicable a mi caso como paciente de 54 años con artritis reumatoide que requiere tratamiento integral. La Sentencia T-728 de 2005 analiza la negativa de medicamento excluido del POS para artritis reumatoide severa, considerando la vulnerabilidad del paciente, lo que es directamente aplicable a la negativa de tofacitinib por parte de la EPS Salud Andina.",
       "pretensiones": [
-       "Que se ordene a la EPS Salud Andina autorizar, garantizar y hacer efectiva la entrega inmediata del medicamento tofacitinib, formulado por mi reumatóloga el 3 de agosto de 2026, para el tratamiento de mi artritis reumatoide.",
-       "Que se le ordene a la EPS Salud Andina proporcionar el medicamento tofacitinib de manera continua y conforme al esquema terapéutico indicado por el médico tratante, sin interrupciones ni nuevas negaciones injustificadas.",
-       "Que, en caso de que la EPS alegue falta de cobertura en el PBS, se le ordene gestionar el medicamento mediante los mecanismos de excepción y ampliación del PBS previstos en la ley, garantizando mi acceso al tratamiento esencial.",
-       "Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de esta orden, conforme a lo dispuesto en el Decreto 2591 de 1991 y la jurisprudencia constitucional aplicable."
+       "Que se ordene a la EPS Salud Andina autorizar, garantizar y suministrar de manera inmediata el medicamento tofacitinib formulado por mi médico tratante para el tratamiento de mi artritis reumatoide.",
+       "Que se le ordene a la EPS Salud Andina proporcionar el tratamiento integral y continuo necesario para mi condición, incluyendo el medicamento tofacitinib, dentro de un término máximo de 48 horas contadas desde la notificación de esta tutela.",
+       "Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de la orden judicial, conforme a lo dispuesto en el Decreto 2591 de 1991."
       ],
       "pruebas_y_anexos": [
-       "Copia de la fórmula médica del medicamento tofacitinib, fechada el 3 de agosto de 2026.",
-       "Copia de la carta de negación del medicamento tofacitinib recibida el 2 de septiembre de 2026.",
-       "Copia del radicado del derecho de petición presentado ante la EPS Salud Andina el 8 de septiembre de 2026.",
-       "Copias relevantes de mi historia clínica que evidencian el diagnóstico de artritis reumatoide y la necesidad del tratamiento con tofacitinib."
+       "Copia de la carta de negación del medicamento tofacitinib fechada el 2 de septiembre de 2026.",
+       "Copia del radicado del derecho de petición presentado el 8 de septiembre de 2026.",
+       "Copia de mi historia clínica relevante que respalda el diagnóstico de artritis reumatoide y la necesidad del medicamento tofacitinib."
       ],
-      "juramento": "Juro solemnemente que no he presentado previamente otra acción de tutela por los mismos hechos y por la vulneración de los mismos derechos fundamentales aquí expuestos.",
+      "juramento": "Juro solemnemente que no he presentado otra acción de tutela por los mismos hechos y con el mismo objeto que la presente acción.",
       "accionada": "Salud Andina",
       "ciudad": "Bucaramanga",
-      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBucaramanga\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Salud Andina\nDERECHOS INVOCADOS: la salud, consagrado en el artículo 49 de la Constitución Política., la vida digna, vinculado al artículo 1° de la Constitución Política., la seguridad social, establecido en el artículo 48 de la Constitución Política., la dignidad humana, reconocido en el artículo 1° de la Constitución Política.\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Bucaramanga, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Salud Andina, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a la salud, consagrado en el artículo 49 de la Constitución Política., la vida digna, vinculado al artículo 1° de la Constitución Política., la seguridad social, establecido en el artículo 48 de la Constitución Política., la dignidad humana, reconocido en el artículo 1° de la Constitución Política., con base en los siguientes:\n\nI. HECHOS\n\n1. Yo, mayor de edad, residente en Bucaramanga, afiliado a la EPS Salud Andina, formulo los siguientes hechos:\n2. El 3 de agosto de 2026, mi reumatóloga en clínica me formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.\n3. El 10 de agosto de 2026, presenté la solicitud de autorización y entrega del medicamento tofacitinib ante la EPS Salud Andina.\n4. El 2 de septiembre de 2026, recibí una carta de negación por parte de la EPS Salud Andina, en la cual se negó expresamente la entrega del medicamento tofacitinib.\n5. El 8 de septiembre de 2026, presenté un derecho de petición ante la EPS Salud Andina solicitando la revisión y respuesta a mi solicitud de tofacitinib, el cual no ha sido respondido a la fecha.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. El derecho fundamental a la salud, consagrado en el artículo 49 de la Constitución Política.\n2. El derecho a la vida digna, vinculado al artículo 1° de la Constitución Política.\n3. El derecho a la seguridad social, establecido en el artículo 48 de la Constitución Política.\n4. El derecho a la dignidad humana, reconocido en el artículo 1° de la Constitución Política.\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nLa acción de tutela procede conforme al artículo 86 de la Constitución Política, ya que se trata de un derecho fundamental vulnerado por actuación u omisión de autoridad pública o de quien ejerza funciones públicas, como es el caso de la EPS Salud Andina al negar un servicio de salud prescrito por el médico tratante. Asimismo, el Decreto 2591 de 1991 regula la acción de tutela y establece su procedencia cuando se vulneran derechos fundamentales y no existe otro medio más idóneo para su protección. La Ley Estatutaria de Salud 1751 de 2015, en su artículo 1°, garantiza el acceso oportuno y necesario a los servicios de salud, incluyendo medicamentos, cuando sean indispensables para la protección de la vida y la dignidad humana. En este sentido, la Corte Constitucional ha señalado que la negativa de una EPS a suministrar un medicamento prescrito por el médico tratante, aun cuando no esté incluido en el Plan de Beneficios en Salud (PBS), vulnera el derecho fundamental a la salud cuando su omisión pone en riesgo la integridad física o la vida del paciente. Esto ha sido reiterado en múltiples sentencias: la Sentencia T-305 de 2006 establece que la negación de un medicamento excluido del Manual del Plan Obligatorio de Salud por una EPS vulnera el derecho a la salud, tal como ocurre en este caso con el tofacitinib para artritis reumatoide. La Sentencia T-1314 de 2005 reitera el deber del EPS de surtir medicamentos excluidos del POS cuando su omisión pone en riesgo derechos fundamentales como la salud, aplicable directamente a la denegación de tofacitinib. La Sentencia T-500 de 2025 reafirma que el derecho a la salud exige la disponibilidad inmediata de tratamientos médicos prescritos, incluso cuando no estén incluidos en el PBS, siendo relevante para sostener la obligación de la EPS de entregar tofacitinib ante riesgo de agravamiento clínico si no se suministra de forma oportuna. Finalmente, la Sentencia T-061 de 2014 refuerza que la negativa prolongada a suministrar un medicamento esencial sanciona la vulneración del derecho a la salud y puede justificar la tutela, especialmente cuando la demora causa un daño irreversible al paciente, como ocurre con la demora en la entrega de tofacitinib tras la negación del 2 de septiembre y la falta de respuesta al derecho de petición del 8 de septiembre.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Salud Andina autorizar, garantizar y hacer efectiva la entrega inmediata del medicamento tofacitinib, formulado por mi reumatóloga el 3 de agosto de 2026, para el tratamiento de mi artritis reumatoide.\n2. Que se le ordene a la EPS Salud Andina proporcionar el medicamento tofacitinib de manera continua y conforme al esquema terapéutico indicado por el médico tratante, sin interrupciones ni nuevas negaciones injustificadas.\n3. Que, en caso de que la EPS alegue falta de cobertura en el PBS, se le ordene gestionar el medicamento mediante los mecanismos de excepción y ampliación del PBS previstos en la ley, garantizando mi acceso al tratamiento esencial.\n4. Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de esta orden, conforme a lo dispuesto en el Decreto 2591 de 1991 y la jurisprudencia constitucional aplicable.\n\nV. PRUEBAS Y ANEXOS\n\n1. Copia de la fórmula médica del medicamento tofacitinib, fechada el 3 de agosto de 2026.\n2. Copia de la carta de negación del medicamento tofacitinib recibida el 2 de septiembre de 2026.\n3. Copia del radicado del derecho de petición presentado ante la EPS Salud Andina el 8 de septiembre de 2026.\n4. Copias relevantes de mi historia clínica que evidencian el diagnóstico de artritis reumatoide y la necesidad del tratamiento con tofacitinib.\n\nVI. JURAMENTO\n\n\nJuro solemnemente que no he presentado previamente otra acción de tutela por los mismos hechos y por la vulneración de los mismos derechos fundamentales aquí expuestos.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Salud Andina, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
+      "texto_completo": "Señor(a)\nJUEZ(A) DE LA REPÚBLICA (REPARTO)\nBucaramanga\nE. S. D.\n\nREFERENCIA: ACCIÓN DE TUTELA\nACCIONANTE: [COMPLETAR: nombre completo], C.C. [COMPLETAR: número de cédula]\nACCIONADA: Salud Andina\nDERECHOS INVOCADOS: salud, vida digna, seguridad social, dignidad humana, vida\n\n[COMPLETAR: nombre completo], mayor de edad, identificado(a) con la cédula de ciudadanía No. [COMPLETAR: número de cédula], domiciliado(a) en Bucaramanga, actuando en nombre propio, respetuosamente presento ACCIÓN DE TUTELA contra Salud Andina, con fundamento en el artículo 86 de la Constitución Política y el Decreto 2591 de 1991, para que se protejan mis derechos fundamentales a salud, vida digna, seguridad social, dignidad humana, vida, con base en los siguientes:\n\nI. HECHOS\n\n1. El 3 de agosto de 2026 mi médico tratante formuló el medicamento tofacitinib para el tratamiento de mi artritis reumatoide.\n2. El 10 de agosto de 2026 radiqué la solicitud de autorización del medicamento tofacitinib ante la EPS Salud Andina.\n3. El 2 de septiembre de 2026 recibí carta de negación por parte de la EPS Salud Andina, en la cual se indica que el medicamento tofacitinib no está incluido en el Plan de Beneficios en Salud (PBS) y que no puede ser financiado por el Sistema General de Seguridad Social en Salud.\n4. El 8 de septiembre de 2026 presenté un derecho de petición ante la EPS Salud Andina solicitando una respuesta fundamentada a la negación del medicamento tofacitinib, al cual no he recibido respuesta hasta la fecha.\n\nII. DERECHOS FUNDAMENTALES VULNERADOS\n\n1. salud\n2. vida digna\n3. seguridad social\n4. dignidad humana\n5. vida\n\nIII. FUNDAMENTOS JURÍDICOS\n\n\nTengo derecho a la protección de mi salud, vida digna y seguridad social según los artículos 11, 48, 49 y 86 de la Constitución Política de Colombia. El Decreto 2591 de 1991 establece que la acción de tutela procede cuando se vulneran derechos fundamentales y no existe otro medio idóneo para su protección. La Ley 1751 de 2015 (Ley Estatutaria de Salud) garantiza el acceso oportuno a los servicios de salud necesarios. La Sentencia T-549 de 2023 establece que la EPS no puede negar un medicamento excluido del PBS alegando imposibilidad de financiación mediante MIPRES, ya que ello vulnera el derecho a la salud. La Sentencia T-124 de 2019 señala que los usuarios tienen derecho al tratamiento completo para su recuperación, procediendo la tutela cuando se niega un medicamento no incluido en el plan de beneficios. La Sentencia T-319 de 2025 reconoce protección especial a personas en condiciones de vulnerabilidad por edad y enfermedad, aplicable a mi caso como paciente de 54 años con artritis reumatoide que requiere tratamiento integral. La Sentencia T-728 de 2005 analiza la negativa de medicamento excluido del POS para artritis reumatoide severa, considerando la vulnerabilidad del paciente, lo que es directamente aplicable a la negativa de tofacitinib por parte de la EPS Salud Andina.\n\nIV. PRETENSIONES\n\n\nCon fundamento en lo anterior, solicito respetuosamente al señor(a) juez(a):\n1. Que se ordene a la EPS Salud Andina autorizar, garantizar y suministrar de manera inmediata el medicamento tofacitinib formulado por mi médico tratante para el tratamiento de mi artritis reumatoide.\n2. Que se le ordene a la EPS Salud Andina proporcionar el tratamiento integral y continuo necesario para mi condición, incluyendo el medicamento tofacitinib, dentro de un término máximo de 48 horas contadas desde la notificación de esta tutela.\n3. Que se le imponga a la EPS Salud Andina una multa diaria por cada día de retraso en el cumplimiento de la orden judicial, conforme a lo dispuesto en el Decreto 2591 de 1991.\n\nV. PRUEBAS Y ANEXOS\n\n1. Copia de la carta de negación del medicamento tofacitinib fechada el 2 de septiembre de 2026.\n2. Copia del radicado del derecho de petición presentado el 8 de septiembre de 2026.\n3. Copia de mi historia clínica relevante que respalda el diagnóstico de artritis reumatoide y la necesidad del medicamento tofacitinib.\n\nVI. JURAMENTO\n\n\nJuro solemnemente que no he presentado otra acción de tutela por los mismos hechos y con el mismo objeto que la presente acción.\n\nVII. NOTIFICACIONES\n\n\nAccionante: dirección [COMPLETAR: dirección], teléfono [COMPLETAR: teléfono], correo electrónico [COMPLETAR: correo electrónico].\nAccionada: Salud Andina, en su dirección o correo de notificaciones judiciales [COMPLETAR: dirección o correo de notificaciones judiciales de la EPS].\nAtentamente,\n\n\n______________________________\n[COMPLETAR: nombre completo]\nC.C. [COMPLETAR: número de cédula] de [COMPLETAR: lugar de expedición]\nTeléfono: [COMPLETAR: teléfono]\nCorreo electrónico: [COMPLETAR: correo electrónico]\n"
      },
      "verification": {
       "citas_encontradas": [
-       "T-305/06",
-       "T-1314/05",
-       "T-500/25",
-       "T-061/14"
+       "T-549/23",
+       "T-124/19",
+       "T-319/25",
+       "T-728/05"
       ],
       "citas_verificadas": [
        {
-        "sentencia_id": "T-305/06",
+        "sentencia_id": "T-549/23",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2006/t-305-06.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2023/t-549-23.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
-        "sentencia_id": "T-1314/05",
+        "sentencia_id": "T-124/19",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2005/t-1314-05.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2019/t-124-19.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
-        "sentencia_id": "T-500/25",
+        "sentencia_id": "T-319/25",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2025/T-500-25.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2025/t-319-25.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        },
        {
-        "sentencia_id": "T-061/14",
+        "sentencia_id": "T-728/05",
         "estado": "verificada",
-        "url": "https://www.corteconstitucional.gov.co/relatoria/2014/t-061-14.htm",
+        "url": "https://www.corteconstitucional.gov.co/relatoria/2005/T-728-05.htm",
         "detalle": "Coincide con una sentencia encontrada en la búsqueda."
        }
       ],
@@ -694,66 +994,69 @@
       "ciclo": [],
       "iteraciones": 0,
       "observaciones": [
-       "En los hechos se describe al accionante como \"mayor de edad\", pero los datos del caso indican que tiene 54 años; en Colombia la calidad de \"mayor de edad\" se reconoce a partir de los 60 años (Ley 1251 de 2008), por lo que esa calificación es inexacta.",
-       "En el hecho 5 se afirma que el derecho de petición \"no ha sido respondido a la fecha\", pero los hechos del caso no contienen información sobre si hubo o no respuesta; se trata de una aseveración no verificada que podría resultar falsa.",
-       "Los hechos no incluyen el número de radicado de la solicitud del 10 de agosto ni del derecho de petición del 8 de septiembre, datos que el caso señala como faltantes; aunque no son hechos inventados, su omisión puede generar inconsistencias al momento de aportar las pruebas.",
-       "El hecho 3 menciona \"presenté la solicitud de autorización y entrega... ante la EPS Salud Andina\" sin precisar la ciudad donde se radicó, dato que el caso registra como faltante."
+       "En el hecho 3 se incluye contenido específico de la carta de negación (\"no está incluido en el Plan de Beneficios en Salud (PBS) y que no puede ser financiado por el Sistema General de Seguridad Social en Salud\") que no figura en los hechos del caso; los hechos solo mencionan \"carta de negación\" sin detalle de su motivación.",
+       "En el hecho 4 se afirma \"al cual no he recibido respuesta hasta la fecha\", pero los hechos del caso no informan si hubo o no respuesta al derecho de petición; es una afirmación no respaldada por la información entregada."
       ]
      },
      "orientacion": null,
      "canal_radicacion": {
       "ciudad": "Bucaramanga",
       "encontrado": true,
-      "descripcion": "La fuente oficial citada publica los medios autorizados para presentar tutelas en línea en Bucaramanga. Consulte allí el enlace o el correo vigente.",
-      "enlace": "https://www.ramajudicial.gov.co/web/ventanilla/servicios",
+      "descripcion": "Recepción y reparto de demandas ordinarias de la Dirección Seccional de Administración Judicial de Bucaramanga - Ventanilla de servicios",
+      "enlace": null,
       "correo": null,
-      "fuente_url": "https://www.ramajudicial.gov.co/web/ventanilla/servicios",
-      "fuente_titulo": "Ventanilla Única - Ventanilla de servicios",
-      "consultado": "2026-10-23"
+      "fuente_url": "https://www.ramajudicial.gov.co/web/direccion-seccional-de-administracion-judicial-de-bucaramanga/novedades/-/asset_publisher/0dzRda5kPM3V/content/medios-electronicos-autorizados-recepcion-de-acciones-constitucionales-acciones-de-tutela-y-habeas-corpus-",
+      "fuente_titulo": "MEDIOS ELECTRÓNICOS AUTORIZADOS-RECEPCIÓN DE ACCIONES CONSTITUCIONALES (ACCIONES DE TUTELA Y HABEAS CORPUS) - DIRECCIÓN SECCIONAL DE ADMINISTRACIÓN JUDICIAL DE BUCARAMANGA",
+      "consultado": "2026-10-28"
      },
      "resumen_revisores": {
-      "facts": "The petitioner is an adult resident of Bucaramanga affiliated with EPS Salud Andina. On August 3, 2026, their rheumatologist prescribed tofacitinib for rheumatoid arthritis treatment. On August 10, 2026, they requested authorization and delivery of the medication from EPS Salud Andina. On September 2, 2026, they received a denial letter from the EPS refusing to provide tofacitinib. On September 8, 2026, they submitted a petition right (derecho de petición) requesting review and response, which remains unanswered.",
+      "facts": "On August 3, 2026, the petitioner's treating physician prescribed tofacitinib for rheumatoid arthritis. On August 10, 2026, the petitioner submitted a request for authorization of tofacitinib to EPS Salud Andina. On September 2, 2026, EPS Salud Andina sent a denial letter stating that tofacitinib is not included in the Plan de Beneficios en Salud (PBS) and cannot be financed by the General Social Security System in Health. On September 8, 2026, the petitioner filed a petition for information before EPS Salud Andina to obtain a justified response to the denial; no response has been received.",
       "rights_invoked": [
-       "The fundamental right to health under Article 49 of the Political Constitution.",
-       "The right to a dignified life linked to Article 1 of the Political Constitution.",
-       "The right to social security established in Article 48 of the Political Constitution.",
-       "The right to human dignity recognized in Article 1 of the Political Constitution."
+       "health",
+       "dignified life",
+       "social security",
+       "human dignity",
+       "life"
       ],
       "requests": [
-       "Order EPS Salud Andina to authorize, guarantee, and immediately deliver the tofacitinib prescribed on August 3, 2026, for rheumatoid arthritis treatment.",
-       "Order EPS Salud Andina to provide tofacitinib continuously and according to the treating physician’s therapeutic scheme without interruption or unjustified denials.",
-       "If EPS Salud Andina claims lack of PBS coverage, order it to obtain the medication via PBS exception and expansion mechanisms under the law to ensure access to essential treatment.",
-       "Impose a daily fine on EPS Salud Andina for each day of delay in complying with this order, per Decree 2591 of 1991 and applicable constitutional jurisprudence."
+       "The EPS must immediately authorize, guarantee, and provide tofacitinib prescribed for rheumatoid arthritis.",
+       "The EPS must provide the necessary integral and continuous treatment within 48 hours from notification of the judgment.",
+       "EPS must pay a daily fine for each day of delay in complying with the judicial order."
       ],
       "rulings": [
        {
-        "ruling_id": "T-305/06",
-        "why": "It establishes that denying a medication excluded from the Mandatory Health Benefits Plan by an EPS violates the right to health when such omission endangers physical integrity or life, as with tofacitinib for rheumatoid arthritis here."
+        "ruling_id": "T-549/23",
+        "why": "It states that EPS cannot deny a PBS-excluded medication claiming financing impossibility via MIPRES, as this violates the right to health, directly relevant to the denial based on PBS exclusion."
        },
        {
-        "ruling_id": "T-1314/05",
-        "why": "It reiterates the EPS duty to supply medications excluded from the POS when omission threatens fundamental rights like health, directly applicable to the tofacitinib denial."
+        "ruling_id": "T-124/19",
+        "why": "It confirms users' right to full treatment for recovery, allowing tutela when a non-PBS medication is denied, applicable to refusal of tofacitinib."
        },
        {
-        "ruling_id": "T-500/25",
-        "why": "It reaffirms that the right to health requires immediate availability of prescribed treatments, even if not in the PBS, supporting the EPS obligation to deliver tofacitinib to prevent clinical deterioration."
+        "ruling_id": "T-319/25",
+        "why": "It recognizes special protection for individuals vulnerable due to age and illness, applicable to a 54-year-old patient with rheumatoid arthritis requiring comprehensive treatment."
        },
        {
-        "ruling_id": "T-061/14",
-        "why": "It reinforces that prolonged denial of an essential medication sanctions health right violations and may justify tutela when delay causes irreversible harm, as with the delay here after the September 2 denial and unanswered petition."
+        "ruling_id": "T-728/05",
+        "why": "It analyzes denial of medication excluded from the POS for severe rheumatoid arthritis, considering patient vulnerability and confirming applicable principles to the present case."
        }
       ]
      },
      "aviso": "Amparo es una herramienta de ayuda para la redacción y no constituye asesoría legal. Revise el documento, complete los datos entre corchetes y, si es posible, consúltelo con un abogado, un consultorio jurídico universitario o la Defensoría del Pueblo antes de radicarlo."
     },
     "totals": {
-     "input_tokens": 15924,
-     "output_tokens": 7940,
-     "cost_usd": 0.018336,
-     "latency_s": 43.27,
+     "input_tokens": 14810,
+     "output_tokens": 6469,
+     "cost_usd": 0.046922,
+     "llm_cost_usd": 0.014922,
+     "search_cost_usd": 0.032,
+     "cost_all_reasoning_usd": 0.034217,
+     "latency_s": 36.96,
      "tavily_searches": 6,
-     "escalations": 1,
-     "cost_all_reasoning_usd": 0.039744
+     "tavily_live": 4,
+     "tavily_cached": 2,
+     "tavily_credits": 4,
+     "escalations": 0
     },
     "documents": {
      "docx": "/samples/01-medicamento-no-pbs/tutela-salud-andina.docx",
