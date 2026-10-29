@@ -100,7 +100,7 @@ are configuration (`MODEL_FAST`, `MODEL_DRAFT`, `MODEL_REASONING`, `MODEL_FALLBA
   advanced for the main search, at half the credits ([comparison](docs/COSTS.md#basic-vs-advanced-for-the-main-search)).
 - **Cache.** Results are cached for 7 days (Firestore) by normalized query and parameters; a cache hit costs no
   credits, and the UI shows how many searches were live and how many came from the cache.
-- **Budget and degradation.** At most 10 searches per case and a daily credit cap (300 public, 600 for judges). If
+- **Budget and degradation.** At most 10 searches per case and a daily credit cap (100 public, 150 for judges). If
   Tavily is out of credits or keeps failing, the case stops before drafting and the UI offers a sample run: Amparo
   never drafts a tutela without verified case law.
 

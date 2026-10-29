@@ -57,7 +57,7 @@ Ultra: **2.0× cheaper**. It is a lower bound: Ultra would also spend thinking t
 
 ## Limits and degradation
 
-- `TAVILY_DAILY_CREDIT_LIMIT=300` (public demo) and `JUDGE_TAVILY_DAILY_CREDIT_LIMIT=600` (judges), counted per UTC
+- `TAVILY_DAILY_CREDIT_LIMIT=100` (public demo) and `JUDGE_TAVILY_DAILY_CREDIT_LIMIT=150` (judges), counted per UTC
   day in Firestore. Each live search reserves its credits before it runs; a cache hit reserves nothing. When the
   cap is reached, new cases are refused with a message and the recorded sample runs stay available.
 - If Tavily refuses (credits exhausted, plan or rate limit, key) or keeps failing after one retry, the case does not

@@ -24,7 +24,7 @@ export default function Intro() {
           <a href={SOURCE_URL} target="_blank" rel="noreferrer" className="underline hover:text-slate-900">
             Defensoría del Pueblo, April 2026 report
           </a>{" "}
-          (as reported by Infobae).
+          (via a news report).
         </p>
       </div>
       <div className="rounded-lg border border-slate-200 bg-white p-4">

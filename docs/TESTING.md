@@ -10,7 +10,8 @@ All demo cases are synthetic.
 
 The public demo is rate-limited to protect the API credits. Your judge access code (sent with the submission,
 it is not in this repository) lifts those limits for your runs. Judges have their own daily allowance, so
-public traffic cannot use it up.
+public traffic cannot use it up: 100 cases and 150 case-law search credits per day (UTC), about 25 drafted
+tutelas. If it runs out, the page says so and the recorded sample runs stay available.
 
 Either:
 

@@ -145,7 +145,7 @@ All limits are environment variables on the Cloud Run service; counters are per 
 | `RATE_LIMIT_PER_HOUR` / `RATE_LIMIT_PER_DAY` | 3 / 10 | cases per client IP (hashed with `IP_HASH_KEY`) |
 | `DAILY_CASE_LIMIT` | 150 | cases per day, all clients |
 | `DAILY_COST_LIMIT_USD` | 2 | estimated spend per day (models + Tavily); live runs stop until 00:00 UTC |
-| `TAVILY_DAILY_CREDIT_LIMIT` / `JUDGE_TAVILY_DAILY_CREDIT_LIMIT` | 300 / 600 | Tavily credits per day (public / judges); each live search reserves its credits, cache hits are free; new cases are refused until 00:00 UTC |
+| `TAVILY_DAILY_CREDIT_LIMIT` / `JUDGE_TAVILY_DAILY_CREDIT_LIMIT` | 100 / 150 | Tavily credits per day (public / judges); each live search reserves its credits, cache hits are free; new cases are refused until 00:00 UTC |
 | `TAVILY_USD_PER_CREDIT` | 0.008 | price of a Tavily credit in the case cost |
 | `TAVILY_RESEARCH_DEPTH` | basic | depth of the main case-law search (the others are always basic) |
 | `SEARCH_CACHE_TTL_DAYS` | 7 | Tavily results cached in `amparo_search_cache` (Firestore) |

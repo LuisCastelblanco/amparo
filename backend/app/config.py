@@ -73,7 +73,7 @@ class Settings(BaseSettings):
     # USD per Tavily credit (a basic search costs 1 credit, an advanced one 2). Counts in the case cost and
     # in the daily cost limits.
     tavily_usd_per_credit: float = 0.008
-    tavily_daily_credit_limit: int = 300  # live-search credits per UTC day, public demo
+    tavily_daily_credit_limit: int = 100  # live-search credits per UTC day, public demo
     # Depth of the main case-law search; the verification and filing-channel searches always use basic.
     # Basic found as many relevant rulings as advanced on the demo cases, at half the credits (docs/COSTS.md).
     tavily_research_depth: str = "basic"
@@ -88,7 +88,7 @@ class Settings(BaseSettings):
     judge_access_code: str = ""
     judge_daily_case_limit: int = 100
     judge_daily_cost_limit_usd: float = 3.0
-    judge_tavily_daily_credit_limit: int = 600
+    judge_tavily_daily_credit_limit: int = 150
     # Extra running cases per instance reserved for judges on top of MAX_CONCURRENT_CASES.
     judge_extra_concurrent_cases: int = 2
     # "firestore" keeps counters across restarts and instances; "memory" is for local development.
