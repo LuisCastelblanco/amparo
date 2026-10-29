@@ -10,17 +10,17 @@ pipeline and shown in the UI, in `/api/usage` and in the scripts' output, and bo
   advanced): it downloads the ruling pages itself to restore their accents. When Tavily reports the credits of a
   request (`include_usage`), that figure is used.
 
-## Measured (3 demo cases, 2026-10-27)
+## Measured (per drafted tutela)
 
 | | Tavily credits per case | Tavily | Models | **Total per case** |
 | --- | --- | --- | --- | --- |
-| Before (evaluation of 2026-10-23, all searches advanced, no cache; 9 drafted tutelas) | 11.1 | $0.0889 | $0.0135 | **$0.1024** |
-| Now, cold (no cache hit) | 5.3 (6 / 4 / 6) | $0.0427 | $0.0143 | **$0.0569** |
-| Now, same story run again (cache) | 4.0 (4 / 4 / 4) | $0.0320 | $0.0140 | **$0.0460** |
+| Before (evaluation of 2026-10-23: all searches advanced, no cache; 9 drafted tutelas) | 11.1 | $0.0889 | $0.0135 | **$0.1024** |
+| Now, cold ([evaluation](EVALUATION.md) of 2026-10-29: 9 drafted tutelas, almost no cache hits) | 5.3 | $0.0427 | $0.0145 | **$0.0572** |
+| Now, same story run again (3 demo cases, 2026-10-27, cache) | 4.0 (4 / 4 / 4) | $0.0320 | $0.0140 | **$0.0460** |
 
-Case 2 has no city, so it runs no filing-channel searches. A case found not admissible stops before research and
-uses no credits. Before this change Tavily was about 87 % of the cost of a drafted tutela; it is now 75 % cold and
-70 % on a repeat run.
+Over all 13 evaluation cases (including the 4 not admissible, which stop before research and use no credits) a case
+costs $0.0406 on average. A case without a city (demo case 2) runs no filing-channel searches. Before this change
+Tavily was about 87 % of the cost of a drafted tutela; it is now 75 % cold and 70 % on a repeat run.
 
 What changed:
 
@@ -52,8 +52,8 @@ rulings; one run per depth cannot say whether that is noise. `TAVILY_RESEARCH_DE
 ## Model routing (models only)
 
 The routing saving compares only the model part of the cost, since Tavily costs the same whichever model runs each
-step. Over the 6 demo runs above, models cost $0.0141 per case against $0.0293 with every call on Ultra:
-**2.1× cheaper** (2.2× in the 13-case evaluation). It is a lower bound: Ultra would also spend thinking tokens.
+step. In the 13-case evaluation, the models of a drafted tutela cost $0.0145 against $0.0284 with every call on
+Ultra: **2.0× cheaper**. It is a lower bound: Ultra would also spend thinking tokens.
 
 ## Limits and degradation
 

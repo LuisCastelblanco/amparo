@@ -172,6 +172,14 @@ left the address bar) demo case 1 completed in 55 s on a 375 px viewport and bot
 counted those runs under `judges`, leaving the public counters unchanged. The limit was then restored to 150.
 Judge instructions: [TESTING.md](TESTING.md).
 
+Verified again on 2026-10-29 from the public URLs (revision `amparo-api-00017`, Playwright with Chromium) at
+1440 × 900 and at 375 × 812: sample run 1 replayed to the end on both; a live judge case (demo case 1, code read
+from Secret Manager into the browser, removed from the address bar) completed in 60 s with 4 citations verified;
+on the phone viewport the .docx and the PDF each downloaded 5 times from `/api/documents/...` (valid files every
+time), and the sample run's static files once each. No console errors and no horizontal scroll. The cost panel
+showed models against all-Ultra and the Tavily cost with live and cached searches; `/api/usage` counted the 6
+credits under `judges`, and `amparo_search_cache` held the 6 searches, all basic.
+
 When a case finishes, the API renders the .docx and the PDF, stores them in the bucket and sends their links in
 the `case_completed` event (`documents`); `GET /api/documents/<id>/<file>` serves them with
 `Content-Disposition: attachment`, so the UI's download buttons are plain links. The recorded sample runs link to

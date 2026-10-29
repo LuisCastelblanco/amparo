@@ -40,7 +40,8 @@ What to expect in about 60 seconds:
   - **where to file**: the official online filing channel for the person's city (Bucaramanga in this case),
     found on official `.gov.co` sites, with its source and the date it was checked;
   - **models and cost**: the model used per step and the model cost against running every call on the largest
-    model (about 2× cheaper), plus the case-law search cost (Tavily credits; live and cached searches);
+    model (about 2× cheaper), plus the case-law search cost (Tavily credits; live and cached searches); a
+    whole case costs about $0.06;
   - the **English summary**, if you ticked it.
 
 Cases 2 and 3 work the same way. Case 2 has no city, so no filing channel is searched. The download buttons are

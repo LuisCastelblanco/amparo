@@ -192,6 +192,19 @@ reproduce it, why it matters and a concrete suggestion. The workarounds are in t
 - **Impact:** the filing channel often comes without a link; we show the source page instead.
 - **Suggestion:** an option to keep link URLs (e.g. as markdown links).
 
+### 7. Credit spend is hard to see while developing
+
+- **Problem:** a search response reports its credits only with `include_usage=True`, and the account's `/usage`
+  endpoint still showed the same total after we had spent 64 credits in an hour. Nothing says when `advanced`
+  (2 credits) is worth it over `basic` (1): on our demo cases, with the same queries, basic found as many relevant
+  rulings at half the cost.
+- **Reproduce:** read `GET /usage`, run a few searches, read it again; compare `search_depth` basic and advanced on
+  the queries in `docs/COSTS.md`.
+- **Impact:** a day of development used 504 requests and 80 % of the month's credits before an alert arrived; we
+  added our own per-case accounting, a daily credit cap and a result cache.
+- **Suggestion:** return `usage.credits` by default, keep `/usage` near real time, and document when advanced depth
+  pays off.
+
 What worked well: `include_domains=["gov.co"]` matches every `.gov.co` subdomain, which made the official-channel
 search simple, and the async client made parallel queries easy.
 

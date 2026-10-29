@@ -6,7 +6,7 @@ format a judge expects, with every cited ruling verified against the Constitutio
 
 - **Live demo:** https://amparo-swart.vercel.app (or watch a recorded run: [`?sample=1`](https://amparo-swart.vercel.app/?sample=1))
 - **Demo video:** _coming soon_
-- **For judges:** [docs/TESTING.md](docs/TESTING.md) · **Evaluation:** [docs/EVALUATION.md](docs/EVALUATION.md) · **Feedback for Nebius, NVIDIA and Tavily:** [docs/FEEDBACK.md](docs/FEEDBACK.md)
+- **For judges:** [docs/TESTING.md](docs/TESTING.md) · **Evaluation:** [docs/EVALUATION.md](docs/EVALUATION.md) · **Feedback for Nebius, NVIDIA and Tavily:** [docs/FEEDBACK.md](docs/FEEDBACK.md) ([summary](docs/FEEDBACK_SUMMARY.md))
 
 > Amparo is a drafting aid, not legal advice.
 
@@ -76,15 +76,15 @@ are configuration (`MODEL_FAST`, `MODEL_DRAFT`, `MODEL_REASONING`, `MODEL_FALLBA
   validated with Pydantic, with one retry that feeds the validation error back.
 - **Model fallback.** If a tier's model returns 404 or reports deprecation, the call is retried on `MODEL_FALLBACK`.
 - **Measured (models only).** On the [13-case evaluation](docs/EVALUATION.md), the model calls of a drafted tutela
-  cost **$0.0135** on average against **$0.0293** with every call on Ultra (**2.2× cheaper**; 2.1× over the latest 6
-  demo runs), a lower bound since Ultra would also spend thinking tokens. This comparison covers the models only: the
-  Tavily searches cost the same whichever model runs. **5 of 13 cases** escalated a call; latency is 32 s at p50 and
-  53 s at p95. Each step's model and cost are shown in the UI.
-- **Whole case (models + Tavily).** A drafted tutela costs **$0.057** cold ($0.014 models + $0.043 Tavily,
+  cost **$0.0145** on average against **$0.0284** with every call on Ultra (**2.0× cheaper**), a lower bound since
+  Ultra would also spend thinking tokens. This comparison covers the models only: the Tavily searches cost the same
+  whichever model runs. **3 of 13 cases** (23%) escalated a call; a drafted tutela takes 44 s at p50 and 50 s at p95.
+  Each step's model and cost are shown in the UI.
+- **Whole case (models + Tavily).** A drafted tutela costs **$0.057** cold ($0.0145 models + $0.0427 Tavily,
   5.3 credits) and **$0.046** when the same story runs again with the search cache, down from $0.102 when every
   search was advanced and uncached. Details: [docs/COSTS.md](docs/COSTS.md).
 
-<img src="docs/images/desktop-routing.png" alt="Models and cost panel: actual cost, cost if everything ran on Ultra, model per step and escalations" width="70%">
+<img src="docs/images/desktop-routing.png" alt="Models and cost panel: model cost against all on Ultra, case-law search cost with live and cached searches, model per step" width="70%">
 
 ## How we use Tavily
 
